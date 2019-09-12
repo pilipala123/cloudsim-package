@@ -43,6 +43,8 @@ import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
  * VMs with the same MIPS requirements.
  * The cloudlets will take the same time to
  * complete the execution.
+ * 一个数据中心，两台机器，两个云任务
+ * 这些任务的虚拟机参数相同。它们会花费同样的时间
  */
 public class CloudSimExample2 {
 
