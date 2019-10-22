@@ -46,7 +46,7 @@ public class Cloudlet {
      * cloudlet will spend 5 seconds using the processor in order to be
      * completed (that may be uninterrupted or not, depending on the scheduling
      * policy).
-     *
+     * Cloudlet的执行长度，单位为每秒百万指令。
      * @see #setNumberOfPes(int)
      *
      */
@@ -55,12 +55,14 @@ public class Cloudlet {
     /**
      * The input file size of this Cloudlet before execution (unit: in byte).
      * This size has to be considered the program + input data sizes.
+     * 处理前需要的Cloudlet的文件大小。
+     * 需要考虑打程序 + 输入数据。
      */
     private final long cloudletFileSize;
 
     /**
      * The output file size of this Cloudlet after execution (unit: in byte).
-     *
+     * 任务被处理后的输出文件大小。
      * @todo See
      * <a href="https://groups.google.com/forum/#!topic/cloudsim/MyZ7OnrXuuI">this
      * discussion</a>
@@ -70,14 +72,14 @@ public class Cloudlet {
     /**
      * The number of Processing Elements (Pe) required to execute this cloudlet
      * (job).
-     *
+     * 任务需要的Pe单元数。
      * @see #setNumberOfPes(int)
      */
     private int numberOfPes;
 
     /**
      * The execution status of this Cloudlet.
-     *
+     * 任务的处理状态
      * @todo It would be an enum, to avoid using int constants.
      */
     private int status;
@@ -286,7 +288,7 @@ public class Cloudlet {
                 utilizationModelRam,
                 utilizationModelBw,
                 false);
-        vmId = -1;        
+        vmId = -1;
         accumulatedBwCost = 0;
         costPerBw = 0;
         requiredFiles = new LinkedList<String>();

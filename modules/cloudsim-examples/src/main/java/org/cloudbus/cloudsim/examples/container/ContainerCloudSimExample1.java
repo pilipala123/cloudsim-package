@@ -96,24 +96,21 @@ public class ContainerCloudSimExample1 {
             boolean trace_flag = false;
             /**
              * 1- Like CloudSim the first step is initializing the CloudSim Package before creating any entities.
-             *
+             * 1.在创建实例事前，先初始化cloudsim的包
              */
-
-
             CloudSim.init(num_user, calendar, trace_flag);
+
             /**
              * 2-  Defining the container allocation Policy. This policy determines how Containers are
              * allocated to VMs in the data center.
-             *
+             * 2.定义分配策略。这个策略决定了container将如何被分配给数据中心的虚拟机。
              */
-
-
             ContainerAllocationPolicy containerAllocationPolicy = new PowerContainerAllocationPolicySimple();
 
             /**
              * 3-  Defining the VM selection Policy. This policy determines which VMs should be selected for migration
              * when a host is identified as over-loaded.
-             *
+             * 3.定义虚拟机的选择策略。这个策略决定当一个host负载过重时，选择哪一个虚拟机来迁移。
              */
 
             PowerContainerVmSelectionPolicy vmSelectionPolicy = new PowerContainerVmSelectionPolicyMaximumUsage();
@@ -122,11 +119,12 @@ public class ContainerCloudSimExample1 {
             /**
              * 4-  Defining the host selection Policy. This policy determines which hosts should be selected as
              * migration destination.
-             *
+             * 4.定义Host的选择策略。 此策略确定应将哪些主机选择为迁移目标。
              */
             HostSelectionPolicy hostSelectionPolicy = new HostSelectionPolicyFirstFit();
             /**
              * 5- Defining the thresholds for selecting the under-utilized and over-utilized hosts.
+             * 定义用于选择未充分利用和过度利用的主机的阈值。
              */
 
             double overUtilizationThreshold = 0.80;
@@ -134,6 +132,7 @@ public class ContainerCloudSimExample1 {
             /**
              * 6- The host list is created considering the number of hosts, and host types which are specified
              * in the {@link ConstantsExamples}.
+             * 创建主机列表时要考虑到主机数量和{@link ConstantsExamples}中指定的主机类型。
              */
             hostList = new ArrayList<ContainerHost>();
             hostList = createHostList(ConstantsExamples.NUMBER_HOSTS);
@@ -141,6 +140,7 @@ public class ContainerCloudSimExample1 {
             vmList = new ArrayList<ContainerVm>();
             /**
              * 7- The container allocation policy  which defines the allocation of VMs to containers.
+             * 容器分配策略，用于定义虚拟机到容器的分配
              */
             ContainerVmAllocationPolicy vmAllocationPolicy = new
                     PowerContainerVmAllocationPolicyMigrationAbstractHostSelection(hostList, vmSelectionPolicy,
@@ -226,7 +226,7 @@ public class ContainerCloudSimExample1 {
 
     /**
      * Creates the broker.
-     *
+     * 创建代理
      * @param overBookingFactor
      * @return the datacenter broker
      */

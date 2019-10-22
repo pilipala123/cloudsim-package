@@ -5,21 +5,23 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Defines the resource utilization model based on 
+ * Defines the resource utilization model based on
  * a <a href="https://www.planet-lab.org">PlanetLab</a>
  * datacenter trace file.
  */
 public class UtilizationModelPlanetLabInMemory implements UtilizationModel {
-	
-	/** The scheduling interval. */
+
+	/** The scheduling interval.
+	 *  调度间隔
+	 */
 	private double schedulingInterval;
 
 	/** The data (5 min * 288 = 24 hours). */
-	private final double[] data; 
-	
+	private final double[] data;
+
 	/**
 	 * Instantiates a new PlanetLab resource utilization model from a trace file.
-	 * 
+	 *
 	 * @param inputPath The path of a PlanetLab datacenter trace.
          * @param schedulingInterval
 	 * @throws NumberFormatException the number format exception
@@ -38,11 +40,11 @@ public class UtilizationModelPlanetLabInMemory implements UtilizationModel {
 		data[n - 1] = data[n - 2];
 		input.close();
 	}
-	
+
 	/**
 	 * Instantiates a new PlanetLab resource utilization model with variable data samples
          * from a trace file.
-	 * 
+	 *
 	 * @param inputPath The path of a PlanetLab datacenter trace.
 	 * @param dataSamples number of samples in the file
 	 * @throws NumberFormatException the number format exception
@@ -79,7 +81,7 @@ public class UtilizationModelPlanetLabInMemory implements UtilizationModel {
 
 	/**
 	 * Sets the scheduling interval.
-	 * 
+	 *
 	 * @param schedulingInterval the new scheduling interval
 	 */
 	public void setSchedulingInterval(double schedulingInterval) {
@@ -88,13 +90,13 @@ public class UtilizationModelPlanetLabInMemory implements UtilizationModel {
 
 	/**
 	 * Gets the scheduling interval.
-	 * 
+	 *
 	 * @return the scheduling interval
 	 */
 	public double getSchedulingInterval() {
 		return schedulingInterval;
 	}
-	
+
 	public double[] getData(){
 		return data;
 	}
