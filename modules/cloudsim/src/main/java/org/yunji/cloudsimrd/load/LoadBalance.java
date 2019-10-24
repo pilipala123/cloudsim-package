@@ -1,4 +1,4 @@
-package org.yunji.cloudsimrd;
+package org.yunji.cloudsimrd.load;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.Vm;
