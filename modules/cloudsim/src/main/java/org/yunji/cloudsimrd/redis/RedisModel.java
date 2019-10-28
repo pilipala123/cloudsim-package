@@ -9,7 +9,7 @@ public interface RedisModel {
      * 通过单个节点读取数据
      * @param redisNode
      * @param length
-     * @return
+     * @return AccessTime
      */
     int getDataFromNode(RedisNode redisNode, Byte length);
 
@@ -17,28 +17,28 @@ public interface RedisModel {
      * 通过集群读取数据
      * @param redisCluster
      * @param length
-     * @return
+     * @return AccessTime
      */
     int getDataFromCluster(RedisCluster redisCluster, Byte length);
 
     /**
      * 读取RDB持久化的数据
      * @param length
-     * @return
+     * @return AccessTime
      */
     int getDataFromRDB(Byte length);
 
     /**
      * 读取AOF持久化的数据
      * @param length
-     * @return
+     * @return AccessTime
      */
     int getDataFromAOF(Byte length);
 
     /**
      * 保存数据
      * @param length
-     * @return
+     * @return AccessTime
      */
     int saveData(Byte length);
 }

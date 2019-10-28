@@ -215,7 +215,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Process the ack received due to a request for VM creation.
-	 *
+	 * 处理由于创建虚拟机的请求而收到的ack。
 	 * @param ev a SimEvent object
 	 * @pre ev != null
 	 * @post $none
@@ -267,7 +267,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Process a cloudlet return event.
-	 *
+	 * 处理Cloudlet返回事件。
 	 * @param ev a SimEvent object
 	 * @pre ev != $null
 	 * @post $none
@@ -316,7 +316,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Create the submitted virtual machines in a datacenter.
-	 *
+	 * 在数据中心中创建提交的虚拟机。
 	 * @param datacenterId Id of the chosen Datacenter
 	 * @pre $none
 	 * @post $none
@@ -343,7 +343,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Submit cloudlets to the created VMs.
-	 *
+	 * 向创建的vm提交cloudlet。
 	 * @pre $none
 	 * @post $none
          * @see #submitCloudletList(java.util.List)
@@ -386,7 +386,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Destroy all virtual machines running in datacenters.
-	 *
+	 * 销毁数据中心中运行的所有虚拟机。
 	 * @pre $none
 	 * @post $none
 	 */
@@ -401,7 +401,7 @@ public class DatacenterBroker extends SimEntity {
 
 	/**
 	 * Send an internal event communicating the end of the simulation.
-	 *
+	 * 发送一个内部事件来通知模拟的结束。
 	 * @pre $none
 	 * @post $none
 	 */
