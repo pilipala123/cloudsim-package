@@ -78,6 +78,16 @@
         	<artifactId>opencsv</artifactId>
         	<version>3.7</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.25</version>
+        </dependency>
     </dependencies>
     <reporting>
 	<plugins>
