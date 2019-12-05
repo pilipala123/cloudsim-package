@@ -27,9 +27,6 @@ import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmRamPro
 import org.cloudbus.cloudsim.container.core.*;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicy;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicyFirstFit;
-import org.cloudbus.cloudsim.container.load.LoadGeneratorMDSP;
-import org.cloudbus.cloudsim.container.load.LoadPropertiesMDSP;
-import org.cloudbus.cloudsim.container.load.MathUtil;
 import org.cloudbus.cloudsim.container.resourceAllocatorMigrationEnabled.PowerContainerVmAllocationPolicyMigrationAbstractHostSelection;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerAllocationPolicy;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerVmAllocationPolicy;
@@ -113,21 +110,6 @@ public class ContainerCloudSimExample1 {
              *
              */
 
-            LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
-            MathUtil mathUtil = new MathUtil();
-            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
-
-            //根据起始点和结束点生成幂函数形状的负载
-            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
-            //根据起始点和结束点生成直线形状的负载
-            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
-            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
-            //合并不同阶段的负载
-            Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
-            //将负载保存到配置文件
-            loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
-            //读取配置文件生成任务
-            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/trace-29", map.size()));
 
             ContainerAllocationPolicy containerAllocationPolicy = new PowerContainerAllocationPolicySimple();
 
@@ -176,7 +158,6 @@ public class ContainerCloudSimExample1 {
             /**
              * 9- Creating the cloudlet, container and VM lists for submitting to the broker.
              */
-//            cloudletList =cloudlets;
             cloudletList = createContainerCloudletList(brokerId, ConstantsExamples.NUMBER_CLOUDLETS);
             containerList = createContainerList(brokerId, ConstantsExamples.NUMBER_CLOUDLETS);
             vmList = createVmList(brokerId, ConstantsExamples.NUMBER_VMS);
@@ -204,19 +185,15 @@ public class ContainerCloudSimExample1 {
             /**
              * 12- Determining the simulation termination time according to the cloudlet's workload.
              */
-
-
-//            CloudSim.terminateSimulation(86400.00);
-//            /**
-//             * 13- Starting the simualtion.
-//             */
-//            CloudSim.startSimulation();
-//            /**
-//             * 14- Stopping the simualtion.
-//             */
-//            CloudSim.stopSimulation();
-            int i=0;
-
+            CloudSim.terminateSimulation(86400.00);
+            /**
+             * 13- Starting the simualtion.
+             */
+            CloudSim.startSimulation();
+            /**
+             * 14- Stopping the simualtion.
+             */
+            CloudSim.stopSimulation();
             /**
              * 15- Printing the results when the simulation is finished.
              */
@@ -266,7 +243,7 @@ public class ContainerCloudSimExample1 {
             /**
             * S2: Requests are going through SLB_GW
             */
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota, slbcpuquota,slbmemoryquota, slbmoney,slbMaxoutboundbandwidth, cloudlets);
+            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota, slbcpuquota,slbmemoryquota, slbmoney,slbMaxoutboundbandwidth, cloudletList);
             broker.connectWithSLB_GW(slb_gw);
             /**
              * S3: Requests processed by GW K8S
@@ -298,6 +275,7 @@ public class ContainerCloudSimExample1 {
 
             List<ContainerCloudlet> newList = broker.getCloudletReceivedList();
             printCloudletList(newList);
+
             Log.printConcatLine("Total Response Time is ", broker.getResponeTime() + "ms");
 
             Log.printLine("ContainerCloudSimExample1 finished!");
@@ -514,7 +492,6 @@ public class ContainerCloudSimExample1 {
     public static List<ContainerCloudlet> createContainerCloudletList(int brokerId, int numberOfCloudlets)
             throws FileNotFoundException {
         String inputFolderName = ContainerCloudSimExample1.class.getClassLoader().getResource("workload/planetlab").getPath();
-
 
        // System.out.println(inputFolderName);
 

@@ -150,7 +150,7 @@ public class Vm {
 	 * @pre currentTime >= 0
 	 * @post $none
 	 */
-	public double updateVmProcessing(double currentTime, List<Double> mipsShare) {
+	public double  updateVmProcessing(double currentTime, List<Double> mipsShare) {
 		if (mipsShare != null) {
 			return getCloudletScheduler().updateVmProcessing(currentTime, mipsShare);
 		}

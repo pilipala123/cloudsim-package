@@ -25,6 +25,46 @@ import org.cloudbus.cloudsim.core.CloudSim;
  */
 public class Cloudlet {
 
+
+
+    private int starttime;
+
+    private int finishtime;
+    private int state;
+    private int bwrequest;
+    public int getFinishtime() {
+        return finishtime;
+    }
+
+    public void setFinishtime(int finishtime) {
+        this.finishtime = finishtime;
+    }
+    public int getStarttime() {
+        return starttime;
+    }
+
+    public void setStarttime(int starttime) {
+        this.starttime = starttime;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public int getBwrequest() {
+        return bwrequest;
+    }
+
+    public void setBwrequest(int bwrequest) {
+        this.bwrequest = bwrequest;
+    }
+
+
+
     /**
      * The cloudlet ID.
      */
@@ -245,6 +285,16 @@ public class Cloudlet {
      * cloudlet inside a given VM
      */
     private List<String> requiredFiles = null;
+
+    public int getCpurequest() {
+        return cpurequest;
+    }
+
+    public void setCpurequest(int cpurequest) {
+        this.cpurequest = cpurequest;
+    }
+
+    private int cpurequest;
 
     /**
      * Allocates a new Cloudlet object. The Cloudlet length, input and output
