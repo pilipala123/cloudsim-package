@@ -70,13 +70,13 @@ public class LoadGeneratorMDSP {
         return resultList;
     }
 
-    public List<ContainerCloudlet> generateContainerCloudletsFromList(List<Integer> numList) {
+    public List<ContainerCloudlet> generateContainerCloudletsFromList(int number) {
         System.out.println("Load Generator: generating loads......\n");
         List<ContainerCloudlet> resultList = new ArrayList<>();
 //        for (Integer num : numList) {
 //            resultList.addAll(generateContainerCloudlets(num));
 //        }
-        resultList.addAll(generateContainerCloudlets(10000));
+        resultList.addAll(generateContainerCloudlets(number));
         return resultList;
     }
 
@@ -87,7 +87,7 @@ public class LoadGeneratorMDSP {
      * @return
      */
     public List<Cloudlet> generateCloudlets(Integer number) {
-        long length = 400000;
+        long length = 40;
         long fileSize = 300;
         long outputSize = 300;
         // number of cpus
@@ -107,15 +107,18 @@ public class LoadGeneratorMDSP {
     }
 
     public List<ContainerCloudlet> generateContainerCloudlets(Integer number) {
-        long length = (int) (Math.random() * 10)+5;       //单个任务需要处理的时间
+            //单个任务需要处理的时间
         long fileSize = 300;
         long outputSize = 300;
+        int basetime = 1;
         // number of cpus
         int pesNumber = 1;
+        int cloudleteverytimenumber = 0;
         UtilizationModel utilizationModel = new UtilizationModelFull();
         List<ContainerCloudlet> containerCloudlets = new ArrayList<>();
         int clocktime =  0;
         for (Integer i = 0; i < number; i++) {
+            long length =(5+(int) (Math.random() * 10))*basetime;
             ContainerCloudlet cloudlet =
                     new ContainerCloudlet(i, length, pesNumber, fileSize,
                             outputSize, utilizationModel, utilizationModel,
@@ -124,13 +127,24 @@ public class LoadGeneratorMDSP {
             cloudlet.setVmId(vmId);
             int cpurequest = (int) (Math.random() * 10)+1;     //单个任务的cpu需求
             int bwrequest = (int)(Math.random() * 10)+1;      //单个任务的带宽需求
+            int cloudlethandle = (int)(Math.random() * 10)+5;
+            if (clocktime >= 150){
+                cloudleteverytimenumber++;
+                cloudlet.setStarttime(clocktime);
+                if (cloudleteverytimenumber==150){
+                    cloudleteverytimenumber=0;
+                    clocktime++;
+                }
+            }
 
-            if (i<=(clocktime*(clocktime+1)/2)&&(i>=((clocktime*(clocktime+1)/2)-clocktime))){
+            if (i <= (clocktime * (clocktime + 1) / 2) && (i >= ((clocktime * (clocktime + 1) / 2) - clocktime))) {
                 cloudlet.setStarttime(clocktime);
             }
-            if (i==(clocktime*(clocktime+1)/2)){
+            if (i == (clocktime * (clocktime + 1) / 2)) {
                 clocktime++;                                          //画出一个随时间增加,任务数呈现直线的图像
             }
+
+
             cloudlet.setCpurequest(cpurequest);
             cloudlet.setBwrequest(bwrequest);
             cloudlet.setState(0);   //waiting state

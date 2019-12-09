@@ -1,4 +1,4 @@
-package org.cloudbus.cloudsim.container.core.SLB;
+package org.cloudbus.cloudsim.container.core.Siemens;
 
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
@@ -21,15 +21,18 @@ public class CloudletMinParament {
 
 
 
-    public void setcloudletMinParament(List<ContainerCloudlet> cloudletList){
-        int presentcloudletcpu,presentcloudletbw;
+    public void setcloudletMinParament(List<ContainerCloudlet> cloudletList,int containernumber){
+        int presentcloudletcpu,presentcloudletbw,maxcpucost=0,maxbwcost=0;
         for (Cloudlet cloudlet: cloudletList) {
             this.maxtimelength = (int)cloudlet.getCloudletLength()+this.maxtimelength;
             presentcloudletcpu = cloudlet.getCpurequest();
             presentcloudletbw = cloudlet.getBwrequest();
+
             if (cloudlet.getCloudletId() == 1) {
                 this.mincpurequest = presentcloudletcpu;
                 this.minbwrequest = presentcloudletbw;
+                maxcpucost = cloudlet.getCpurequest();
+                maxbwcost = cloudlet.getBwrequest();
             }
             if (this.mincpurequest > presentcloudletcpu) {
                 this.mincpurequest = presentcloudletcpu;
@@ -37,6 +40,18 @@ public class CloudletMinParament {
             if (this.minbwrequest>presentcloudletbw){
                 this.minbwrequest = presentcloudletbw;
             }
+            if(maxcpucost<cloudlet.getCpurequest()){
+                maxcpucost= cloudlet.getCpurequest();
+            }
+            if(maxbwcost <cloudlet.getBwrequest()){
+                maxbwcost = cloudlet.getBwrequest();
+            }
+        }
+        if(maxbwcost<=maxcpucost){
+            this.maxtimelength=this.maxtimelength/containernumber/maxcpucost;
+        }
+        else{
+            this.maxtimelength=this.maxtimelength/containernumber/maxbwcost;
         }
 
     }

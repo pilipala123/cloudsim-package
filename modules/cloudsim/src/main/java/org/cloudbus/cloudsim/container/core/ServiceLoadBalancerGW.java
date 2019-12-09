@@ -1,9 +1,6 @@
 package org.cloudbus.cloudsim.container.core;
 
-import org.cloudbus.cloudsim.container.core.Siemens.BindContainer;
-import org.cloudbus.cloudsim.container.core.Siemens.CloudletMinParament;
-import org.cloudbus.cloudsim.container.core.Siemens.SiemensContainerresource;
-import org.cloudbus.cloudsim.container.core.Siemens.SiemensVmresources;
+import org.cloudbus.cloudsim.container.core.Siemens.*;
 import org.cloudbus.cloudsim.container.core.plotpicture.LineCharts;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 import org.jfree.ui.RefineryUtilities;
@@ -27,13 +24,12 @@ public class ServiceLoadBalancerGW extends Container{
      * @param ram
      * @param bw
      */
-    public ServiceLoadBalancerGW(int id, int userId, double mips, int numberOfPes, int ram, int money, long bw, List<ContainerCloudlet> cloudletList) throws FileNotFoundException {
+    public ServiceLoadBalancerGW(int id, int userId, double mips, int numberOfPes, int ram, long bw, List<ContainerCloudlet> cloudletList) throws FileNotFoundException {
         super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
         /**
          * Functions to calculate response time and qps will be added here
          */
         setResponseTime(processRequests(cloudletList,100,100));
-        setQps(money);
         System.out.println("The GWSLB QPS is "+qps);
     }
 
@@ -109,8 +105,7 @@ public class ServiceLoadBalancerGW extends Container{
 
 
     public int processRequests(List<ContainerCloudlet> cloudletList,int cpuresources,int bwresources) throws FileNotFoundException {
-        int response_time=0;
-        int containernumber=18;
+        int containernumber=12;
         int vmnumber = 6;
         int containerhandletime;
         int time = 0;
@@ -120,14 +115,10 @@ public class ServiceLoadBalancerGW extends Container{
         int containercpuusage = 0,containerbwusage = 0;
         int finishcloudletnumber=0,startcloudletnumber=0,lasttimestartcloudletnumber=0,presentstarttimecloudletnumber=0;
         int hostcpuusage=0,hostbwusage=0;
-        List<Integer> hostcpuusagelist=new ArrayList<>();
-        List<Integer>hostbwusagelist=new ArrayList<>();
-        List<Integer> averageresponsetimelist=new ArrayList<>();
-        List<Integer> loadnumber=new ArrayList<>();
 
+        SiemensList siemensList = new SiemensList();
         CloudletMinParament cloudletMinParament = new CloudletMinParament();
-        cloudletMinParament.setcloudletMinParament(cloudletList);
-//        List<Integer>responsetimeList = new ArrayList<>();
+        cloudletMinParament.setcloudletMinParament(cloudletList,containernumber);
         List<SiemensVmresources> siemensVmresourcesList = createsiemnesVmresources(vmnumber);
         List<SiemensContainerresource> siemensContainerresourceList = createVmResource(containernumber,vmnumber,cpuresources,bwresources,cloudletMinParament.getMaxtimelength());
 
@@ -184,89 +175,31 @@ public class ServiceLoadBalancerGW extends Container{
                 }
             }
             presentstarttimecloudletnumber = startcloudletnumber-lasttimestartcloudletnumber;
-            loadnumber.add(presentstarttimecloudletnumber);
+            siemensList.getLoadnumber().add(presentstarttimecloudletnumber);
             lasttimestartcloudletnumber = startcloudletnumber;
 
             hostbwusage=hostcpuusage=0;
             //计算cpu和带宽利用率
-            for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
-                siemensVmresources.setCpuusage(0);
-                siemensVmresources.setBwusage(0);
-                for (SiemensContainerresource siemensContainerresource : siemensContainerresourceList) {
-                    containercpuusage = 0;
-                    containerbwusage = 0;
-                    if(siemensContainerresource.getSiemensVmid()!= siemensVmresources.getId()){
-                        continue;
-                    }
-                    for (int i = 0; i < cpuresources; i++) {
-                        if (siemensContainerresource.getCpuarraypool()[i][time] == 1) {
-                            containercpuusage++;
-                        }
-                        if (siemensContainerresource.getBwarraypool()[i][time] == 1) {
-                            containerbwusage++;
-                        }
-                    }
-
-                    siemensVmresources.addCpuusage(containercpuusage);
-                    siemensVmresources.addBwusage(containerbwusage);
-
-
-//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Cpu usage is " + containercpuusage);
-//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Bw usage is " + containerbwusage);
-
-                }
-                vmcpuusage = siemensVmresources.getCpuusage();
-                vmbwusage = siemensVmresources.getBwusage();
-                if (vmcpuusage == 0 && vmbwusage == 0) {
-                    vmfreenumber++;
-                }
-//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Cpu usage is " + vmcpuusage);
-//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Bw usage is " + vmbwusage);
-                hostcpuusage = hostcpuusage + vmcpuusage;
-                hostbwusage =hostbwusage +vmbwusage;
-
-            }
+            siemensList = calculateusage(siemensVmresourcesList,siemensContainerresourceList,siemensList,time,containernumber);
             //计算当前时间的平均响应时间
-            int sumreponsetime = 0,presentfinishcloudletnumber = 0,averagereponsetime =0;
-            for(BindContainer bindContainer : bindCloudletlist){
-                if (bindContainer.getFinishtime()<=time&&bindContainer.getFinishtime()!=0) {
-                    int perresponsetime = bindContainer.getEveryresponsetime();
-                    sumreponsetime= sumreponsetime+perresponsetime;
-                    presentfinishcloudletnumber++;
-                }
-                else if(bindContainer.getState()==0){
-                    break;
-                }
-            }
-            if(presentfinishcloudletnumber==0){
-                System.out.println("At time:"+ time +"ms averageresponsetime:"+ averagereponsetime+"ms");
-            }
-            else {
-                averagereponsetime = sumreponsetime / presentfinishcloudletnumber;
-                System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
-            }
-            if (vmfreenumber == vmnumber) {
+            siemensList = calculateaverageresponsetime(siemensList,bindCloudletlist,time);
+//            try {
+//                RandomAccessFile accessFile = new RandomAccessFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/core/Siemens/responsetimecontent.txt", "rw");
+//                //获取文件长度
+//                long length = accessFile.length();
+//                //设置文件指针移动到文件末尾
+//                accessFile.seek(length);
+//                String responsetimecontent = time+","+averagereponsetime+" ";
+//                String cpuusage = time+","+hostcpuusage+" ";
+//                String bwusage = time+","+hostbwusage+" ";
+//                String load = time+","+presentstarttimecloudletnumber+" ";
+//                accessFile.write(responsetimecontent.getBytes());
+//                accessFile.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            if (siemensList.getStatus()==1) {
                 break;
-            }
-            hostbwusage = hostbwusage/containernumber;
-            hostcpuusage = hostcpuusage/containernumber;
-            hostbwusagelist.add(hostbwusage);
-            hostcpuusagelist.add(hostcpuusage);
-            averageresponsetimelist.add(averagereponsetime);
-            try {
-                RandomAccessFile accessFile = new RandomAccessFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/core/Siemens/responsetimecontent.txt", "rw");
-                //获取文件长度
-                long length = accessFile.length();
-                //设置文件指针移动到文件末尾
-                accessFile.seek(length);
-                String responsetimecontent = time+","+averagereponsetime+" ";
-                String cpuusage = time+","+hostcpuusage+" ";
-                String bwusage = time+","+hostbwusage+" ";
-                String load = time+","+presentstarttimecloudletnumber+" ";
-                accessFile.write(responsetimecontent.getBytes());
-                accessFile.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             time++;
 
@@ -276,10 +209,10 @@ public class ServiceLoadBalancerGW extends Container{
 //        for (int i=0;i<100;i++){
 //            numberlist.add(i);
 //        }
-        Plotpictures.plotpicture(time,loadnumber,"负载产生数量随时间的关系","load");
-        Plotpictures.plotpicture(time,hostcpuusagelist,"CPU利用率随时间的关系","CPU");
-        Plotpictures.plotpicture(time,hostbwusagelist,"带宽利用率随时间的关系","bw");
-        Plotpictures.plotpicture(time,averageresponsetimelist,"平均响应时间随时间的关系","response time");
+        Plotpictures.plotpicture(time,siemensList.getLoadnumber(),"负载产生数量随时间的关系","load");
+        Plotpictures.plotpicture(time,siemensList.getHostcpuusagelist(),"CPU利用率随时间的关系","CPU");
+        Plotpictures.plotpicture(time,siemensList.getHostbwusagelist(),"带宽利用率随时间的关系","bw");
+        Plotpictures.plotpicture(time,siemensList.getAverageresponsetimelist(),"平均响应时间随时间的关系","response time");
         System.out.println("finish cloudlet numbers is "+finishcloudletnumber);
         System.out.println("The finish time of Siemens is "+time+"ms");
 //        System.out.println("The Response Time of GWslb is "+ response_time+"ms");
@@ -287,6 +220,79 @@ public class ServiceLoadBalancerGW extends Container{
     }
 
 
+    public SiemensList calculateusage(List<SiemensVmresources> siemensVmresourcesList,List<SiemensContainerresource> siemensContainerresourceList,SiemensList siemensList,int time,int containernumber){
+        int containercpuusage,containerbwusage;
+        int vmcpuusage,vmbwusage;
+        int hostcpuusage=0,hostbwusage=0;
+        for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
+            siemensVmresources.setCpuusage(0);
+            siemensVmresources.setBwusage(0);
+            for (SiemensContainerresource siemensContainerresource : siemensContainerresourceList) {
+                containercpuusage = 0;
+                containerbwusage = 0;
+                if(siemensContainerresource.getSiemensVmid()!= siemensVmresources.getId()){
+                    continue;
+                }
+                for (int i = 0; i < siemensContainerresource.getCpuarraypool().length; i++) {
+                    if (siemensContainerresource.getCpuarraypool()[i][time] == 1) {
+                        containercpuusage++;
+                    }
+                }
+                for (int j = 0;j<siemensContainerresource.getBwarraypool().length;j++){
+                    if (siemensContainerresource.getBwarraypool()[j][time] == 1) {
+                        containerbwusage++;
+                    }
+                }
 
+                siemensVmresources.addCpuusage(containercpuusage);
+                siemensVmresources.addBwusage(containerbwusage);
+
+
+//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Cpu usage is " + containercpuusage);
+//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Bw usage is " + containerbwusage);
+
+            }
+            vmcpuusage = siemensVmresources.getCpuusage();
+            vmbwusage = siemensVmresources.getBwusage();
+
+//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Cpu usage is " + vmcpuusage);
+//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Bw usage is " + vmbwusage);
+            hostcpuusage = hostcpuusage + vmcpuusage;
+            hostbwusage =hostbwusage +vmbwusage;
+
+        }
+        hostcpuusage= hostcpuusage/containernumber;
+        hostbwusage=hostbwusage/containernumber;
+        if(hostbwusage==0&&hostcpuusage ==0&&time!=0){
+            siemensList.setStatus(1);
+        }
+        siemensList.getHostcpuusagelist().add(hostcpuusage);
+        siemensList.getHostbwusagelist().add(hostbwusage);
+        return siemensList;
+    }
+
+    public SiemensList calculateaverageresponsetime(SiemensList siemensList,List<BindContainer> bindCloudletlist,int time){
+        int sumreponsetime = 0,presentfinishcloudletnumber = 0,averagereponsetime =0;
+        for(BindContainer bindContainer : bindCloudletlist){
+            if (bindContainer.getFinishtime()<=time&&bindContainer.getFinishtime()!=0) {
+                int perresponsetime = bindContainer.getEveryresponsetime();
+                sumreponsetime= sumreponsetime+perresponsetime;
+                presentfinishcloudletnumber++;
+            }
+            else if(bindContainer.getState()==0){
+                break;
+            }
+        }
+        if(presentfinishcloudletnumber==0){
+            System.out.println("At time:"+ time +"ms averageresponsetime:"+ averagereponsetime+"ms");
+        }
+        else {
+            averagereponsetime = sumreponsetime / presentfinishcloudletnumber;
+            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
+        }
+
+        siemensList.getAverageresponsetimelist().add(averagereponsetime);
+        return siemensList;
+    }
 
 }

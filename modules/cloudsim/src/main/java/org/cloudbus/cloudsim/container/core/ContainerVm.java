@@ -168,6 +168,8 @@ public class ContainerVm {
     @SuppressWarnings("unused")
 	private ContainerDatacenter datacenter;
 
+    public ContainerVm(){
+    }
 
     /**
      * Creates a new VMCharacteristics object.

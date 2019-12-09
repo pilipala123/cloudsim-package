@@ -131,6 +131,8 @@ public class Container {
 
 
     List<ContainerCloudlet> cloudletList;
+    public Container(){
+    }
     /**
      * Creates a new Container object.
      * @param id

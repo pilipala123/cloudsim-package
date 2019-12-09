@@ -78,6 +78,9 @@ public class ContainerHost {
      * @param peList         the pe list
      * @param containerVmScheduler    the vm scheduler
      */
+    public ContainerHost(){
+    }
+
     public ContainerHost(
             int id,
             ContainerVmRamProvisioner containerVmRamProvisioner,

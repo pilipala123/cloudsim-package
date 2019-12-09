@@ -13,7 +13,7 @@ public class MockService {
     String serviceId;
 
     /**
-     * The construct method will be called by SLB NFR instances.
+     * The construct method will be called by Siemens NFR instances.
      * @param name
      * @param serviceId
      * @param responseTime

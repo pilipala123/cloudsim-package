@@ -1,26 +1,28 @@
-package org.cloudbus.cloudsim.container.core.SLB;
+package org.cloudbus.cloudsim.container.core.Siemens;
 
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerBwProvisioner;
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerPe;
 import org.cloudbus.cloudsim.container.containerProvisioners.ContainerRamProvisioner;
-import org.cloudbus.cloudsim.container.core.Container;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.core.ContainerVm;
-import org.cloudbus.cloudsim.container.lists.ContainerList;
-import org.cloudbus.cloudsim.container.schedulers.ContainerScheduler;
-import org.cloudbus.cloudsim.core.CloudSim;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SiemensContainerresource {
+public class SiemensContainerresource extends ContainerVm {
     private int pepool;
     private int memorypool;
     private int [][] bwarraypool;
     private int [][] cpuarraypool;
     private int remaincpuresource;
     private int id;
+    private int SiemensVmid;
+
+    public int getSiemensVmid() {
+        return SiemensVmid;
+    }
+
+    public void setSiemensVmid(int siemensVmid) {
+        SiemensVmid = siemensVmid;
+    }
+
 
 
     public int getId() {
@@ -92,10 +94,13 @@ public class SiemensContainerresource {
 //        setPepool(0);
 //    }
 
+
     public SiemensContainerresource(){
+//        super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
         setMemorypool(0);
         setPepool(0);
     }
+
 
     public int getRemaincpuresource() {
         return remaincpuresource;

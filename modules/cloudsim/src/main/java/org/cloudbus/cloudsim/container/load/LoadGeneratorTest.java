@@ -32,8 +32,8 @@ public class LoadGeneratorTest {
         //将负载保存到配置文件
         loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
         //读取配置文件生成任务
-        List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/trace-29", map.size()));
-        System.out.println(cloudlets.size());
+//        List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/trace-29", map.size()));
+//        System.out.println(cloudlets.size());
     }
 
 

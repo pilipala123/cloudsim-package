@@ -29,9 +29,20 @@ public class Cloudlet {
 
     private int starttime;
 
+
+
+    private int cloudlethandletime;
     private int finishtime;
     private int state;
     private int bwrequest;
+
+    public int getCloudlethandletime() {
+        return cloudlethandletime;
+    }
+
+    public void setCloudlethandletime(int cloudlethandletime) {
+        this.cloudlethandletime = cloudlethandletime;
+    }
     public int getFinishtime() {
         return finishtime;
     }
