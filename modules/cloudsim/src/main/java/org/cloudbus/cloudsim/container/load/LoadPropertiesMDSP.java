@@ -11,7 +11,7 @@ import java.util.Map;
  * 读取load.properties文件的属性
  */
 public class LoadPropertiesMDSP {
-    public String propertiesPath = "/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/load.properties";
+    public String propertiesPath =LoadGeneratorMDSP.root+ "\\modules\\cloudsim\\src\\main\\java\\org\\cloudbus\\cloudsim\\container\\load\\load.properties";
 
 
     PropertiesUtil propertiesUtil = new PropertiesUtil();

@@ -54,7 +54,7 @@ import static org.cloudbus.cloudsim.container.core.LoadProperties.*;
 /**
  * A simple example showing how to create a data center with one host, one VM, one container and run one cloudlet on it.
  */
-public class ContainerCloudSimExample1 {
+public class ContainerRedisCloudSimExample1 {
 
     /**
      * The cloudlet list.
@@ -84,7 +84,8 @@ public class ContainerCloudSimExample1 {
      * @param args the args
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Log.printLine("Starting ContainerCloudSimExample1...");
 
         try {
@@ -118,16 +119,16 @@ public class ContainerCloudSimExample1 {
             LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
 
             //根据起始点和结束点生成幂函数形状的负载
-            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
+            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 100, 600, 15000, 1);
             //根据起始点和结束点生成直线形状的负载
-            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
-            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
+            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 15000, 1800, 20000, 1);
+            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1800, 20000, 2500, 0, 1);
             //合并不同阶段的负载
             Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
             //将负载保存到配置文件
             loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
             //读取配置文件生成任务
-            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/trace-29", map.size()));
+            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile(LoadGeneratorMDSP.root + "\\modules\\cloudsim\\src\\main\\java\\org\\cloudbus\\cloudsim\\container\\load\\trace-29", map.size()));
 
             ContainerAllocationPolicy containerAllocationPolicy = new PowerContainerAllocationPolicySimple();
 
@@ -186,7 +187,7 @@ public class ContainerCloudSimExample1 {
             String logAddress = "~/Results";
 
             @SuppressWarnings("unused")
-			PowerContainerDatacenter e = (PowerContainerDatacenter) createDatacenter("datacenter",
+            PowerContainerDatacenter e = (PowerContainerDatacenter) createDatacenter("datacenter",
                     PowerContainerDatacenterCM.class, hostList, vmAllocationPolicy, containerAllocationPolicy,
                     getExperimentName("ContainerCloudSimExample-1", String.valueOf(overBookingFactor)),
                     ConstantsExamples.SCHEDULING_INTERVAL, logAddress,
@@ -215,16 +216,16 @@ public class ContainerCloudSimExample1 {
 //             * 14- Stopping the simualtion.
 //             */
 //            CloudSim.stopSimulation();
-            int i=0;
+            int i = 0;
 
             /**
              * 15- Printing the results when the simulation is finished.
              */
             /**
-            * S1: define some paraments
-            */
-            int bw=0, ecsmipspercore=0, ecsmemory=0, ecscpuquote = 0, ecsbw=0, k8secsnumber=0,k8smoney=0,
-                    slbMaxoutboundbandwidth=0, slbcpuquota=0,slbmemoryquota=0,slbmoney =0;
+             * S1: define some paraments
+             */
+            int bw = 0, ecsmipspercore = 0, ecsmemory = 0, ecscpuquote = 0, ecsbw = 0, k8secsnumber = 0, k8smoney = 0,
+                    slbMaxoutboundbandwidth = 0, slbcpuquota = 0, slbmemoryquota = 0, slbmoney = 0;
 
             /**
              * S2: Use properties input the paraments
@@ -233,10 +234,10 @@ public class ContainerCloudSimExample1 {
             InputStream inputStream = null;
 
             try {
-                inputStream = new FileInputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
+                inputStream = new FileInputStream(LoadGeneratorMDSP.root + "/modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
                 EcsInput ecsInput = setEcsInput(properties);
-                ecsmipspercore=ecsInput.getEcsMIPSpercore();
+                ecsmipspercore = ecsInput.getEcsMIPSpercore();
                 ecsmemory = ecsInput.getEcsMemoryQuota();
                 ecscpuquote = ecsInput.getEcsCPUQuota();
                 ecsbw = ecsInput.getEcsOutboundbandwidth();
@@ -246,16 +247,16 @@ public class ContainerCloudSimExample1 {
                 k8smoney = k8sInput.getK8smoney();
                 LoadGeneratorInput loadGeneratorInput = setLoadGeneratorInput(properties);
                 SlbInput slbInput = setslbInput(properties);
-                slbMaxoutboundbandwidth=slbInput.getSlbMaxoutboundbandwidth();
+                slbMaxoutboundbandwidth = slbInput.getSlbMaxoutboundbandwidth();
                 slbcpuquota = slbInput.getSlbCPUQuota();
                 slbmemoryquota = slbInput.getSlbMemoryQuota();
                 slbmoney = slbInput.getSlbmoney();
-                RedisInput redisInput =setRedisInput(properties);
+                RedisInput redisInput = setRedisInput(properties);
                 TablestoreInput tablestoreInput = settablestoreInput(properties);
             } catch (IOException error) {
                 error.printStackTrace();
-            }finally {
-                if(inputStream !=null) {
+            } finally {
+                if (inputStream != null) {
                     try {
                         inputStream.close();
                     } catch (IOException error2) {
@@ -264,23 +265,24 @@ public class ContainerCloudSimExample1 {
                 }
             }
             /**
-            * S2: Requests are going through SLB_GW
-            */
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota, slbcpuquota,slbmemoryquota,slbMaxoutboundbandwidth, cloudlets);
-            broker.connectWithSLB_GW(slb_gw);
+             * S2: Requests are going through SLB_GW
+             */
+//            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore * slbcpuquota
+//                    , slbcpuquota, slbmemoryquota, slbMaxoutboundbandwidth, cloudlets);
+//            broker.connectWithSLB_GW(slb_gw);
             /**
              * S3: Requests processed by GW K8S
              * Capacity of SLB GW can be configured here
              */
 
-            GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore, k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory, k8smoney,k8secsnumber*ecsbw, cloudletList);
-            broker.connectWithGW_K8S(gw_k8s);
+//            GW_K8S gw_k8s = new GW_K8S(0, 0, k8secsnumber * ecsmipspercore, k8secsnumber * ecscpuquote, k8secsnumber * ecsmemory, k8smoney, k8secsnumber * ecsbw, cloudletList);
+//            broker.connectWithGW_K8S(gw_k8s);
 
             /**
              * S4: Connect with Redis, update response time
              * Redis configurations can be configured here
              */
-            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudletList);
+            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
             broker.connectWithRedis(redis);
 
             /**
@@ -306,7 +308,6 @@ public class ContainerCloudSimExample1 {
             Log.printLine("Unwanted errors happen");
         }
     }
-
 
 
     /**
@@ -513,7 +514,7 @@ public class ContainerCloudSimExample1 {
      */
     public static List<ContainerCloudlet> createContainerCloudletList(int brokerId, int numberOfCloudlets)
             throws FileNotFoundException {
-        String inputFolderName = ContainerCloudSimExample1.class.getClassLoader().getResource("workload/planetlab").getPath();
+        String inputFolderName = ContainerRedisCloudSimExample1.class.getClassLoader().getResource("workload/planetlab").getPath();
 
 
        // System.out.println(inputFolderName);

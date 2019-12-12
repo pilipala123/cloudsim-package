@@ -24,6 +24,9 @@ import java.util.*;
  * 负载生成器，仿真负载。
  */
 public class LoadGeneratorMDSP {
+
+    public static final String root = "E:\\GitHub\\cloudsim-package";
+
     private String propertiesPath = "D:/cloudsim-5.0/cloudsim-5.0/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/load.properties";
 
     private int brokeId = 1;
@@ -77,6 +80,16 @@ public class LoadGeneratorMDSP {
 //            resultList.addAll(generateContainerCloudlets(num));
 //        }
         resultList.addAll(generateContainerCloudlets(number));
+        return resultList;
+    }
+
+    public List<ContainerCloudlet> generateContainerCloudletsFromList(List<Integer> number) {
+        System.out.println("Load Generator: generating loads......\n");
+        List<ContainerCloudlet> resultList = new ArrayList<>();
+        for (Integer num : number) {
+            resultList.addAll(generateContainerCloudlets(num));
+        }
+//        resultList.addAll(generateContainerCloudlets(number));
         return resultList;
     }
 

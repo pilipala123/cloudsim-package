@@ -8,6 +8,10 @@ public class SiemensList {
     private List<Integer> hostbwusagelist;
     private List<Integer> averageresponsetimelist;
     private List<Integer> loadnumber;
+
+    private List<Integer> inputFlow;
+    private List<Integer> qps;
+
     private int status;
 
     public int getStatus() {
@@ -49,11 +53,29 @@ public class SiemensList {
         this.loadnumber = loadnumber;
     }
 
+    public List<Integer> getInputFlow() {
+        return inputFlow;
+    }
+
+    public void setInputFlow(List<Integer> inputFlow) {
+        this.inputFlow = inputFlow;
+    }
+
+    public List<Integer> getQps() {
+        return qps;
+    }
+
+    public void setQps(List<Integer> qps) {
+        this.qps = qps;
+    }
+
     public SiemensList() {
         setAverageresponsetimelist(new ArrayList<>());
         setHostbwusagelist(new ArrayList<>());
         setHostcpuusagelist(new ArrayList<>());
         setLoadnumber(new ArrayList<>());
+        setInputFlow(new ArrayList<>());
+        setQps(new ArrayList<>());
         setStatus(0);
     }
 }
