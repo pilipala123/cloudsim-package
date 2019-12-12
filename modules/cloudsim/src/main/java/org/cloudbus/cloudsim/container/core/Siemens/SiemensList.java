@@ -1,5 +1,7 @@
 package org.cloudbus.cloudsim.container.core.Siemens;
 
+import org.apache.commons.math3.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ public class SiemensList {
 
     private List<Integer> inputFlow;
     private List<Integer> qps;
+    private List<Pair<Integer, Integer>> load2qps;
 
     private int status;
 
@@ -69,6 +72,14 @@ public class SiemensList {
         this.qps = qps;
     }
 
+    public List<Pair<Integer, Integer>> getLoad2qps() {
+        return load2qps;
+    }
+
+    public void setLoad2qps(List<Pair<Integer, Integer>> load2qps) {
+        this.load2qps = load2qps;
+    }
+
     public SiemensList() {
         setAverageresponsetimelist(new ArrayList<>());
         setHostbwusagelist(new ArrayList<>());
@@ -76,6 +87,7 @@ public class SiemensList {
         setLoadnumber(new ArrayList<>());
         setInputFlow(new ArrayList<>());
         setQps(new ArrayList<>());
+        setLoad2qps(new ArrayList<>());
         setStatus(0);
     }
 }

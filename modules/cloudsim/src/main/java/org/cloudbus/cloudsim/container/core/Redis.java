@@ -2,6 +2,7 @@ package org.cloudbus.cloudsim.container.core;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.math3.util.Pair;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 import org.cloudbus.cloudsim.container.core.redis.Configuration;
@@ -296,6 +297,8 @@ public class Redis extends Container {
                     .filter(bindContainer -> bindContainer.getStarttime() == current_time).count()).intValue();
             int current_qps = Float.valueOf(current_connection * per_qps * coefficient).intValue();
             siemensList.getQps().add(current_qps);
+            siemensList.getLoad2qps().add(Pair.create(current_connection, current_qps));
+
             containerhandletime = calculateResponseTime(current_connection);
 
             for (BindContainer bindContainer : bindCloudletlist) {
@@ -378,6 +381,8 @@ public class Redis extends Container {
         Plotpictures.plotpicture(time, siemensList.getHostcpuusagelist(), "CPU利用率随时间的关系", "CPU");
         Plotpictures.plotpicture(time, siemensList.getHostbwusagelist(), "带宽利用率随时间的关系", "bw");
         Plotpictures.plotpicture(time, siemensList.getAverageresponsetimelist(), "平均响应时间随时间的关系", "response time");
+        Plotpictures.plotpictureFromMap(time, siemensList.getLoad2qps(), "qps与负载的关系", "load2qps");
+
         System.out.println("finish cloudlet numbers is " + finishcloudletnumber);
         System.out.println("The finish time of Siemens is " + time + "ms");
 //        System.out.println("The Response Time of GWslb is "+ response_time+"ms");
