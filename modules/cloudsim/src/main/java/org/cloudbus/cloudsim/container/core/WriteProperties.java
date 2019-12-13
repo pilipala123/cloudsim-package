@@ -87,6 +87,10 @@ public class WriteProperties {
         properties.setProperty("Slbmoney","19000");
     }
 
+    public void setRegression(Properties properties){
+        properties.setProperty("bw_a_s","0.01486");
+
+    }
     public void setRedis(Properties properties){
         properties.setProperty("RedisMemoryQuota", "12");
         properties.setProperty("RedisNodes", "8");

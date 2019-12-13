@@ -25,11 +25,13 @@ import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmPe;
 import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmPeProvisionerSimple;
 import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmRamProvisionerSimple;
 import org.cloudbus.cloudsim.container.core.*;
+import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
+import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
+import org.cloudbus.cloudsim.container.core.util.CalculateSumResponsetime;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicy;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicyFirstFit;
 import org.cloudbus.cloudsim.container.load.LoadGeneratorMDSP;
 import org.cloudbus.cloudsim.container.load.LoadPropertiesMDSP;
-import org.cloudbus.cloudsim.container.load.MathUtil;
 import org.cloudbus.cloudsim.container.resourceAllocatorMigrationEnabled.PowerContainerVmAllocationPolicyMigrationAbstractHostSelection;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerAllocationPolicy;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerVmAllocationPolicy;
@@ -113,21 +115,6 @@ public class ContainerCloudSimExample1 {
              *
              */
 
-            LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
-            MathUtil mathUtil = new MathUtil();
-            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
-
-            //根据起始点和结束点生成幂函数形状的负载
-            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
-            //根据起始点和结束点生成直线形状的负载
-            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
-            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
-            //合并不同阶段的负载
-            Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
-            //将负载保存到配置文件
-            loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
-            //读取配置文件生成任务
-            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/cloudsim31/modules/cloudsim/src/main/java/org/cloudbus/cloudsim/container/load/trace-29", map.size()));
 
             ContainerAllocationPolicy containerAllocationPolicy = new PowerContainerAllocationPolicySimple();
 
@@ -231,26 +218,40 @@ public class ContainerCloudSimExample1 {
              */
             Properties properties = new Properties();
             InputStream inputStream = null;
-
+            LoadGeneratorInput loadGeneratorInput = new LoadGeneratorInput();
+            EcsInput ecsInput = new EcsInput();
+            K8sInput k8sInput = new K8sInput();
+            SlbInput slbInput = new SlbInput();
+            RedisInput redisInput = new RedisInput();
+            ContainerInput containerInput = new ContainerInput();
+            RegressionParament regressionParament = new RegressionParament();
             try {
                 inputStream = new FileInputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
-                EcsInput ecsInput = setEcsInput(properties);
+                //ecs init
+                regressionParament = setregressionParament(properties);
+                ecsInput = setEcsInput(properties);
+                k8sInput = setK8sInput(properties);
+                slbInput = setslbInput(properties);
+                redisInput =setRedisInput(properties);
+                containerInput = setContainerInput(properties);
                 ecsmipspercore=ecsInput.getEcsMIPSpercore();
                 ecsmemory = ecsInput.getEcsMemoryQuota();
                 ecscpuquote = ecsInput.getEcsCPUQuota();
                 ecsbw = ecsInput.getEcsOutboundbandwidth();
-                ContainerInput containerInput = setContainerInput(properties);
-                K8sInput k8sInput = setK8sInput(properties);
+
+                //k8s init
+
                 k8secsnumber = k8sInput.getECSNumbers();
                 k8smoney = k8sInput.getK8smoney();
-                LoadGeneratorInput loadGeneratorInput = setLoadGeneratorInput(properties);
-                SlbInput slbInput = setslbInput(properties);
+                loadGeneratorInput = setLoadGeneratorInput(properties);
+                //slb init
+
                 slbMaxoutboundbandwidth=slbInput.getSlbMaxoutboundbandwidth();
                 slbcpuquota = slbInput.getSlbCPUQuota();
                 slbmemoryquota = slbInput.getSlbMemoryQuota();
-                slbmoney = slbInput.getSlbmoney();
-                RedisInput redisInput =setRedisInput(properties);
+
+
                 TablestoreInput tablestoreInput = settablestoreInput(properties);
             } catch (IOException error) {
                 error.printStackTrace();
@@ -263,18 +264,48 @@ public class ContainerCloudSimExample1 {
                     }
                 }
             }
+
+            LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
+//            MathUtil mathUtil = new MathUtil();
+            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
+
+//            //根据起始点和结束点生成幂函数形状的负载
+//            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
+//            //根据起始点和结束点生成直线形状的负载
+//            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
+//            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
+//            //合并不同阶段的负载
+//            Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
+//            //将负载保存到配置文件
+//            loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
+            //读取配置文件生成任务
+
+            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput);
+
+            int flag = 1;
             /**
             * S2: Requests are going through SLB_GW
             */
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota, slbcpuquota,slbmemoryquota, slbmoney,slbMaxoutboundbandwidth, cloudlets);
+            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota,
+                    slbcpuquota,slbmemoryquota,slbMaxoutboundbandwidth, cloudlets,slbInput,ecsInput,
+                    loadGeneratorInput,regressionParament,flag);
+            SiemensList slbsiemensList=slb_gw.getSlbsiemensList();
             broker.connectWithSLB_GW(slb_gw);
+//            SiemensUtils.calculateregressionbw("slb","k8s",1,1500,10000,regressionParament);
+//            SiemensUtils.calculateregressionbw("k8s","slb",1,1500,10000,regressionParament);
+
             /**
              * S3: Requests processed by GW K8S
-             * Capacity of SLB GW can be configured here
+             * Capacity of Siemens GW can be configured here
              */
 
-            GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore, k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory, k8smoney,k8secsnumber*ecsbw, cloudletList);
+            GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore,
+                    k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory,
+                    k8secsnumber*ecsbw, cloudlets,k8sInput,ecsInput,loadGeneratorInput,
+                    regressionParament,flag);
+            SiemensList k8ssiemensList = gw_k8s.getK8ssiemensList();
             broker.connectWithGW_K8S(gw_k8s);
+//            SiemensUtils.calculateregressionbw("k8s","redis",1,1500,10000,regressionParament);
 
             /**
              * S4: Connect with Redis, update response time
@@ -282,21 +313,40 @@ public class ContainerCloudSimExample1 {
              */
             Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudletList);
             broker.connectWithRedis(redis);
+//            SiemensUtils.calculateregressionbw("redis","k8s",1,1500,10000,regressionParament);
+//            SiemensUtils.calculateregressionbw("k8s","nfr",1,1500,10000,regressionParament);
 
             /**
-             * S5: Requests going through SLB NFR
-             * SLB specification can be defined here
+             * S5: Requests going through Siemens NFR
+             * Siemens specification can be defined here
              */
-            ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000, 1, 512, 1000, cloudletList);
+            ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000,
+                    1, 512, 1000, cloudlets,loadGeneratorInput,regressionParament,flag);
+            SiemensList nfrsiemensList= slb_nfr.getNfrsiemensList();
             broker.connectWithSLB_NFR(slb_nfr);
+//            SiemensUtils.calculateregressionbw("nfr","k8s",1,1500,10000,regressionParament);
+//            SiemensUtils.calculateregressionbw("nfr","gwtma",1,1500,10000,regressionParament);
+
+
 
             /**
              * S6: Connect with MockService();
              * Mock service (constant response time configured here). The response time should be updated
              */
-            broker.connectWithMockService(new MockService("Service1", "MS1", 300));
+            broker.connectWithMockService(new MockService("Service1", "MS1", 25,slbsiemensList));
+//            SiemensUtils.calculateregressionbw("gwtma","nfr",1,1500,10000,regressionParament);
+            List<SiemensList> siemensListList = new ArrayList<>();
+            siemensListList.add(slbsiemensList);
+            siemensListList.add(k8ssiemensList);
+            siemensListList.add(nfrsiemensList);
+            CalculateSumResponsetime.calculateresultresponsetime(siemensListList);
+
+
 
             List<ContainerCloudlet> newList = broker.getCloudletReceivedList();
+
+
+
             printCloudletList(newList);
             Log.printConcatLine("Total Response Time is ", broker.getResponeTime() + "ms");
 

@@ -7,8 +7,8 @@ import java.util.List;
 
 public class CloudletMinParament {
     private int mincpurequest;
-    private int minbwrequest;
     private int minmemoryrequest;
+    private int memoryrequest;
     private int maxtimelength;
 
     public int getMaxtimelength() {
@@ -26,25 +26,25 @@ public class CloudletMinParament {
         for (Cloudlet cloudlet: cloudletList) {
             this.maxtimelength = (int)cloudlet.getCloudletLength()+this.maxtimelength;
             presentcloudletcpu = cloudlet.getCpurequest();
-            presentcloudletbw = cloudlet.getBwrequest();
+            presentcloudletbw = cloudlet.getMemoryrequest();
 
             if (cloudlet.getCloudletId() == 1) {
                 this.mincpurequest = presentcloudletcpu;
-                this.minbwrequest = presentcloudletbw;
+                this.minmemoryrequest = presentcloudletbw;
                 maxcpucost = cloudlet.getCpurequest();
-                maxbwcost = cloudlet.getBwrequest();
+                maxbwcost = cloudlet.getMemoryrequest();
             }
             if (this.mincpurequest > presentcloudletcpu) {
                 this.mincpurequest = presentcloudletcpu;
             }
-            if (this.minbwrequest>presentcloudletbw){
-                this.minbwrequest = presentcloudletbw;
+            if (this.minmemoryrequest >presentcloudletbw){
+                this.minmemoryrequest = presentcloudletbw;
             }
             if(maxcpucost<cloudlet.getCpurequest()){
                 maxcpucost= cloudlet.getCpurequest();
             }
-            if(maxbwcost <cloudlet.getBwrequest()){
-                maxbwcost = cloudlet.getBwrequest();
+            if(maxbwcost <cloudlet.getMemoryrequest()){
+                maxbwcost = cloudlet.getMemoryrequest();
             }
         }
         if(maxbwcost<=maxcpucost){
@@ -56,13 +56,13 @@ public class CloudletMinParament {
 
     }
     public CloudletMinParament(int pe,int memory, int bw){
-        setMinbwrequest(bw);
-        setMinmemoryrequest(memory);
+        setMinmemoryrequest(bw);
+        setMemoryrequest(memory);
         setMincpurequest(pe);
     }
     public CloudletMinParament(){
-        setMinbwrequest(10);
-        setMinmemoryrequest(0);
+        setMinmemoryrequest(10);
+        setMemoryrequest(0);
         setMincpurequest(10);
         setMaxtimelength(0);
 
@@ -75,19 +75,19 @@ public class CloudletMinParament {
         this.mincpurequest = mincpurequest;
     }
 
-    public int getMinbwrequest() {
-        return minbwrequest;
-    }
-
-    public void setMinbwrequest(int minbwrequest) {
-        this.minbwrequest = minbwrequest;
-    }
-
     public int getMinmemoryrequest() {
         return minmemoryrequest;
     }
 
     public void setMinmemoryrequest(int minmemoryrequest) {
         this.minmemoryrequest = minmemoryrequest;
+    }
+
+    public int getMemoryrequest() {
+        return memoryrequest;
+    }
+
+    public void setMemoryrequest(int memoryrequest) {
+        this.memoryrequest = memoryrequest;
     }
 }

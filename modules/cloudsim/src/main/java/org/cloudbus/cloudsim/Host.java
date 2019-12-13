@@ -85,6 +85,12 @@ public class Host {
 		setFailed(false);
 	}
 
+	public Host(
+			int id
+	){
+		setId(id);
+	}
+
 	/**
 	 * Requests updating of cloudlets' processing in VMs running in this host.
 	 * 

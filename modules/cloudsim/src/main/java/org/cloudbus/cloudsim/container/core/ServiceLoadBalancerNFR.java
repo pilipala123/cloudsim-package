@@ -1,14 +1,35 @@
 package org.cloudbus.cloudsim.container.core;
 
+import org.cloudbus.cloudsim.Host;
+import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
+import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
+import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
+import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
+import org.cloudbus.cloudsim.container.core.util.Calculatebw;
 import org.cloudbus.cloudsim.container.schedulers.ContainerCloudletScheduler;
+import org.yunji.cloudsimrd.load.LoadGenerator;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
-public class ServiceLoadBalancerNFR extends Container{
+import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
+
+public class ServiceLoadBalancerNFR extends Host {
 
     private int responseTime;
 
     private int qps;
+
+    private SiemensList nfrsiemensList;
+
+    public SiemensList getNfrsiemensList() {
+        return nfrsiemensList;
+    }
+
+    public void setNfrsiemensList(SiemensList nfrsiemensList) {
+        this.nfrsiemensList = nfrsiemensList;
+    }
+
     /**
      * Creates a new Container-based Redis object.
      *
@@ -19,13 +40,27 @@ public class ServiceLoadBalancerNFR extends Container{
      * @param ram
      * @param bw
      */
-    public ServiceLoadBalancerNFR(int id, int userId, double mips, int numberOfPes, int ram, long bw, List<ContainerCloudlet> cloudletList) {
-        super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
+    public ServiceLoadBalancerNFR(int id, int userId, double mips, int numberOfPes, int ram, long bw,
+                                  List<ContainerCloudlet> cloudletList,
+                                  LoadGeneratorInput loadGeneratorInput,
+                                  RegressionParament regressionParament,
+
+                                  int flag) {
+        super(id);
         /**
          * Functions to calculate response time and qps will be added here
          */
-        processRequests(cloudletList);
-        setResponseTime(100);
+        this.nfrsiemensList= null;
+        try {
+            this.nfrsiemensList = processRequests(cloudletList,1000,1000,"NfR",loadGeneratorInput,18,9);
+            Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,this.nfrsiemensList);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        setResponseTime(this.nfrsiemensList.getFinishtime());
+//        setResponseTime(100);
         setQps(100);
     }
 
@@ -49,8 +84,8 @@ public class ServiceLoadBalancerNFR extends Container{
      * Process the requests and generate response time
      * @param cloudletList
      */
-    public void processRequests(List<ContainerCloudlet> cloudletList){
-
-    }
+//    public void processRequests(List<ContainerCloudlet> cloudletList){
+//
+//    }
 
 }

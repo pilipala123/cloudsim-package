@@ -19,6 +19,9 @@ public class SiemensVmresources extends ContainerHost {
     private int cpuusage;
     private int bwusage;
 
+
+    private int memoryusage;
+
     /**
      * Instantiates a new host.
      *
@@ -60,4 +63,15 @@ public class SiemensVmresources extends ContainerHost {
         this.bwusage = this.bwusage+bwusage;
     }
 
+    public void addMemoryusage(int memoryusage){
+        this.memoryusage = this.memoryusage+memoryusage;
+    }
+
+    public int getMemoryusage() {
+        return memoryusage;
+    }
+
+    public void setMemoryusage(int memoryusage) {
+        this.memoryusage = memoryusage;
+    }
 }

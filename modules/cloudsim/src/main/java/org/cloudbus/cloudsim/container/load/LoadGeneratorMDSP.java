@@ -3,8 +3,10 @@ package org.cloudbus.cloudsim.container.load;
 import org.cloudbus.cloudsim.Cloudlet;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.cloudbus.cloudsim.UtilizationModelFull;
+import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.utils.IDs;
+import org.yunji.cloudsimrd.load.LoadGenerator;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -70,13 +72,42 @@ public class LoadGeneratorMDSP {
         return resultList;
     }
 
-    public List<ContainerCloudlet> generateContainerCloudletsFromList(int number) {
+    public List<ContainerCloudlet> generateContainerCloudletsFromList(LoadGeneratorInput loadGeneratorInput) {
         System.out.println("Load Generator: generating loads......\n");
         List<ContainerCloudlet> resultList = new ArrayList<>();
-//        for (Integer num : numList) {
-//            resultList.addAll(generateContainerCloudlets(num));
+        int number = loadGeneratorInput.getLoadnumbers();
+        int duration = loadGeneratorInput.getLoadduration();
+        int ramp_up = loadGeneratorInput.getRamp_up();
+        int endtime = loadGeneratorInput.getRamp_down();
+        double timerange = (double)number/(double)ramp_up;
+        loadGeneratorInput.setTimerange(timerange);
+//        double precision = loadGeneratorInput.getPrecision();
+//        double timesum = (double)ramp_up/precision;
+//        double loadpertime = ((double)number/timesum);
+//        int timenumber;
+//        if(loadpertime<1){
+//            timenumber = 1;
+//            loadGeneratorInput.setTimerange((double)ramp_up/(double)number);
+//            loadGeneratorInput.setTimenumber(timenumber);
 //        }
-        resultList.addAll(generateContainerCloudlets(number));
+//        else{
+//            timenumber = (int) Math.floor(loadpertime);
+//            while (true) {
+//                if (ramp_up % timenumber == 0) {
+//                    loadGeneratorInput.setTimerange((double) ramp_up / (double) number / (double) timenumber);
+//                    loadGeneratorInput.setTimenumber(timenumber);
+//                    break;
+//                } else {
+//                    timenumber--;
+//                }
+//            }
+//
+//        }
+//        double mutitime = (double)number/(double)timenumber/(double)ramp_up;
+//        endtime = (int)((double)endtime*mutitime);
+
+
+        resultList.addAll(generateContainerCloudlets(number,endtime,timerange));
         return resultList;
     }
 
@@ -106,49 +137,63 @@ public class LoadGeneratorMDSP {
         return cloudlets;
     }
 
-    public List<ContainerCloudlet> generateContainerCloudlets(Integer number) {
+    public List<ContainerCloudlet> generateContainerCloudlets(Integer number,int endtime,double timerange) {
             //单个任务需要处理的时间
         long fileSize = 300;
         long outputSize = 300;
         int basetime = 1;
+        int id = 0;
         // number of cpus
         int pesNumber = 1;
+        int cloudletnumber =0;
         int cloudleteverytimenumber = 0;
         UtilizationModel utilizationModel = new UtilizationModelFull();
         List<ContainerCloudlet> containerCloudlets = new ArrayList<>();
-        int clocktime =  0;
-        for (Integer i = 0; i < number; i++) {
-            long length =(5+(int) (Math.random() * 10))*basetime;
+        int clocktime =  1;
+        while(true){
+            id ++;
+            long length =(1+(int) (Math.random() * 5))*basetime;
             ContainerCloudlet cloudlet =
-                    new ContainerCloudlet(i, length, pesNumber, fileSize,
+                    new ContainerCloudlet(id, length, pesNumber, fileSize,
                             outputSize, utilizationModel, utilizationModel,
                             utilizationModel);
             cloudlet.setUserId(brokeId);
             cloudlet.setVmId(vmId);
-            int cpurequest = (int) (Math.random() * 10)+1;     //单个任务的cpu需求
-            int bwrequest = (int)(Math.random() * 10)+1;      //单个任务的带宽需求
+            int cpurequest = (int) (Math.random() * 8)+5;     //单个任务的cpu需求
+            int bwrequest = (int)(Math.random() * 8)+1;      //单个任务的带宽需求
             int cloudlethandle = (int)(Math.random() * 10)+5;
-            if (clocktime >= 150){
+            if (timerange * (double)clocktime >= number){
                 cloudleteverytimenumber++;
                 cloudlet.setStarttime(clocktime);
-                if (cloudleteverytimenumber==150){
+                if (cloudleteverytimenumber==number){
                     cloudleteverytimenumber=0;
                     clocktime++;
                 }
             }
 
-            if (i <= (clocktime * (clocktime + 1) / 2) && (i >= ((clocktime * (clocktime + 1) / 2) - clocktime))) {
+//            if (i <=(clocktime * (clocktime + 1) / 2) && (i > (clocktime * (clocktime - 1) *timenumber/ 2))) {
+//                cloudlet.setStarttime(clocktime);
+//            }
+//            if (i == (clocktime * (clocktime + 1) / 2)) {
+//                clocktime++;                                          //画出一个随时间增加,任务数呈现直线的图像
+//            }
+            else {
                 cloudlet.setStarttime(clocktime);
+                cloudletnumber++;
+                if (cloudletnumber >= Math.ceil(timerange*(double)clocktime)) {
+                    cloudletnumber = 0;
+                    clocktime++;
+                }
             }
-            if (i == (clocktime * (clocktime + 1) / 2)) {
-                clocktime++;                                          //画出一个随时间增加,任务数呈现直线的图像
-            }
-
-
             cloudlet.setCpurequest(cpurequest);
-            cloudlet.setBwrequest(bwrequest);
+            cloudlet.setMemoryrequest(bwrequest);
+            cloudlet.setQps(6.5);
             cloudlet.setState(0);   //waiting state
             containerCloudlets.add(cloudlet);
+            if(clocktime == endtime){
+                break;
+            }
+
         }
         return containerCloudlets;
     }

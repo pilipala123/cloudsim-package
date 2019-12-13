@@ -477,7 +477,7 @@ public class ContainerHost {
      *
      * @param id the new id
      */
-    protected void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 

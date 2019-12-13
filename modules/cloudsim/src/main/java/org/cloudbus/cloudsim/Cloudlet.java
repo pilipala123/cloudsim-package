@@ -28,14 +28,19 @@ public class Cloudlet {
 
 
     private int starttime;
-
-
-
+    private double qps;
     private int cloudlethandletime;
     private int finishtime;
     private int state;
-    private int bwrequest;
+    private int memoryrequest;
 
+    public double getQps() {
+        return qps;
+    }
+
+    public void setQps(double qps) {
+        this.qps = qps;
+    }
     public int getCloudlethandletime() {
         return cloudlethandletime;
     }
@@ -66,12 +71,12 @@ public class Cloudlet {
         this.state = state;
     }
 
-    public int getBwrequest() {
-        return bwrequest;
+    public int getMemoryrequest() {
+        return memoryrequest;
     }
 
-    public void setBwrequest(int bwrequest) {
-        this.bwrequest = bwrequest;
+    public void setMemoryrequest(int memoryrequest) {
+        this.memoryrequest = memoryrequest;
     }
 
 

@@ -1,17 +1,36 @@
 package org.cloudbus.cloudsim.container.core;
 
-import org.cloudbus.cloudsim.Cloudlet;
+import org.cloudbus.cloudsim.Host;
+import org.cloudbus.cloudsim.container.InputParament.EcsInput;
+import org.cloudbus.cloudsim.container.InputParament.K8sInput;
+import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
+import org.cloudbus.cloudsim.container.core.Siemens.*;
+import org.cloudbus.cloudsim.container.core.util.Calculatebw;
+import org.cloudbus.cloudsim.container.core.util.SiemensUtils;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
 import java.util.List;
 
+import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
 
 
-public class GW_K8S extends Container{
+public class GW_K8S extends Host {
 
     private int responseTime;
 
     private int qps;
+
+
+    private SiemensList k8ssiemensList;
+
+
+    public SiemensList getK8ssiemensList() {
+        return k8ssiemensList;
+    }
+
+    public void setK8ssiemensList(SiemensList k8ssiemensList) {
+        this.k8ssiemensList = k8ssiemensList;
+    }
     /**
      * Creates a new Container-based Redis object.
      *
@@ -22,13 +41,35 @@ public class GW_K8S extends Container{
      * @param ram
      * @param bw
      */
-    public GW_K8S(int id, int userId, double mips, int numberOfPes, int ram, int k8smoneycost, long bw, List<ContainerCloudlet> cloudletList) {
-        super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
+    public GW_K8S(int id,
+                  int userId,
+                  double mips,
+                  int numberOfPes,
+                  int ram,
+                  long bw,
+                  List<ContainerCloudlet> cloudletList,
+                  K8sInput k8sInput,
+                  EcsInput ecsInput,
+                  LoadGeneratorInput loadGeneratorInput,
+                  RegressionParament regressionParament,
+                  int flag) {
+        super(id);
         /**
          * Functions to calculate response time and qps will be added here
          */
-        setResponseTime(processRequests(cloudletList,bw));
-        setQps(k8smoneycost);
+        setK8ssiemensList(null);
+        try {
+            this.k8ssiemensList = processRequests(cloudletList,1000,1000,"K8s",loadGeneratorInput,18,9);
+            Calculatebw.calculateregressionbw("k8s","slb",flag,regressionParament,this.k8ssiemensList);
+            Calculatebw.calculateregressionbw("k8s","redis",flag,regressionParament,this.k8ssiemensList);
+            Calculatebw.calculateregressionbw("k8s","nfr",flag,regressionParament,this.k8ssiemensList);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        setResponseTime(this.k8ssiemensList.getFinishtime());
+//        setQps(k8smoneycost);
         System.out.println("The GWK8s QPS is "+qps);
     }
 
@@ -59,30 +100,8 @@ public class GW_K8S extends Container{
      * Process the requests and generate response time
      * @param cloudletList
      */
-    public int processRequests(List<ContainerCloudlet> cloudletList,long bw){
-        int response_time=0;
-        int base_response_time=10;
-        long bwResource = bw;
-        int time = 0;
-        int id = 0;
-        ArrayList<Integer> delaycloudlistid = new ArrayList<>();
-
-        for(Cloudlet cloudlet:cloudletList){
-//            while(true) {
-//                if (bwResource < 0.1*cloudlet.getCloudletLength()) {
-//                    delaycloudlistid.add(cloudlet.getCloudletId());
-//                    break;
-//                }
-//            }
-//            for (int i : delaycloudlistid) {
+//    public int processRequests(List<ContainerCloudlet> cloudletList,int cpuresources,int memoryresources){
 //
-//            }
-            bwResource = bwResource-(long)0.1*cloudlet.getCloudletLength();
-            response_time = (int)(response_time + 0.5*cloudlet.getCloudletLength()/base_response_time);
-
-        }
-        System.out.println("The Response Time of k8sGw is " + response_time + "ms");
-        return response_time;
-    }
+//    }
 
 }

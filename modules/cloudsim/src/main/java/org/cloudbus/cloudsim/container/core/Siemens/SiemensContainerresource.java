@@ -1,19 +1,24 @@
 package org.cloudbus.cloudsim.container.core.Siemens;
 
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerRamProvisioner;
-import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.core.ContainerVm;
-
-import java.util.List;
 
 public class SiemensContainerresource extends ContainerVm {
     private int pepool;
     private int memorypool;
-    private int [][] bwarraypool;
+    private int [][] memoryarraypool;
     private int [][] cpuarraypool;
     private int remaincpuresource;
     private int id;
     private int SiemensVmid;
+    private int state;
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 
     public int getSiemensVmid() {
         return SiemensVmid;
@@ -33,7 +38,7 @@ public class SiemensContainerresource extends ContainerVm {
         this.id = id;
     }
 
-    private int remainbwresource;
+    private int remainmemoryresource;
 
     public void initCpuarraypool(int cpuresources,int maxtimelength){
         this.cpuarraypool = new int[cpuresources][maxtimelength];
@@ -45,11 +50,11 @@ public class SiemensContainerresource extends ContainerVm {
 
     }
 
-    public void initBwarraypool(int bwresources,int maxtimelength){
-        this.bwarraypool = new int[bwresources][maxtimelength];
-        for(int i=0;i<this.bwarraypool.length;i++){
-            for(int j=0;j<this.bwarraypool[0].length;j++){
-                this.bwarraypool[i][j]=0;
+    public void initMemoryarraypool(int memoryresources, int maxtimelength){
+        this.memoryarraypool = new int[memoryresources][maxtimelength];
+        for(int i = 0; i<this.memoryarraypool.length; i++){
+            for(int j = 0; j<this.memoryarraypool[0].length; j++){
+                this.memoryarraypool[i][j]=0;
             }
         }
 
@@ -65,12 +70,12 @@ public class SiemensContainerresource extends ContainerVm {
         }
     }
 
-    public void changeBwarraypool(int remainbwresource, int cloudletbwrequest,int presenttime, int cloudletconsumetime){
+    public void changeMemoryarraypool(int remainmemoryresource, int cloudletbwrequest, int presenttime, int cloudletconsumetime){
 
-        int arraystart= this.bwarraypool.length-remainbwresource;
+        int arraystart= this.memoryarraypool.length-remainmemoryresource;
         for(int i=arraystart;i<arraystart+cloudletbwrequest;i++) {
             for (int j = presenttime; j < presenttime + cloudletconsumetime; j++) {
-                this.bwarraypool[i][j] = 1;
+                this.memoryarraypool[i][j] = 1;
             }
         }
     }
@@ -99,6 +104,7 @@ public class SiemensContainerresource extends ContainerVm {
 //        super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
         setMemorypool(0);
         setPepool(0);
+        setState(0);
     }
 
 
@@ -122,24 +128,24 @@ public class SiemensContainerresource extends ContainerVm {
         this.remaincpuresource = remaincpuresource;
     }
 
-    public int getRemainbwresource() {
-        return remainbwresource;
+    public int getRemainmemoryresource() {
+        return remainmemoryresource;
     }
 
-    public void setRemainbwresource(int time) {
+    public void setRemainmemoryresource(int time) {
         int remainbwresource=0;
-        for(int i=0;i<bwarraypool.length;i++) {
-            if(bwarraypool[i][time]==0){
+        for(int i = 0; i< memoryarraypool.length; i++) {
+            if(memoryarraypool[i][time]==0){
                 remainbwresource++;
             }
         }
-        for(int j=0;j<bwarraypool.length-remainbwresource;j++){
-            bwarraypool[j][time]=1;
+        for(int j = 0; j< memoryarraypool.length-remainbwresource; j++){
+            memoryarraypool[j][time]=1;
         }
-        for(int z=bwarraypool.length-remainbwresource;z<bwarraypool.length;z++){
-            bwarraypool[z][time]=0;
+        for(int z = memoryarraypool.length-remainbwresource; z< memoryarraypool.length; z++){
+            memoryarraypool[z][time]=0;
         }
-        this.remainbwresource = remainbwresource;
+        this.remainmemoryresource = remainbwresource;
     }
 
     public int[][] getCpuarraypool() {
@@ -149,12 +155,12 @@ public class SiemensContainerresource extends ContainerVm {
     public void setCpuarraypool(int[][] cpuarraypool) {
         this.cpuarraypool = cpuarraypool;
     }
-    public int[][] getBwarraypool() {
-        return bwarraypool;
+    public int[][] getMemoryarraypool() {
+        return memoryarraypool;
     }
 
-    public void setBwarraypool(int[][] bwarraypool) {
-        this.bwarraypool = bwarraypool;
+    public void setMemoryarraypool(int[][] memoryarraypool) {
+        this.memoryarraypool = memoryarraypool;
     }
 
 

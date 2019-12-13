@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Plotpictures {
-    public static void plotpicture(int time, List<Integer> numberlist,String title,String ylabel){
+    public static void plotpicture(int time, List<Double> numberlist,String title,String ylabel){
         LineCharts fjc = new LineCharts("折线图",time,numberlist,title,ylabel);
         fjc.pack();
         RefineryUtilities.centerFrameOnScreen(fjc);

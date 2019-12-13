@@ -7,6 +7,33 @@ public class LoadGeneratorInput {
     private int Requestinterval;
     private int Ramp_up;
     private int Ramp_down;
+    private double timerange;
+    private double precision;
+    private int timenumber;
+
+    public int getTimenumber() {
+        return timenumber;
+    }
+
+    public void setTimenumber(int timenumber) {
+        this.timenumber = timenumber;
+    }
+
+    public double getTimerange() {
+        return timerange;
+    }
+
+    public void setTimerange(double timerange) {
+        this.timerange = timerange;
+    }
+
+    public double getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(double precision) {
+        this.precision = precision;
+    }
 
     public int getLoadnumbers() {
         return Loadnumbers;

@@ -1,6 +1,7 @@
 package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.container.InputParament.*;
+import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.yunji.cloudsimrd.load.Load;
 import org.yunji.cloudsimrd.load.LoadGenerator;
 
@@ -8,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.function.DoublePredicate;
 
 public class LoadProperties {
     public static void main(String[] args){
@@ -122,6 +124,7 @@ public class LoadProperties {
         loadGeneratorInput.setRequestinterval(Integer.parseInt(properties.getProperty("Requestinterval")));
         loadGeneratorInput.setRamp_up(Integer.parseInt(properties.getProperty("Ramp_up")));
         loadGeneratorInput.setRamp_down(Integer.parseInt(properties.getProperty("Ramp_down")));
+        loadGeneratorInput.setPrecision(Double.parseDouble(properties.getProperty("precision")));
         return loadGeneratorInput;
     }
 
@@ -160,11 +163,6 @@ public class LoadProperties {
         System.out.println("SlbLoadbalancertype:"+slbInput.getSlbLoadbalancertype());
         System.out.println("SlbCPUQuota:"+slbInput.getSlbCPUQuota());
         System.out.println("SlbMemoryQuota:"+slbInput.getSlbMemoryQuota());
-
-
-
-
-
     }
 
     public static RedisInput setRedisInput(Properties properties){
@@ -213,5 +211,56 @@ public class LoadProperties {
         System.out.println("Tablestorerunnercount:"+tablestoreInput.getTablestorerunnercount());
         System.out.println("Tablestorethreadcount:"+tablestoreInput.getTablestorethreadcount());
     }
+
+    public static RegressionParament setregressionParament(Properties properties){
+        RegressionParament regressionParament = new RegressionParament();
+//        double bw = Double.parseDouble(properties.getProperty("bw_a_s"));
+        regressionParament.getSlb_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_s")));
+        regressionParament.getSlb_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_s")));
+        regressionParament.getSlb_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_m")));
+        regressionParament.getSlb_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_m")));
+        regressionParament.getSlb_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_c_m")));
+        regressionParament.getGwtma_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_s")));
+        regressionParament.getGwtma_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_s")));
+        regressionParament.getGwtma_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_m")));
+        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_m")));
+        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_c_m")));
+        regressionParament.getK8s_slb_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_s")));
+        regressionParament.getK8s_slb_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_s")));
+        regressionParament.getK8s_slb_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_m")));
+        regressionParament.getK8s_slb_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_m")));
+        regressionParament.getK8s_slb_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_c_m")));
+        regressionParament.getK8s_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_s")));
+        regressionParament.getK8s_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_s")));
+        regressionParament.getK8s_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_m")));
+        regressionParament.getK8s_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_m")));
+        regressionParament.getK8s_nfr_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_c_m")));
+        regressionParament.getK8s_redis_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_s")));
+        regressionParament.getK8s_redis_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_s")));
+        regressionParament.getK8s_redis_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_m")));
+        regressionParament.getK8s_redis_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_m")));
+        regressionParament.getK8s_redis_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_c_m")));
+        regressionParament.getNfr_gwtma_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_s")));
+        regressionParament.getNfr_gwtma_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_s")));
+        regressionParament.getNfr_gwtma_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_m")));
+        regressionParament.getNfr_gwtma_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_m")));
+        regressionParament.getNfr_gwtma_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_c_m")));
+        regressionParament.getNfr_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_s")));
+        regressionParament.getNfr_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_s")));
+        regressionParament.getNfr_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_m")));
+        regressionParament.getNfr_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_m")));
+        regressionParament.getNfr_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_c_m")));
+        regressionParament.getRedis_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_s")));
+        regressionParament.getRedis_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_s")));
+        regressionParament.getRedis_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_m")));
+        regressionParament.getRedis_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_m")));
+        regressionParament.getRedis_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_c_m")));
+
+        return regressionParament;
+    }
+
+
+
+
 
 }

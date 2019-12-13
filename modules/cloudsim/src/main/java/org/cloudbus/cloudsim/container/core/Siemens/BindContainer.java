@@ -10,7 +10,7 @@ public class BindContainer extends Container {
 
     private int starttime;
     private int finishtime;
-    private int everyresponsetime;
+    private double everyresponsetime;
 
 
     public int getHandletime() {
@@ -27,15 +27,15 @@ public class BindContainer extends Container {
         this.state = state;
     }
 
-    public int getEveryresponsetime() {
+    public double getEveryresponsetime() {
         return everyresponsetime;
     }
 
-    public void setEveryresponsetime(int everyresponsetime) {
+    public void setEveryresponsetime(double everyresponsetime) {
         this.everyresponsetime = everyresponsetime;
     }
     private int cpuusage;
-    private int bwusage;
+    private int memoryusage;
     private int Cloudletid;
 
     public int getState() {
@@ -49,12 +49,12 @@ public class BindContainer extends Container {
         this.cpuusage = cpuusage;
     }
 
-    public int getBwusage() {
-        return bwusage;
+    public int getMemoryusage() {
+        return memoryusage;
     }
 
-    public void setBwusage(int bwusage) {
-        this.bwusage = bwusage;
+    public void setMemoryusage(int memoryusage) {
+        this.memoryusage = memoryusage;
     }
 
     public int getCloudletid() {
@@ -84,9 +84,9 @@ public class BindContainer extends Container {
     public BindContainer(int id, int userId, double mips, int numberOfPes, int ram, long bw, List<ContainerCloudlet> cloudletList) {
         super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
     }
-    public BindContainer(int cpuusage, int bwusage, int cloudletid, int containerid, int starttime, int handletime){
+    public BindContainer(int cpuusage, int memoryusage, int cloudletid, int containerid, int starttime, int handletime){
         setCpuusage(cpuusage);
-        setBwusage(bwusage);
+        setMemoryusage(memoryusage);
         setCloudletid(cloudletid);
         setId(containerid);
         setState(0);
