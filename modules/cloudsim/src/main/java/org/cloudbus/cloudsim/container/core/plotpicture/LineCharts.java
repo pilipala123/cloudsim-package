@@ -1,5 +1,6 @@
 package org.cloudbus.cloudsim.container.core.plotpicture;
 
+import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -23,10 +24,16 @@ public class LineCharts extends ApplicationFrame {
      */
     private static final long serialVersionUID = 1L;
     private static List<Double> staticNumberList = null;
+
     public LineCharts(String s, int time, List<Double> numberlist, String title, String ylabel) {
         super(s);
         staticNumberList = numberlist;
         setContentPane(createDemoLine(time,numberlist,title,ylabel));
+    }
+
+    public LineCharts(String s, int time, String title, String ylabel, List<Pair<Integer, Integer>> numberlist) {
+        super(s);
+        setContentPane(createDemoLineFromMap(time, numberlist, title, ylabel));
     }
 //    public static void main(String[] args) {
 //        List<Integer> numberlist= new ArrayList<>();
@@ -87,7 +94,10 @@ public class LineCharts extends ApplicationFrame {
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);  //设置X轴45度
     }
     // 生成数据
-
+    public static JPanel createDemoLineFromMap(int time, List<Pair<Integer, Integer>> numberlist, String title, String ylabel) {
+        JFreeChart jfreechart = createChart(createDatasetFromMap(time, numberlist, ylabel), title, ylabel);
+        return new ChartPanel(jfreechart);
+    }
     public static DefaultCategoryDataset createDataset(int time, List<Double> numberlist, String ylabel) {
         DefaultCategoryDataset linedataset = new DefaultCategoryDataset();
         // 各曲线名称
@@ -109,6 +119,18 @@ public class LineCharts extends ApplicationFrame {
 //        linedataset.addValue(2.0, series3, type1);
 //        linedataset.addValue(9.2, series3, type2);
 //        linedataset.addValue(8.9, series3, type3);
+        return linedataset;
+    }
+
+    public static DefaultCategoryDataset createDatasetFromMap(int time, List<Pair<Integer, Integer>> numberlist, String ylabel) {
+        DefaultCategoryDataset linedataset = new DefaultCategoryDataset();
+        // 各曲线名称
+        String series1 = "x:time;y:" + ylabel;
+        for (int i = 0; i < time; i++) {
+            Pair<Integer, Integer> pair = numberlist.get(i);
+            linedataset.addValue(pair.getValue(), series1, pair.getKey());
+        }
+
         return linedataset;
     }
 }

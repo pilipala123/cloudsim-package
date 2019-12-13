@@ -1,5 +1,7 @@
 package org.cloudbus.cloudsim.container.core.Siemens;
 
+import org.apache.commons.math3.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,12 @@ public class SiemensList {
     private List<Double> hostmemoryusagelist;
     private List<Double> averageresponsetimelist;
     private List<Double> loadnumber;
+    private List<Double> hostbwusagelist;
+
+
+    private List<Double> inputFlow;
+    private List<Double> qps;
+    private List<Pair<Integer, Integer>> load2qps;
 
     private List<Double> qpslist;
     private int state;    //qps是否进入阈值
@@ -115,6 +123,44 @@ public class SiemensList {
         this.loadnumber = loadnumber;
     }
 
+
+
+
+
+
+    public List<Double> getHostbwusagelist() {
+        return hostbwusagelist;
+    }
+
+    public void setHostbwusagelist(List<Double> hostbwusagelist) {
+        this.hostbwusagelist = hostbwusagelist;
+    }
+
+
+    public List<Double> getInputFlow() {
+        return inputFlow;
+    }
+
+    public void setInputFlow(List<Double> inputFlow) {
+        this.inputFlow = inputFlow;
+    }
+
+    public List<Double> getQps() {
+        return qps;
+    }
+
+    public void setQps(List<Double> qps) {
+        this.qps = qps;
+    }
+
+    public List<Pair<Integer, Integer>> getLoad2qps() {
+        return load2qps;
+    }
+
+    public void setLoad2qps(List<Pair<Integer, Integer>> load2qps) {
+        this.load2qps = load2qps;
+    }
+
     public SiemensList() {
         setAverageresponsetimelist(new ArrayList<>());
         setHostmemoryusagelist(new ArrayList<>());
@@ -127,6 +173,9 @@ public class SiemensList {
         setFinishcloudletnumber(new ArrayList<>());
         setStatus(0);
         setState(0);
-
+        setHostbwusagelist(new ArrayList<>());
+        setInputFlow(new ArrayList<>());
+        setQps(new ArrayList<>());
+        setLoad2qps(new ArrayList<>());
     }
 }

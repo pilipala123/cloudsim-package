@@ -306,13 +306,13 @@ public class ContainerCloudSimExample1 {
             SiemensList k8ssiemensList = gw_k8s.getK8ssiemensList();
             broker.connectWithGW_K8S(gw_k8s);
 //            SiemensUtils.calculateregressionbw("k8s","redis",1,1500,10000,regressionParament);
-
+            List<ContainerCloudlet> cloudlets2= cloudlets;
             /**
              * S4: Connect with Redis, update response time
              * Redis configurations can be configured here
              */
-            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudletList);
-            broker.connectWithRedis(redis);
+//            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
+//            broker.connectWithRedis(redis);
 //            SiemensUtils.calculateregressionbw("redis","k8s",1,1500,10000,regressionParament);
 //            SiemensUtils.calculateregressionbw("k8s","nfr",1,1500,10000,regressionParament);
 
@@ -320,8 +320,9 @@ public class ContainerCloudSimExample1 {
              * S5: Requests going through Siemens NFR
              * Siemens specification can be defined here
              */
+
             ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000,
-                    1, 512, 1000, cloudlets,loadGeneratorInput,regressionParament,flag);
+                    1, 512, 1000, cloudlets2,loadGeneratorInput,regressionParament,flag);
             SiemensList nfrsiemensList= slb_nfr.getNfrsiemensList();
             broker.connectWithSLB_NFR(slb_nfr);
 //            SiemensUtils.calculateregressionbw("nfr","k8s",1,1500,10000,regressionParament);

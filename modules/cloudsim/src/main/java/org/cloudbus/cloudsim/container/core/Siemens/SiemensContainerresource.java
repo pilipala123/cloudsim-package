@@ -7,10 +7,28 @@ public class SiemensContainerresource extends ContainerVm {
     private int memorypool;
     private int [][] memoryarraypool;
     private int [][] cpuarraypool;
+    private int [][] bwarraypool;
     private int remaincpuresource;
+    private int remainbwresource;
     private int id;
     private int SiemensVmid;
     private int state;
+
+    public int[][] getBwarraypool() {
+        return bwarraypool;
+    }
+
+    public void setBwarraypool(int[][] bwarraypool) {
+        this.bwarraypool = bwarraypool;
+    }
+
+    public int getRemainbwresource() {
+        return remainbwresource;
+    }
+
+    public void setRemainbwresource(int remainbwresource) {
+        this.remainbwresource = remainbwresource;
+    }
 
     public int getState() {
         return state;
@@ -60,12 +78,31 @@ public class SiemensContainerresource extends ContainerVm {
 
     }
 
+    public void initBwarraypool(int bwresources,int maxtimelength){
+        this.bwarraypool = new int[bwresources][maxtimelength];
+        for(int i=0;i<this.bwarraypool.length;i++){
+            for(int j=0;j<this.bwarraypool[0].length;j++){
+                this.bwarraypool[i][j]=0;
+            }
+        }
+
+    }
+
     public void changeCpuarraypool(int remainperesource, int cloudletcpurequest,int presenttime, int cloudletconsumetime){
 
         int arraystart= this.cpuarraypool.length-remainperesource;
         for(int i=arraystart;i<arraystart+cloudletcpurequest;i++) {
             for (int j = presenttime; j < presenttime + cloudletconsumetime; j++) {
                 this.cpuarraypool[i][j] = 1;
+            }
+        }
+    }
+    public void changeBwarraypool(int remainbwresource, int cloudletbwrequest,int presenttime, int cloudletconsumetime){
+
+        int arraystart= this.bwarraypool.length-remainbwresource;
+        for(int i=arraystart;i<arraystart+cloudletbwrequest;i++) {
+            for (int j = presenttime; j < presenttime + cloudletconsumetime; j++) {
+                this.bwarraypool[i][j] = 1;
             }
         }
     }

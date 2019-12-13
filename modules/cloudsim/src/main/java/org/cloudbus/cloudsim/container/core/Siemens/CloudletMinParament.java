@@ -10,6 +10,9 @@ public class CloudletMinParament {
     private int minmemoryrequest;
     private int memoryrequest;
     private int maxtimelength;
+    private int minbwrequest;
+
+
 
     public int getMaxtimelength() {
         return maxtimelength;
@@ -22,33 +25,46 @@ public class CloudletMinParament {
 
 
     public void setcloudletMinParament(List<ContainerCloudlet> cloudletList,int containernumber){
-        int presentcloudletcpu,presentcloudletbw,maxcpucost=0,maxbwcost=0;
+        int presentcloudletcpu,presentcloudletmemory,presentcloudletbw,maxcpucost=0,maxmemorycost=0,maxbwcost=0;
         for (Cloudlet cloudlet: cloudletList) {
             this.maxtimelength = (int)cloudlet.getCloudletLength()+this.maxtimelength;
             presentcloudletcpu = cloudlet.getCpurequest();
-            presentcloudletbw = cloudlet.getMemoryrequest();
+            presentcloudletmemory = cloudlet.getMemoryrequest();
+            presentcloudletbw = cloudlet.getBwrequest();
+
 
             if (cloudlet.getCloudletId() == 1) {
                 this.mincpurequest = presentcloudletcpu;
-                this.minmemoryrequest = presentcloudletbw;
+                this.minmemoryrequest = presentcloudletmemory;
+                this.minbwrequest = presentcloudletbw;
                 maxcpucost = cloudlet.getCpurequest();
-                maxbwcost = cloudlet.getMemoryrequest();
+                maxmemorycost = cloudlet.getMemoryrequest();
+                maxbwcost = cloudlet.getBwrequest();
             }
             if (this.mincpurequest > presentcloudletcpu) {
                 this.mincpurequest = presentcloudletcpu;
             }
-            if (this.minmemoryrequest >presentcloudletbw){
-                this.minmemoryrequest = presentcloudletbw;
+            if (this.minmemoryrequest >presentcloudletmemory){
+                this.minmemoryrequest = presentcloudletmemory;
+            }
+            if(this.minbwrequest>presentcloudletbw){
+                this.minbwrequest = presentcloudletbw;
             }
             if(maxcpucost<cloudlet.getCpurequest()){
                 maxcpucost= cloudlet.getCpurequest();
             }
-            if(maxbwcost <cloudlet.getMemoryrequest()){
-                maxbwcost = cloudlet.getMemoryrequest();
+            if(maxmemorycost <cloudlet.getMemoryrequest()){
+                maxmemorycost = cloudlet.getMemoryrequest();
+            }
+            if(maxbwcost<cloudlet.getBwrequest()){
+                maxbwcost = cloudlet.getBwrequest();
             }
         }
-        if(maxbwcost<=maxcpucost){
+        if(maxmemorycost<=maxcpucost&&maxbwcost<=maxcpucost){
             this.maxtimelength=this.maxtimelength/containernumber/maxcpucost;
+        }
+        else if(maxmemorycost>maxbwcost&&(maxmemorycost>maxcpucost)){
+            this.maxtimelength=this.maxtimelength/containernumber/maxmemorycost;
         }
         else{
             this.maxtimelength=this.maxtimelength/containernumber/maxbwcost;
@@ -66,6 +82,14 @@ public class CloudletMinParament {
         setMincpurequest(10);
         setMaxtimelength(0);
 
+    }
+
+    public int getMinbwrequest() {
+        return minbwrequest;
+    }
+
+    public void setMinbwrequest(int minbwrequest) {
+        this.minbwrequest = minbwrequest;
     }
     public int getMincpurequest() {
         return mincpurequest;

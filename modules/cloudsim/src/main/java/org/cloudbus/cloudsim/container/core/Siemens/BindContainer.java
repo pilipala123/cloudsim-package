@@ -37,6 +37,15 @@ public class BindContainer extends Container {
     private int cpuusage;
     private int memoryusage;
     private int Cloudletid;
+    private int bwusage;
+
+    public int getBwusage() {
+        return bwusage;
+    }
+
+    public void setBwusage(int bwusage) {
+        this.bwusage = bwusage;
+    }
 
     public int getState() {
         return state;

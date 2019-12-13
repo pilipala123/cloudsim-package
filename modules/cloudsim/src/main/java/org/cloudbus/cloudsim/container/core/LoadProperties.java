@@ -23,7 +23,7 @@ public class LoadProperties {
         InputStream inputStream = null;
 
         try {
-            inputStream = new FileInputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
+            inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
             properties.load(inputStream);
             EcsInput ecsInput = setEcsInput(properties);
             printEcsInput(ecsInput);

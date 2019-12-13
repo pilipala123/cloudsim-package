@@ -33,6 +33,15 @@ public class Cloudlet {
     private int finishtime;
     private int state;
     private int memoryrequest;
+    private int bwrequest;
+
+    public int getBwrequest() {
+        return bwrequest;
+    }
+
+    public void setBwrequest(int bwrequest) {
+        this.bwrequest = bwrequest;
+    }
 
     public double getQps() {
         return qps;

@@ -160,7 +160,8 @@ public class LoadGeneratorMDSP {
             cloudlet.setUserId(brokeId);
             cloudlet.setVmId(vmId);
             int cpurequest = (int) (Math.random() * 8)+5;     //单个任务的cpu需求
-            int bwrequest = (int)(Math.random() * 8)+1;      //单个任务的带宽需求
+            int bwrequest = (int)(Math.random() * 8)+2;
+            int memoryrequest = (int)(Math.random()*8)+2;//单个任务的带宽需求
             int cloudlethandle = (int)(Math.random() * 10)+5;
             if (timerange * (double)clocktime >= number){
                 cloudleteverytimenumber++;
@@ -186,7 +187,8 @@ public class LoadGeneratorMDSP {
                 }
             }
             cloudlet.setCpurequest(cpurequest);
-            cloudlet.setMemoryrequest(bwrequest);
+            cloudlet.setBwrequest(bwrequest);
+            cloudlet.setMemoryrequest(memoryrequest);
             cloudlet.setQps(6.5);
             cloudlet.setState(0);   //waiting state
             containerCloudlets.add(cloudlet);

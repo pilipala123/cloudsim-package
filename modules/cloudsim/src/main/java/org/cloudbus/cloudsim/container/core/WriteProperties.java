@@ -11,7 +11,7 @@ public class WriteProperties {
         Properties properties = new Properties();
         OutputStream output = null;
         try {
-            output = new FileOutputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
+            output = new FileOutputStream("modules/cloudsim/src/main/resources/config1.properties");
             setEcs(properties);
             setRedis(properties);
             setContainers(properties);
