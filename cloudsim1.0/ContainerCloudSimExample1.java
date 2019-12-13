@@ -247,7 +247,7 @@ public class ContainerCloudSimExample1 {
             broker.connectWithSLB_GW(slb_gw);
             /**
              * S3: Requests processed by GW K8S
-             * Capacity of SLB GW can be configured here
+             * Capacity of Siemens GW can be configured here
              */
 
             GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore, k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory, k8smoney,k8secsnumber*ecsbw, cloudletList);
@@ -261,8 +261,8 @@ public class ContainerCloudSimExample1 {
             broker.connectWithRedis(redis);
 
             /**
-             * S5: Requests going through SLB NFR
-             * SLB specification can be defined here
+             * S5: Requests going through Siemens NFR
+             * Siemens specification can be defined here
              */
             ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000, 1, 512, 1000, cloudletList);
             broker.connectWithSLB_NFR(slb_nfr);
