@@ -159,6 +159,7 @@ public class LoadGeneratorMDSP {
                             utilizationModel);
             cloudlet.setUserId(brokeId);
             cloudlet.setVmId(vmId);
+            cloudlet.setCloudletLength(length);
             int cpurequest = (int) (Math.random() * 8)+5;     //单个任务的cpu需求
             int bwrequest = (int)(Math.random() * 8)+2;
             int memoryrequest = (int)(Math.random()*8)+2;//单个任务的带宽需求

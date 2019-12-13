@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.cloudbus.cloudsim.container.core.util.SchedulePolicy.schedule;
+import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.*;
+
 public class Redis extends Container {
 
     private int responseTime;
@@ -260,38 +263,38 @@ public class Redis extends Container {
         return ids;
     }
 
-    public int processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int bwresources) throws FileNotFoundException {
+    public int processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources) throws FileNotFoundException {
         int containernumber = 12;
         int vmnumber = 6;
         int containerhandletime;
         int time = 0;
         int containercpurequest = 0, remaincpuresources = 0;
-        int containerbwrequest = 0, remainbwresources = 0;
-        int vmfreenumber = 0, vmcpuusage = 0, vmbwusage = 0;
-        int containercpuusage = 0, containerbwusage = 0;
+        int containermemoryrequest = 0, remainmemoryresources = 0;
+
+
         int finishcloudletnumber = 0, startcloudletnumber = 0, lasttimestartcloudletnumber = 0, presentstarttimecloudletnumber = 0;
-        int hostcpuusage = 0, hostbwusage = 0;
 
         SiemensList siemensList = new SiemensList();
         CloudletMinParament cloudletMinParament = new CloudletMinParament();
 
-        cloudletList.forEach(cloudlet->cloudlet.setCloudletLength(25));
+//        cloudletList.forEach(cloudlet->cloudlet.setCloudletLength(25));
 
         cloudletMinParament.setcloudletMinParament(cloudletList, containernumber);
         List<SiemensVmresources> siemensVmresourcesList = createsiemnesVmresources(vmnumber);
-        List<SiemensContainerresource> siemensContainerresourceList = createVmResource(containernumber, vmnumber, cpuresources, bwresources, cloudletMinParament.getMaxtimelength());
+        List<SiemensContainerresource> siemensContainerresourceList = createVmResource(containernumber, vmnumber, cpuresources, memoryresources, cloudletMinParament.getMaxtimelength());
 
         List<BindContainer> bindCloudletlist = bindCloudlet(cloudletList);
         bindCloudletlist.sort(Comparator.comparingInt(BindContainer::getStarttime));
-
+        bindCloudletlist.forEach(bindContainer -> bindContainer.setHandletime(1));
         int current_connection = 0, pre_connection = 0;
         double currentResponseTime = 0;
         double preResponseTime = 0;
+        int roundrobinorder = 0,roundrobinnumber;
         float per_qps = 6.5f, coefficient = 1.0f;
-
+        int flag = 0;
         while (true) {
             startcloudletnumber = 0;
-            vmfreenumber = 0;
+
             final int current_time = time;
 
             current_connection = Long.valueOf(bindCloudletlist.stream()
@@ -302,47 +305,48 @@ public class Redis extends Container {
             siemensList.getLoad2qps().add(Pair.create(current_connection, current_qps2));
 
             containerhandletime = calculateResponseTime(current_connection);
-
             for (BindContainer bindContainer : bindCloudletlist) {
-                if (bindContainer.getState() == 3) {
+                roundrobinnumber=0;
+                if ((bindContainer.getState() == 3)&&(bindContainer.getFinishtime() == time)){
+                    bindContainer.setState(4);
+                }
+                if ((bindContainer.getState() == 4)||(bindContainer.getState()==3)) {
                     continue;
                 }
                 if (bindContainer.getStarttime() > time) {
                     break;
                 }
-                for (SiemensContainerresource siemensContainerresource : siemensContainerresourceList) {
-                    siemensContainerresource.setRemaincpuresource(time);
-                    siemensContainerresource.setRemainbwresource(time);
-                    remaincpuresources = siemensContainerresource.getRemaincpuresource();
-                    remainbwresources = siemensContainerresource.getRemainbwresource();
-
-                    if (bindContainer.getState() == 0 && bindContainer.getStarttime() == time) {
-                        bindContainer.setState(1);
-                    }
-                    if (bindContainer.getState() == 1 || bindContainer.getState() == 2) {
-
-                        containercpurequest = bindContainer.getCpuusage();
-                        containerbwrequest = bindContainer.getBwusage();
-                        if ((remaincpuresources >= containercpurequest) && (remainbwresources >= containerbwrequest)) {
-                            siemensContainerresource.changeCpuarraypool(remaincpuresources, containercpurequest, time, containerhandletime);
-                            siemensContainerresource.changeBwarraypool(remainbwresources, containerbwrequest, time, containerhandletime);
-                            bindContainer.setState(3);
-                            bindContainer.setFinishtime(time + containerhandletime);
-                            bindContainer.setEveryresponsetime(bindContainer.getFinishtime() - bindContainer.getStarttime());
-                            finishcloudletnumber++;
+                if (roundrobinorder ==containernumber){
+                    roundrobinorder=0;
+                }
+                flag = schedule(siemensContainerresourceList,bindContainer,roundrobinorder,time);
+                roundrobinorder++;
+                if(flag==0){
+                    while (true) {
+                        roundrobinnumber++;
+                        if (roundrobinorder==containernumber) {
+                            roundrobinorder = 0;
+                        }
+                        flag = schedule(siemensContainerresourceList,bindContainer,roundrobinorder,time);
+                        roundrobinorder++;
+                        if(flag==1){
                             break;
                         }
 
-                        if ((remaincpuresources < cloudletMinParament.getMincpurequest()
-                                || remainbwresources < cloudletMinParament.getMinbwrequest())
-                                && (siemensContainerresource.getId() == containernumber - 1)) {
+                        if(roundrobinnumber ==containernumber){
+                            roundrobinnumber = 0;
                             bindContainer.setState(2);
                             break;
                         }
                     }
 
+
+
                 }
+
+
             }
+
             startcloudletnumber = Long.valueOf(bindCloudletlist.stream().filter(bindContainer -> 0 != bindContainer.getState()).count()).intValue();
             //当time时，当前CloudLet数，也是connection，但是不是执行个数
             presentstarttimecloudletnumber = startcloudletnumber - lasttimestartcloudletnumber;
@@ -352,11 +356,10 @@ public class Redis extends Container {
             siemensList.getInputFlow().add(calculateInputFlow(current_connection));
             lasttimestartcloudletnumber = startcloudletnumber;
 
-            hostbwusage = hostcpuusage = 0;
-            //计算cpu和带宽利用率
-            siemensList = calculateusage(siemensVmresourcesList, siemensContainerresourceList, siemensList, time, containernumber);
+            //计算cpu和内存利用率
+            siemensList = calculateusage(siemensVmresourcesList,bindCloudletlist, siemensContainerresourceList, siemensList, time, containernumber,cpuresources,memoryresources);
             //计算当前时间的平均响应时间
-            currentResponseTime = calculateaverageresponsetime(siemensList, bindCloudletlist, time);
+            currentResponseTime =  calculateaverageresponsetime(siemensList, bindCloudletlist, time);
             if (0 == current_connection || 0 == pre_connection
                     || currentResponseTime / current_connection <= preResponseTime / pre_connection) {
                 coefficient = 1.0f;
@@ -372,16 +375,12 @@ public class Redis extends Container {
             time++;
 
         }
-//        Plotpictures.plotpicture(time,hostbwusagelist);
-//        List<Integer> numberlist= new ArrayList<>();
-//        for (int i=0;i<100;i++){
-//            numberlist.add(i);
-//        }
+
         Plotpictures.plotpicture(time, siemensList.getLoadnumber(), "负载产生数量随时间的关系", "load");
         Plotpictures.plotpicture(time, siemensList.getInputFlow(), "InputFlow随时间的关系", "input flow");
         Plotpictures.plotpicture(time, siemensList.getQps(), "qps随时间的关系", "qps");
         Plotpictures.plotpicture(time, siemensList.getHostcpuusagelist(), "CPU利用率随时间的关系", "CPU");
-        Plotpictures.plotpicture(time, siemensList.getHostbwusagelist(), "带宽利用率随时间的关系", "bw");
+        Plotpictures.plotpicture(time, siemensList.getHostmemoryusagelist(), "带宽利用率随时间的关系", "memory");
         Plotpictures.plotpicture(time, siemensList.getAverageresponsetimelist(), "平均响应时间随时间的关系", "response time");
         Plotpictures.plotpictureFromMap(time, siemensList.getLoad2qps(), "qps与负载的关系", "load2qps");
 
@@ -413,61 +412,8 @@ public class Redis extends Container {
     private double calculateInputFlow(int current_connection) {
         return -2.695652 - 0.00026087 * current_connection + 0.00087 * current_connection * 5;
     }
-
-    public SiemensList calculateusage(List<SiemensVmresources> siemensVmresourcesList, List<SiemensContainerresource> siemensContainerresourceList, SiemensList siemensList, int time, int containernumber) {
-        int containercpuusage, containerbwusage;
-        int vmcpuusage, vmbwusage;
-        int hostcpuusage = 0, hostbwusage = 0;
-        for (SiemensVmresources siemensVmresources : siemensVmresourcesList) {
-            siemensVmresources.setCpuusage(0);
-            siemensVmresources.setBwusage(0);
-            for (SiemensContainerresource siemensContainerresource : siemensContainerresourceList) {
-                containercpuusage = 0;
-                containerbwusage = 0;
-                if (siemensContainerresource.getSiemensVmid() != siemensVmresources.getId()) {
-                    continue;
-                }
-                for (int i = 0; i < siemensContainerresource.getCpuarraypool().length; i++) {
-                    if (siemensContainerresource.getCpuarraypool()[i][time] == 1) {
-                        containercpuusage++;
-                    }
-                }
-                for (int j = 0; j < siemensContainerresource.getBwarraypool().length; j++) {
-                    if (siemensContainerresource.getBwarraypool()[j][time] == 1) {
-                        containerbwusage++;
-                    }
-                }
-
-                siemensVmresources.addCpuusage(containercpuusage);
-                siemensVmresources.addBwusage(containerbwusage);
-
-
-//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Cpu usage is " + containercpuusage);
-//                    System.out.println("At time:" + time + "ms Container:" + siemensContainerresource.getId() + " Bw usage is " + containerbwusage);
-
-            }
-            vmcpuusage = siemensVmresources.getCpuusage();
-            vmbwusage = siemensVmresources.getBwusage();
-
-//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Cpu usage is " + vmcpuusage);
-//                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Bw usage is " + vmbwusage);
-            hostcpuusage = hostcpuusage + vmcpuusage;
-            hostbwusage = hostbwusage + vmbwusage;
-
-        }
-        double hostcpu = (double)hostcpuusage / (double)containernumber;
-        double hostbw = (double)hostbwusage / (double)containernumber;
-        if (hostbwusage == 0 && hostcpuusage == 0 && time != 0) {
-            siemensList.setStatus(1);
-        }
-        siemensList.getHostcpuusagelist().add(hostcpu);
-        siemensList.getHostbwusagelist().add(hostbw);
-        return siemensList;
-    }
-
     public double calculateaverageresponsetime(SiemensList siemensList, List<BindContainer> bindCloudletlist, int time) {
-        double sumreponsetime = 0, averagereponsetime = 0;
-        int presentfinishcloudletnumber = 0;
+        double sumreponsetime = 0, presentfinishcloudletnumber = 0, averagereponsetime = 0;
         for (BindContainer bindContainer : bindCloudletlist) {
             if (bindContainer.getFinishtime() <= time && bindContainer.getFinishtime() != 0) {
                 double perresponsetime = bindContainer.getEveryresponsetime();
@@ -489,50 +435,8 @@ public class Redis extends Container {
         return sumreponsetime;
     }
 
-    public List<SiemensContainerresource> createVmResource(int containernumber, int vmnumber, int cpuresources, int bwresources, int maxlength) {
-        List<SiemensContainerresource> siemensContainerresourceList = new ArrayList<>();
-        int containereveryvm = (int) containernumber / vmnumber;
-        for (Integer i = 0; i < containernumber; i++) {
-            SiemensContainerresource siemensContainerresource = new SiemensContainerresource();
-            siemensContainerresource.setId(i);
-            siemensContainerresource.initCpuarraypool(cpuresources, maxlength);
-            siemensContainerresource.initBwarraypool(bwresources, maxlength);
-            siemensContainerresource.setSiemensVmid((int) (i / containereveryvm));
-            siemensContainerresourceList.add(siemensContainerresource);
-
-        }
-        return siemensContainerresourceList;
-    }
 
 
-    /**
-     * Process the requests and generate response time
-     *
-     * @param cloudletList
-     */
-    public List<BindContainer> bindCloudlet(List<ContainerCloudlet> cloudletList) {
-        List<BindContainer> bindContainerList = new ArrayList<>();
-        int containerid = 0;
 
-        for (ContainerCloudlet cloudlet : cloudletList) {
-            BindContainer bindContainer = new BindContainer(cloudlet.getCpurequest(),
-                    cloudlet.getBwrequest(), cloudlet.getCloudletId(), containerid,
-                    cloudlet.getStarttime(), (int) cloudlet.getCloudletLength());
-            bindContainerList.add(bindContainer);
-            cloudlet.setContainerId(bindContainer.getId());
-            containerid++;
-        }
-        return bindContainerList;
-    }
 
-    public List<SiemensVmresources> createsiemnesVmresources(int vmnumber) {
-        List<SiemensVmresources> siemensVmresourcesList = new ArrayList<>();
-        for (int i = 0; i < vmnumber; i++) {
-            SiemensVmresources siemensVmresources = new SiemensVmresources();
-            siemensVmresources.setId(i);
-            siemensVmresourcesList.add(siemensVmresources);
-        }
-        return siemensVmresourcesList;
-
-    }
 }

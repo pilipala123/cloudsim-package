@@ -311,7 +311,8 @@ public class ContainerCloudSimExample1 {
              * S4: Connect with Redis, update response time
              * Redis configurations can be configured here
              */
-
+            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
+            broker.connectWithRedis(redis);
 //            SiemensUtils.calculateregressionbw("redis","k8s",1,1500,10000,regressionParament);
 //            SiemensUtils.calculateregressionbw("k8s","nfr",1,1500,10000,regressionParament);
 
@@ -326,8 +327,7 @@ public class ContainerCloudSimExample1 {
             broker.connectWithSLB_NFR(slb_nfr);
 //            SiemensUtils.calculateregressionbw("nfr","k8s",1,1500,10000,regressionParament);
 //            SiemensUtils.calculateregressionbw("nfr","gwtma",1,1500,10000,regressionParament);
-            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
-            broker.connectWithRedis(redis);
+
 
 
             /**

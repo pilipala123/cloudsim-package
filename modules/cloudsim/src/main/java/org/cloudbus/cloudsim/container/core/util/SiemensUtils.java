@@ -18,6 +18,7 @@ public class SiemensUtils {
             siemensContainerresource.setId(i);
             siemensContainerresource.initCpuarraypool(cpuresources,maxlength);
             siemensContainerresource.initMemoryarraypool(memoryresources,maxlength);
+            siemensContainerresource.initBwarraypool(memoryresources,maxlength);
             siemensContainerresource.setSiemensVmid((int)(i/containereveryvm));
             siemensContainerresourceList.add(siemensContainerresource);
 
