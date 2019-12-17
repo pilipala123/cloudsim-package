@@ -21,6 +21,45 @@ public class ServiceLoadBalancerNFR extends Host {
     private int qps;
 
     private SiemensList nfrsiemensList;
+    private int cpuresources;
+
+    private int memoryresources;
+
+    private int containernumber;
+
+    private int vmnumber;
+
+    public int getCpuresources() {
+        return cpuresources;
+    }
+
+    public void setCpuresources(int cpuresources) {
+        this.cpuresources = cpuresources;
+    }
+
+    public int getMemoryresources() {
+        return memoryresources;
+    }
+
+    public void setMemoryresources(int memoryresources) {
+        this.memoryresources = memoryresources;
+    }
+
+    public int getContainernumber() {
+        return containernumber;
+    }
+
+    public void setContainernumber(int containernumber) {
+        this.containernumber = containernumber;
+    }
+
+    public int getVmnumber() {
+        return vmnumber;
+    }
+
+    public void setVmnumber(int vmnumber) {
+        this.vmnumber = vmnumber;
+    }
 
     public SiemensList getNfrsiemensList() {
         return nfrsiemensList;
@@ -34,33 +73,23 @@ public class ServiceLoadBalancerNFR extends Host {
      * Creates a new Container-based Redis object.
      *
      * @param id
-     * @param userId
-     * @param mips
-     * @param numberOfPes
-     * @param ram
-     * @param bw
      */
-    public ServiceLoadBalancerNFR(int id, int userId, double mips, int numberOfPes, int ram, long bw,
-                                  List<ContainerCloudlet> cloudletList,
-                                  LoadGeneratorInput loadGeneratorInput,
-                                  RegressionParament regressionParament,
-
-                                  int flag) {
+    public ServiceLoadBalancerNFR(int id,List<ContainerCloudlet> cloudletList,int loadnumber,int ramp_down) {
         super(id);
+        int containernumber = 18;
+        int vmnumber =9;
+        int cpuresources= 700;
+        int memoryresources = 600;
+        setCpuresources(cpuresources);
+        setMemoryresources(memoryresources);
+        setContainernumber(containernumber);
+        setVmnumber(vmnumber);
         /**
          * Functions to calculate response time and qps will be added here
          */
-        this.nfrsiemensList= null;
-        try {
-            this.nfrsiemensList = processRequests(cloudletList,1000,1000,"NfR",loadGeneratorInput,18,9);
-            Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,this.nfrsiemensList);
+        setNfrsiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
+                cpuresources,memoryresources,loadnumber,ramp_down));
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        setResponseTime(this.nfrsiemensList.getFinishtime());
-//        setResponseTime(100);
         setQps(100);
     }
 
@@ -84,8 +113,23 @@ public class ServiceLoadBalancerNFR extends Host {
      * Process the requests and generate response time
      * @param cloudletList
      */
-//    public void processRequests(List<ContainerCloudlet> cloudletList){
-//
-//    }
+    public void process(List<ContainerCloudlet> cloudletList,
+                        int flag,
+                        RegressionParament regressionParament,
+                        LoadGeneratorInput loadGeneratorInput,
+                        int time){
+        try {
+
+            this.nfrsiemensList = processRequests(cloudletList,cpuresources,
+                    memoryresources,"NFR",loadGeneratorInput,containernumber,
+                    vmnumber,100,100,time,this.nfrsiemensList);
+//            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.nfrsiemensList);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        setResponseTime(this.nfrsiemensList.getFinishtime());
+    }
 
 }

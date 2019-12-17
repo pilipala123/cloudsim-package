@@ -20,9 +20,47 @@ public class GW_K8S extends Host {
 
     private int qps;
 
-
     private SiemensList k8ssiemensList;
 
+    private int cpuresources;
+
+    private int memoryresources;
+
+    private int containernumber;
+
+    private int vmnumber;
+
+    public int getCpuresources() {
+        return cpuresources;
+    }
+
+    public void setCpuresources(int cpuresources) {
+        this.cpuresources = cpuresources;
+    }
+
+    public int getMemoryresources() {
+        return memoryresources;
+    }
+
+    public void setMemoryresources(int memoryresources) {
+        this.memoryresources = memoryresources;
+    }
+
+    public int getContainernumber() {
+        return containernumber;
+    }
+
+    public void setContainernumber(int containernumber) {
+        this.containernumber = containernumber;
+    }
+
+    public int getVmnumber() {
+        return vmnumber;
+    }
+
+    public void setVmnumber(int vmnumber) {
+        this.vmnumber = vmnumber;
+    }
 
     public SiemensList getK8ssiemensList() {
         return k8ssiemensList;
@@ -35,40 +73,23 @@ public class GW_K8S extends Host {
      * Creates a new Container-based Redis object.
      *
      * @param id
-     * @param userId
-     * @param mips
-     * @param numberOfPes
-     * @param ram
-     * @param bw
      */
-    public GW_K8S(int id,
-                  int userId,
-                  double mips,
-                  int numberOfPes,
-                  int ram,
-                  long bw,
-                  List<ContainerCloudlet> cloudletList,
-                  K8sInput k8sInput,
-                  EcsInput ecsInput,
-                  LoadGeneratorInput loadGeneratorInput,
-                  RegressionParament regressionParament,
-                  int flag) {
+    public GW_K8S(int id,List<ContainerCloudlet> cloudletList,int loadnumber,int ramp_down) {
         super(id);
+        int containernumber = 18;
+        int vmnumber =9;
+        int cpuresources= 550;
+        int memoryresources = 550;
+        setCpuresources(cpuresources);
+        setMemoryresources(memoryresources);
+        setContainernumber(containernumber);
+        setVmnumber(vmnumber);
         /**
          * Functions to calculate response time and qps will be added here
          */
-        setK8ssiemensList(null);
-        try {
-            this.k8ssiemensList = processRequests(cloudletList,1000,1000,"K8s",loadGeneratorInput,18,9);
-            Calculatebw.calculateregressionbw("k8s","slb",flag,regressionParament,this.k8ssiemensList);
-            Calculatebw.calculateregressionbw("k8s","redis",flag,regressionParament,this.k8ssiemensList);
-            Calculatebw.calculateregressionbw("k8s","nfr",flag,regressionParament,this.k8ssiemensList);
+        setK8ssiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
+                cpuresources,memoryresources,loadnumber,ramp_down));
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        setResponseTime(this.k8ssiemensList.getFinishtime());
 //        setQps(k8smoneycost);
         System.out.println("The GWK8s QPS is "+qps);
     }
@@ -100,8 +121,23 @@ public class GW_K8S extends Host {
      * Process the requests and generate response time
      * @param cloudletList
      */
-//    public int processRequests(List<ContainerCloudlet> cloudletList,int cpuresources,int memoryresources){
-//
-//    }
+    public void process(List<ContainerCloudlet> cloudletList,
+                     int flag,
+                     RegressionParament regressionParament,
+                     LoadGeneratorInput loadGeneratorInput,
+                        int time){
+        try {
+
+            this.k8ssiemensList = processRequests(cloudletList,cpuresources,memoryresources,
+                    "K8s",loadGeneratorInput,containernumber,vmnumber,100,
+                    100,time,this.k8ssiemensList);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        setResponseTime(this.k8ssiemensList.getFinishtime());
+    }
+
 
 }

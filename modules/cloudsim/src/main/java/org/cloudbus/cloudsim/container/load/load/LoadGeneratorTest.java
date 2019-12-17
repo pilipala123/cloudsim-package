@@ -34,7 +34,7 @@ public class LoadGeneratorTest {
         //合并不同阶段的负载
         Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
         //将负载保存到配置文件
-        loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
+//        loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
         //读取配置文件生成任务
 //        List<ContainerCloudlet> cloudletList = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorMDSP.readListFromFile("/dev/xlx/CloudSimNFR-master/cloudsim-5.0/loadTrace,1290", map.size()));
 //        System.out.println(cloudletList.size());

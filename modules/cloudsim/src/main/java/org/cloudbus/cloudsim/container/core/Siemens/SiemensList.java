@@ -1,9 +1,13 @@
 package org.cloudbus.cloudsim.container.core.Siemens;
 
 import org.apache.commons.math3.util.Pair;
+import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.createVmResource;
+import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.createsiemnesVmresources;
 
 public class SiemensList {
     private List<Double> hostcpuusagelist;
@@ -11,23 +15,79 @@ public class SiemensList {
     private List<Double> averageresponsetimelist;
     private List<Double> loadnumber;
     private List<Double> hostbwusagelist;
-
-
     private List<Double> inputFlow;
     private List<Double> qps;
     private List<Pair<Integer, Integer>> load2qps;
-
     private List<Double> qpslist;
     private int state;    //qps是否进入阈值
-
     private List<Integer> runningcloudletnumberlist;
-
     private List<Integer> startcloudletnumberList;
-
-
+    private List<BindContainer> deferedbindContainerslist;
+    private List<BindContainer> processbindContainerslist;
     private int finishtime;
-
+    private int finishloadnumber;
     private List<Integer> finishcloudletnumber;
+    private String name;
+
+    private CloudletMinParament cloudletMinParament;
+    private List<SiemensVmresources> siemensVmresourcesList;
+    private List<SiemensContainerresource> siemensContainerresourceList;
+
+    public CloudletMinParament getCloudletMinParament() {
+        return cloudletMinParament;
+    }
+
+    public void setCloudletMinParament(CloudletMinParament cloudletMinParament) {
+        this.cloudletMinParament = cloudletMinParament;
+    }
+
+    public List<SiemensVmresources> getSiemensVmresourcesList() {
+        return siemensVmresourcesList;
+    }
+
+    public void setSiemensVmresourcesList(List<SiemensVmresources> siemensVmresourcesList) {
+        this.siemensVmresourcesList = siemensVmresourcesList;
+    }
+
+    public List<SiemensContainerresource> getSiemensContainerresourceList() {
+        return siemensContainerresourceList;
+    }
+
+    public void setSiemensContainerresourceList(List<SiemensContainerresource> siemensContainerresourceList) {
+        this.siemensContainerresourceList = siemensContainerresourceList;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getFinishloadnumber() {
+        return finishloadnumber;
+    }
+
+    public void setFinishloadnumber(int finishloadnumber) {
+        this.finishloadnumber = finishloadnumber;
+    }
+
+    public List<BindContainer> getProcessbindContainerslist() {
+        return processbindContainerslist;
+    }
+
+    public void setProcessbindContainerslist(List<BindContainer> processbindContainerslist) {
+        this.processbindContainerslist = processbindContainerslist;
+    }
+
+    public List<BindContainer> getDeferedbindContainerslist() {
+        return deferedbindContainerslist;
+    }
+
+    public void setDeferedbindContainerslist(List<BindContainer> deferedbindContainerslist) {
+        this.deferedbindContainerslist = deferedbindContainerslist;
+    }
 
     public List<Integer> getStartcloudletnumberList() {
         return startcloudletnumberList;
@@ -161,7 +221,11 @@ public class SiemensList {
         this.load2qps = load2qps;
     }
 
-    public SiemensList() {
+    public SiemensList(){
+
+    }
+    public SiemensList(List<ContainerCloudlet> cloudletList, int containernumber,
+                       int vmnumber,int cpuresources,int memoryresources,int loadnumber,int ramp_down) {
         setAverageresponsetimelist(new ArrayList<>());
         setHostmemoryusagelist(new ArrayList<>());
         setHostcpuusagelist(new ArrayList<>());
@@ -177,5 +241,13 @@ public class SiemensList {
         setInputFlow(new ArrayList<>());
         setQps(new ArrayList<>());
         setLoad2qps(new ArrayList<>());
+        setDeferedbindContainerslist(new ArrayList<>());
+        setProcessbindContainerslist(new ArrayList<>());
+        setFinishloadnumber(0);
+        setCloudletMinParament(new CloudletMinParament());
+        cloudletMinParament.setcloudletMinParament(cloudletList,containernumber,loadnumber);
+        setSiemensVmresourcesList(createsiemnesVmresources(vmnumber));
+        ramp_down = ramp_down+cloudletMinParament.getMaxtimelength();
+        setSiemensContainerresourceList(createVmResource(containernumber,vmnumber,cpuresources,memoryresources,ramp_down));
     }
 }

@@ -27,6 +27,16 @@ import org.cloudbus.cloudsim.provisioners.RamProvisioner;
  */
 public class Host {
 
+	private int state;
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
 	/** The id of the host. */
 	private int id;
 

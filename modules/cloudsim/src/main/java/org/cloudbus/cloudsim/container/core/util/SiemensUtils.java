@@ -37,23 +37,25 @@ public class SiemensUtils {
 
     }
 
-    public static List<BindContainer> bindCloudlet(List<ContainerCloudlet> cloudletList){
+    public static List<BindContainer> createbindCloudlet(List<ContainerCloudlet> cloudletList){
         List<BindContainer> bindContainerList = new ArrayList<>();
         int containerid = 0;
 
         for (ContainerCloudlet cloudlet:cloudletList){
-            BindContainer bindContainer = new BindContainer(cloudlet.getCpurequest(),
-                    cloudlet.getMemoryrequest(),cloudlet.getCloudletId(),containerid,
-                    cloudlet.getStarttime(),(int)cloudlet.getCloudletLength());
-            bindContainerList.add(bindContainer);
-            cloudlet.setContainerId(bindContainer.getId());
-            containerid++;
+            if(cloudlet.getState()==1) {
+                BindContainer bindContainer = new BindContainer(cloudlet.getCpurequest(),
+                        cloudlet.getMemoryrequest(), cloudlet.getCloudletId(), containerid,
+                        cloudlet.getState(), cloudlet.getStarttime(), (int) cloudlet.getCloudletLength());
+                bindContainerList.add(bindContainer);
+                cloudlet.setContainerId(bindContainer.getId());
+                containerid++;
+            }
         }
         return bindContainerList;
     }
 
     public static SiemensList calculateusage(List<SiemensVmresources> siemensVmresourcesList,
-                                             List<BindContainer> bindContainerList,
+                                             List<BindContainer> processbindContainerList,
                                              List<SiemensContainerresource> siemensContainerresourceList,
                                              SiemensList siemensList,
                                              int time,
@@ -106,17 +108,17 @@ public class SiemensUtils {
         }
 //        hostcpuusage= hostcpuusage/containernumber;
 //        hostbwusage=hostbwusage/containernumber;
-        if(hostbwusage==0&&hostcpuusage ==0&&time>10){
-            siemensList.setStatus(1);
-        }
         hostcpu=(double)hostcpuusage*100.0/(double)containernumber/(double)cpuresource;
         hostbw = (double)hostbwusage*100.0/(double)containernumber/(double)bwresource;
+//        System.out.println("At time:" + time + "ms " + " Cpu usage is " + hostcpu);
+//        System.out.println("At time:" + time + "ms " + " Bw usage is " + hostbw);
+
         if(hostbw>=90||hostcpu>=90){
-            for(BindContainer bindContainer:bindContainerList){
-                if(bindContainer.getState()==3){
-                    responsetime = bindContainer.getEveryresponsetime();
-                    bindContainer.setEveryresponsetime(responsetime*threshold);
-                }
+            for(BindContainer bindContainer:processbindContainerList){
+
+                responsetime = bindContainer.getEveryresponsetime();
+                bindContainer.setEveryresponsetime(responsetime*threshold);
+
             }
         }
         siemensList.getHostcpuusagelist().add(hostcpu);
@@ -147,7 +149,7 @@ public class SiemensUtils {
         return siemensList;
     }
 
-    public static SiemensList calculateaverageresponsetime(SiemensList siemensList,List<BindContainer> bindCloudletlist,int time){
+    public static SiemensList calculateaverageresponsetime(SiemensList siemensList,List<BindContainer> bindCloudletlist,int time,int responsetimeparaments){
         double sumreponsetime = 0;
         int presentfinishcloudletnumber = 0;
         double averagereponsetime =0;
@@ -166,7 +168,7 @@ public class SiemensUtils {
             System.out.println("At time:"+ time +"ms averageresponsetime:"+ averagereponsetime+"ms");
         }
         else {
-            averagereponsetime = sumreponsetime*100.0 / (double)presentfinishcloudletnumber;
+            averagereponsetime = sumreponsetime*responsetimeparaments / (double)presentfinishcloudletnumber;
             System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
         }
 

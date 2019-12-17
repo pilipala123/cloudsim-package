@@ -27,9 +27,12 @@ import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmRamPro
 import org.cloudbus.cloudsim.container.core.*;
 import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
+import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 import org.cloudbus.cloudsim.container.core.util.CalculateSumResponsetime;
+import org.cloudbus.cloudsim.container.core.util.Calculatebw;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicy;
 import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicyFirstFit;
+import org.cloudbus.cloudsim.container.load.ConcurrencyLoads;
 import org.cloudbus.cloudsim.container.load.LoadGeneratorMDSP;
 import org.cloudbus.cloudsim.container.load.LoadPropertiesMDSP;
 import org.cloudbus.cloudsim.container.resourceAllocatorMigrationEnabled.PowerContainerVmAllocationPolicyMigrationAbstractHostSelection;
@@ -226,7 +229,7 @@ public class ContainerCloudSimExample1 {
             ContainerInput containerInput = new ContainerInput();
             RegressionParament regressionParament = new RegressionParament();
             try {
-                inputStream = new FileInputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
+                inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
                 //ecs init
                 regressionParament = setregressionParament(properties);
@@ -243,7 +246,6 @@ public class ContainerCloudSimExample1 {
                 //k8s init
 
                 k8secsnumber = k8sInput.getECSNumbers();
-                k8smoney = k8sInput.getK8smoney();
                 loadGeneratorInput = setLoadGeneratorInput(properties);
                 //slb init
 
@@ -268,90 +270,122 @@ public class ContainerCloudSimExample1 {
             LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
 //            MathUtil mathUtil = new MathUtil();
             LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
-
-//            //根据起始点和结束点生成幂函数形状的负载
-//            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
-//            //根据起始点和结束点生成直线形状的负载
-//            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
-//            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
-//            //合并不同阶段的负载
-//            Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
-//            //将负载保存到配置文件
-//            loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
-            //读取配置文件生成任务
-
+            int loadnumber = loadGeneratorInput.getLoadnumbers();
+            int ramp_up = loadGeneratorInput.getRamp_up();
+            int ramp_down = loadGeneratorInput.getRamp_down();
+            int duration = loadGeneratorInput.getLoadduration();
             List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput);
-
+            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down);
+            GW_K8S gw_k8S = new GW_K8S(0,cloudlets,loadnumber,ramp_down);
+            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down);
             int flag = 1;
             /**
             * S2: Requests are going through SLB_GW
             */
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0, 0, ecsmipspercore*slbcpuquota,
-                    slbcpuquota,slbmemoryquota,slbMaxoutboundbandwidth, cloudlets,slbInput,ecsInput,
-                    loadGeneratorInput,regressionParament,flag);
-            SiemensList slbsiemensList=slb_gw.getSlbsiemensList();
-            broker.connectWithSLB_GW(slb_gw);
-//            SiemensUtils.calculateregressionbw("slb","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("k8s","slb",1,1500,10000,regressionParament);
-
-            /**
-             * S3: Requests processed by GW K8S
-             * Capacity of Siemens GW can be configured here
-             */
-
-            GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore,
-                    k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory,
-                    k8secsnumber*ecsbw, cloudlets,k8sInput,ecsInput,loadGeneratorInput,
-                    regressionParament,flag);
-            SiemensList k8ssiemensList = gw_k8s.getK8ssiemensList();
-            broker.connectWithGW_K8S(gw_k8s);
-//            SiemensUtils.calculateregressionbw("k8s","redis",1,1500,10000,regressionParament);
-            List<ContainerCloudlet> cloudlets2= cloudlets;
-            /**
-             * S4: Connect with Redis, update response time
-             * Redis configurations can be configured here
-             */
-            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
-            broker.connectWithRedis(redis);
-//            SiemensUtils.calculateregressionbw("redis","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("k8s","nfr",1,1500,10000,regressionParament);
-
-            /**
-             * S5: Requests going through Siemens NFR
-             * Siemens specification can be defined here
-             */
-
-            ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000,
-                    1, 512, 1000, cloudlets2,loadGeneratorInput,regressionParament,flag);
-            SiemensList nfrsiemensList= slb_nfr.getNfrsiemensList();
-            broker.connectWithSLB_NFR(slb_nfr);
-//            SiemensUtils.calculateregressionbw("nfr","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("nfr","gwtma",1,1500,10000,regressionParament);
-
-
-
-            /**
-             * S6: Connect with MockService();
-             * Mock service (constant response time configured here). The response time should be updated
-             */
-            broker.connectWithMockService(new MockService("Service1", "MS1", 25,slbsiemensList));
-//            SiemensUtils.calculateregressionbw("gwtma","nfr",1,1500,10000,regressionParament);
+            SiemensList slbsiemensList=null;
+            SiemensList k8ssiemensList= null;
+            SiemensList nfrsiemensList=null;
             List<SiemensList> siemensListList = new ArrayList<>();
+            int time =0;
+            int loadnumberpertime = 0;
+            for(time=0;time<ramp_down;time++) {
+                loadnumberpertime = 0;
+                for (ContainerCloudlet cloudlet:cloudlets){
+                    cloudlet.setState(1);   //submitting state
+                    cloudlet.setStarttime(time);
+                    loadnumberpertime ++;
+                    if(loadnumberpertime >= ((double)time*(double)loadnumber/(double)ramp_up)){
+                        break;
+                    }
+                    if(loadnumberpertime >= loadnumber){
+                        break;
+                    }
+                }
+                slb_gw.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
+                gw_k8S.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
+                nfr.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
+            }
+            slbsiemensList = slb_gw.getSlbsiemensList();
+            k8ssiemensList = gw_k8S.getK8ssiemensList();
+            nfrsiemensList = nfr.getNfrsiemensList();
+            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,slbsiemensList,ramp_down);
+            Calculatebw.calculateregressionbw("k8s","slb",flag,regressionParament,k8ssiemensList,ramp_down);
+            Calculatebw.calculateregressionbw("k8s","redis",flag,regressionParament,k8ssiemensList,ramp_down);
+            Calculatebw.calculateregressionbw("k8s","nfr",flag,regressionParament,k8ssiemensList,ramp_down);
+            Calculatebw.calculateregressionbw("nfr","k8s",flag,regressionParament,nfrsiemensList,ramp_down);
+            Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,k8ssiemensList,ramp_down);
+
             siemensListList.add(slbsiemensList);
             siemensListList.add(k8ssiemensList);
             siemensListList.add(nfrsiemensList);
-            CalculateSumResponsetime.calculateresultresponsetime(siemensListList);
+            for (SiemensList siemensList:siemensListList){
+                Plotpictures.plotpicture(ramp_down,siemensList.getQpslist(),siemensList.getName()+"qps随时间的关系","qps");
+                Plotpictures.plotpicture(ramp_down,siemensList.getLoadnumber(),siemensList.getName()+"负载产生数量随时间的关系","load");
+                Plotpictures.plotpicture(ramp_down,siemensList.getHostcpuusagelist(),siemensList.getName()+"CPU利用率随时间的关系","CPU");
+                Plotpictures.plotpicture(ramp_down,siemensList.getHostmemoryusagelist(),siemensList.getName()+"内存利用率随时间的关系","memory");
+                Plotpictures.plotpicture(ramp_down,siemensList.getAverageresponsetimelist(),siemensList.getName()+"平均响应时间随时间的关系","response time");
+
+            }
+//            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
 
 
-
-            List<ContainerCloudlet> newList = broker.getCloudletReceivedList();
-
-
-
-            printCloudletList(newList);
-            Log.printConcatLine("Total Response Time is ", broker.getResponeTime() + "ms");
-
-            Log.printLine("ContainerCloudSimExample1 finished!");
+//            SiemensList slbsiemensList=slb_gw.getSlbsiemensList();
+//            broker.connectWithSLB_GW(slb_gw);
+//            /**
+//             * S3: Requests processed by GW K8S
+//             * Capacity of Siemens GW can be configured here
+//             */
+//
+//            GW_K8S gw_k8s= new GW_K8S(0, 0, k8secsnumber*ecsmipspercore,
+//                    k8secsnumber*ecscpuquote, k8secsnumber*ecsmemory,
+//                    k8secsnumber*ecsbw, cloudlets,k8sInput,ecsInput,loadGeneratorInput,
+//                    regressionParament,flag);
+//            SiemensList k8ssiemensList = gw_k8s.getK8ssiemensList();
+//            broker.connectWithGW_K8S(gw_k8s);
+//
+//
+//            /**
+//             * S4: Connect with Redis, update response time
+//             * Redis configurations can be configured here
+//             */
+//            Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
+//            SiemensList redissiemensList = redis.getSiemensList();
+//            broker.connectWithRedis(redis);
+//
+//            /**
+//             * S5: Requests going through Siemens NFR
+//             * Siemens specification can be defined here
+//             */
+//
+//            ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000,
+//                    1, 512, 1000, cloudlets,loadGeneratorInput,regressionParament,flag);
+//            SiemensList nfrsiemensList= slb_nfr.getNfrsiemensList();
+//            broker.connectWithSLB_NFR(slb_nfr);
+//
+//
+//
+//            /**
+//             * S6: Connect with MockService();
+//             * Mock service (constant response time configured here). The response time should be updated
+//             */
+//            broker.connectWithMockService(new MockService("Service1", "MS1", 25,slbsiemensList));
+//            List<SiemensList> siemensListList = new ArrayList<>();
+//            siemensListList.add(slbsiemensList);
+//            siemensListList.add(k8ssiemensList);
+//            siemensListList.add(redissiemensList);
+//            siemensListList.add(nfrsiemensList);
+//            CalculateSumResponsetime.calculateresultresponsetime(siemensListList);
+//
+//
+//
+//            List<ContainerCloudlet> newList = broker.getCloudletReceivedList();
+//
+//
+//
+//            printCloudletList(newList);
+//            Log.printConcatLine("Total Response Time is ", broker.getResponeTime() + "ms");
+//
+//            Log.printLine("ContainerCloudSimExample1 finished!");
         } catch (Exception e) {
             e.printStackTrace();
             Log.printLine("Unwanted errors happen");

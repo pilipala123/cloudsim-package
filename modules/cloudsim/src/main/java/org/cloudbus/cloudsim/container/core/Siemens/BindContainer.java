@@ -93,12 +93,12 @@ public class BindContainer extends Container {
     public BindContainer(int id, int userId, double mips, int numberOfPes, int ram, long bw, List<ContainerCloudlet> cloudletList) {
         super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
     }
-    public BindContainer(int cpuusage, int memoryusage, int cloudletid, int containerid, int starttime, int handletime){
+    public BindContainer(int cpuusage, int memoryusage, int cloudletid, int containerid, int nowstate,int starttime, int handletime){
         setCpuusage(cpuusage);
         setMemoryusage(memoryusage);
         setCloudletid(cloudletid);
         setId(containerid);
-        setState(0);
+        setState(nowstate);
         setStarttime(starttime);
         setHandletime(handletime);
     }

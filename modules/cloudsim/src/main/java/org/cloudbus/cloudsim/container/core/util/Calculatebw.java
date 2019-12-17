@@ -9,10 +9,10 @@ import java.util.List;
 
 public class Calculatebw {
 
-    public static double calculateregressionbw(String label1, String label2, int flag, RegressionParament regressionParament, SiemensList siemensList){
+    public static double calculateregressionbw(String label1, String label2, int flag, RegressionParament regressionParament, SiemensList siemensList,int time){
         double a,b,c;
         double bw=0.0;
-        int time = siemensList.getFinishtime();
+//        int time = siemensList.getFinishtime();
         List<Double> bwlist = new ArrayList<>();
         switch (label1 + "_" + label2) {
             case "slb_k8s": {
