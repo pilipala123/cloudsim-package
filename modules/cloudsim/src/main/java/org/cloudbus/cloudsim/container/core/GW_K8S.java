@@ -59,7 +59,7 @@ public class GW_K8S extends Host {
          */
         setK8ssiemensList(null);
         try {
-            this.k8ssiemensList = processRequests(cloudletList,1000,1000,"K8s",loadGeneratorInput,18,9);
+            this.k8ssiemensList = processRequests(cloudletList,300,300,"K8s",loadGeneratorInput,18,9);
             Calculatebw.calculateregressionbw("k8s","slb",flag,regressionParament,this.k8ssiemensList);
             Calculatebw.calculateregressionbw("k8s","redis",flag,regressionParament,this.k8ssiemensList);
             Calculatebw.calculateregressionbw("k8s","nfr",flag,regressionParament,this.k8ssiemensList);

@@ -52,7 +52,7 @@ public class ServiceLoadBalancerNFR extends Host {
          */
         this.nfrsiemensList= null;
         try {
-            this.nfrsiemensList = processRequests(cloudletList,1000,1000,"NfR",loadGeneratorInput,18,9);
+            this.nfrsiemensList = processRequests(cloudletList,200,200,"NfR",loadGeneratorInput,18,9);
             Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,this.nfrsiemensList);
 
         } catch (FileNotFoundException e) {

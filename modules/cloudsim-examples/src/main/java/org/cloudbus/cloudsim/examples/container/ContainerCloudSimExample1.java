@@ -226,7 +226,7 @@ public class ContainerCloudSimExample1 {
             ContainerInput containerInput = new ContainerInput();
             RegressionParament regressionParament = new RegressionParament();
             try {
-                inputStream = new FileInputStream("/dev/xlx/cloudsim31/modules/cloudsim/src/main/resources/config.properties");
+                inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
                 //ecs init
                 regressionParament = setregressionParament(properties);
@@ -243,7 +243,6 @@ public class ContainerCloudSimExample1 {
                 //k8s init
 
                 k8secsnumber = k8sInput.getECSNumbers();
-                k8smoney = k8sInput.getK8smoney();
                 loadGeneratorInput = setLoadGeneratorInput(properties);
                 //slb init
 
@@ -269,17 +268,6 @@ public class ContainerCloudSimExample1 {
 //            MathUtil mathUtil = new MathUtil();
             LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
 
-//            //根据起始点和结束点生成幂函数形状的负载
-//            LinkedHashMap<Double, Integer> map1 = mathUtil.powerF(10, 0, 600, 8000, 1);
-//            //根据起始点和结束点生成直线形状的负载
-//            LinkedHashMap<Double, Integer> map2 = mathUtil.linearF(600, 8000, 1200, 9000, 1);
-//            LinkedHashMap<Double, Integer> map3 = mathUtil.linearF(1200, 9000, 1300, 0, 1);
-//            //合并不同阶段的负载
-//            Map<Double, Integer> map = mathUtil.mergeMap(mathUtil.mergeMap(map1, map2), map3);
-//            //将负载保存到配置文件
-//            loadGeneratorMDSP.saveLoadConfig("loadTrace", "rateTrace", map, loadPropertiesMDSP.CPUMax);
-            //读取配置文件生成任务
-
             List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput);
 
             int flag = 1;
@@ -291,9 +279,6 @@ public class ContainerCloudSimExample1 {
                     loadGeneratorInput,regressionParament,flag);
             SiemensList slbsiemensList=slb_gw.getSlbsiemensList();
             broker.connectWithSLB_GW(slb_gw);
-//            SiemensUtils.calculateregressionbw("slb","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("k8s","slb",1,1500,10000,regressionParament);
-
             /**
              * S3: Requests processed by GW K8S
              * Capacity of Siemens GW can be configured here
@@ -305,16 +290,15 @@ public class ContainerCloudSimExample1 {
                     regressionParament,flag);
             SiemensList k8ssiemensList = gw_k8s.getK8ssiemensList();
             broker.connectWithGW_K8S(gw_k8s);
-//            SiemensUtils.calculateregressionbw("k8s","redis",1,1500,10000,regressionParament);
-            List<ContainerCloudlet> cloudlets2= cloudlets;
+
+
             /**
              * S4: Connect with Redis, update response time
              * Redis configurations can be configured here
              */
             Redis redis = new Redis(0, 0, 1000, 1, 512, 1000, cloudlets);
+            SiemensList redissiemensList = redis.getSiemensList();
             broker.connectWithRedis(redis);
-//            SiemensUtils.calculateregressionbw("redis","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("k8s","nfr",1,1500,10000,regressionParament);
 
             /**
              * S5: Requests going through Siemens NFR
@@ -322,11 +306,9 @@ public class ContainerCloudSimExample1 {
              */
 
             ServiceLoadBalancerNFR slb_nfr = new ServiceLoadBalancerNFR(0, 0, 2000,
-                    1, 512, 1000, cloudlets2,loadGeneratorInput,regressionParament,flag);
+                    1, 512, 1000, cloudlets,loadGeneratorInput,regressionParament,flag);
             SiemensList nfrsiemensList= slb_nfr.getNfrsiemensList();
             broker.connectWithSLB_NFR(slb_nfr);
-//            SiemensUtils.calculateregressionbw("nfr","k8s",1,1500,10000,regressionParament);
-//            SiemensUtils.calculateregressionbw("nfr","gwtma",1,1500,10000,regressionParament);
 
 
 
@@ -335,10 +317,10 @@ public class ContainerCloudSimExample1 {
              * Mock service (constant response time configured here). The response time should be updated
              */
             broker.connectWithMockService(new MockService("Service1", "MS1", 25,slbsiemensList));
-//            SiemensUtils.calculateregressionbw("gwtma","nfr",1,1500,10000,regressionParament);
             List<SiemensList> siemensListList = new ArrayList<>();
             siemensListList.add(slbsiemensList);
             siemensListList.add(k8ssiemensList);
+            siemensListList.add(redissiemensList);
             siemensListList.add(nfrsiemensList);
             CalculateSumResponsetime.calculateresultresponsetime(siemensListList);
 

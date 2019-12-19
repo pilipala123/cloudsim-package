@@ -207,6 +207,7 @@ public class SchedulePolicy {
                     siemensList.setState(1);
                 }
             }
+//            所有的数据都存在SiemensList类里面，可以直接进行调出，就是每个时刻的所有数据
             if (siemensList.getState() ==0) {
                 sumqps = qps * (double) runningcloudletnumber;
                 siemensList.getQpslist().add(sumqps);

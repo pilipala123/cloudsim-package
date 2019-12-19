@@ -13,7 +13,6 @@ import org.cloudbus.cloudsim.container.schedulers.ContainerCloudletScheduler;
 import org.cloudbus.cloudsim.container.utils.MapOperator;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,16 @@ public class Redis extends Container {
     private int max_inbound_bandwidth;
     private int max_outbound_bandwidth;
     private int max_qps;
+
+    private SiemensList siemensList;
+
+    public SiemensList getSiemensList() {
+        return siemensList;
+    }
+
+    public void setSiemensList(SiemensList siemensList) {
+        this.siemensList = siemensList;
+    }
 
     private ERedisModel model;
 
@@ -62,7 +71,10 @@ public class Redis extends Container {
         super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
         init();
         try {
-            setResponseTime(processRequests(cloudletList, 100, 100));
+            this.siemensList = null;
+            this.siemensList = processRequests(cloudletList, 250, 250);
+            setResponseTime(25);
+//            setResponseTime(this.siemensList.getAverageresponsetimelist().get(siemensList.getAverageresponsetimelist().size()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -263,13 +275,12 @@ public class Redis extends Container {
         return ids;
     }
 
-    public int processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources) throws FileNotFoundException {
+    public SiemensList processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources) throws FileNotFoundException {
         int containernumber = 12;
         int vmnumber = 6;
         int containerhandletime;
         int time = 0;
-        int containercpurequest = 0, remaincpuresources = 0;
-        int containermemoryrequest = 0, remainmemoryresources = 0;
+        String label="redis";
 
 
         int finishcloudletnumber = 0, startcloudletnumber = 0, lasttimestartcloudletnumber = 0, presentstarttimecloudletnumber = 0;
@@ -339,9 +350,6 @@ public class Redis extends Container {
                             break;
                         }
                     }
-
-
-
                 }
 
 
@@ -355,7 +363,13 @@ public class Redis extends Container {
 
             siemensList.getInputFlow().add(calculateInputFlow(current_connection));
             lasttimestartcloudletnumber = startcloudletnumber;
-
+            for(BindContainer bindContainer:bindCloudletlist){
+                if (bindContainer.getState()==4){
+                    finishcloudletnumber++;
+                }
+            }
+            siemensList.getFinishcloudletnumber().add(finishcloudletnumber);
+            finishcloudletnumber=0;
             //计算cpu和内存利用率
             siemensList = calculateusage(siemensVmresourcesList,bindCloudletlist, siemensContainerresourceList, siemensList, time, containernumber,cpuresources,memoryresources);
             //计算当前时间的平均响应时间
@@ -376,18 +390,18 @@ public class Redis extends Container {
 
         }
 
-        Plotpictures.plotpicture(time, siemensList.getLoadnumber(), "负载产生数量随时间的关系", "load");
-        Plotpictures.plotpicture(time, siemensList.getInputFlow(), "InputFlow随时间的关系", "input flow");
-        Plotpictures.plotpicture(time, siemensList.getQps(), "qps随时间的关系", "qps");
-        Plotpictures.plotpicture(time, siemensList.getHostcpuusagelist(), "CPU利用率随时间的关系", "CPU");
-        Plotpictures.plotpicture(time, siemensList.getHostmemoryusagelist(), "带宽利用率随时间的关系", "memory");
-        Plotpictures.plotpicture(time, siemensList.getAverageresponsetimelist(), "平均响应时间随时间的关系", "response time");
-        Plotpictures.plotpictureFromMap(time, siemensList.getLoad2qps(), "qps与负载的关系", "load2qps");
+        Plotpictures.plotpicture(time, siemensList.getLoadnumber(), label+"负载产生数量随时间的关系", "load");
+        Plotpictures.plotpicture(time, siemensList.getInputFlow(), label+"InputFlow随时间的关系", "input flow");
+        Plotpictures.plotpicture(time, siemensList.getQps(), label+"qps随时间的关系", "qps");
+        Plotpictures.plotpicture(time, siemensList.getHostcpuusagelist(), label+"CPU利用率随时间的关系", "CPU");
+        Plotpictures.plotpicture(time, siemensList.getHostmemoryusagelist(), label+"带宽利用率随时间的关系", "memory");
+        Plotpictures.plotpicture(time, siemensList.getAverageresponsetimelist(), label+"平均响应时间随时间的关系", "response time");
+        Plotpictures.plotpictureFromMap(time, siemensList.getLoad2qps(), label+"qps与负载的关系", "load2qps");
 
         System.out.println("finish cloudlet numbers is " + finishcloudletnumber);
         System.out.println("The finish time of Siemens is " + time + "ms");
 //        System.out.println("The Response Time of GWslb is "+ response_time+"ms");
-        return time;
+        return siemensList;
     }
 
     private int qps(int current_connection) {
@@ -424,13 +438,13 @@ public class Redis extends Container {
             }
         }
         if (presentfinishcloudletnumber == 0) {
-            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
+            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime*25 + "ms");
         } else {
             averagereponsetime = sumreponsetime / presentfinishcloudletnumber;
-            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
+            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime*25 + "ms");
         }
 
-        siemensList.getAverageresponsetimelist().add(averagereponsetime);
+        siemensList.getAverageresponsetimelist().add(averagereponsetime*25);
 
         return sumreponsetime;
     }
