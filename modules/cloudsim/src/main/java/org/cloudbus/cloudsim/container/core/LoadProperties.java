@@ -2,14 +2,11 @@ package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.container.InputParament.*;
 import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
-import org.yunji.cloudsimrd.load.Load;
-import org.yunji.cloudsimrd.load.LoadGenerator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.function.DoublePredicate;
 
 public class LoadProperties {
     public static void main(String[] args){
@@ -39,6 +36,8 @@ public class LoadProperties {
             printRedisInput(redisInput);
             TablestoreInput tablestoreInput = settablestoreInput(properties);
             printTablestoreInput(tablestoreInput);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -259,6 +258,30 @@ public class LoadProperties {
         return regressionParament;
     }
 
+
+    public static AdjustParament setAdjustParament(Properties properties){
+        AdjustParament adjustParament = new AdjustParament();
+        adjustParament.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
+        adjustParament.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
+        adjustParament.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
+        adjustParament.setK8scpuparament(Integer.parseInt(properties.getProperty("k8scpuparament")));
+        adjustParament.setK8smemoryparamnet(Integer.parseInt(properties.getProperty("k8smemoryparament")));
+        adjustParament.setK8smipsparament(Integer.parseInt(properties.getProperty("k8smipsparament")));
+        adjustParament.setK8sresponsetimeparament(Integer.parseInt(properties.getProperty("k8sresponsetimeparament")));
+        adjustParament.setNfrcpuparament(Integer.parseInt(properties.getProperty("nfrcpuparament")));
+        adjustParament.setNfrmemoryparament(Integer.parseInt(properties.getProperty("nfrmemoryparament")));
+        adjustParament.setNfrresponsetimeparament(Integer.parseInt(properties.getProperty("nfrresponsetimeparament")));
+        adjustParament.setNfrmipsparament(Integer.parseInt(properties.getProperty("nfrmipsparament")));
+        adjustParament.setSlbcpuparament(Integer.parseInt(properties.getProperty("slbcpuparament")));
+        adjustParament.setSlbmemoryparament(Integer.parseInt(properties.getProperty("slbmemoryparament")));
+        adjustParament.setSlbresponsetimeparament(Integer.parseInt(properties.getProperty("slbresponsetimeparament")));
+        adjustParament.setSlbmipsparament(Integer.parseInt(properties.getProperty("slbmipsparament")));
+        adjustParament.setCpurandomnumber(Integer.parseInt(properties.getProperty("cpurandomnumber")));
+        adjustParament.setMemoryrandomnumber(Integer.parseInt(properties.getProperty("memoryrandomnumber")));
+        adjustParament.setLengthrandomnumber(Integer.parseInt(properties.getProperty("lengthrandomnumber")));
+        return adjustParament;
+
+    }
 
 
 

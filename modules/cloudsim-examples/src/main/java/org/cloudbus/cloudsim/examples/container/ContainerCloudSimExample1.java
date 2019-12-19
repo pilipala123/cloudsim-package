@@ -46,6 +46,7 @@ import org.cloudbus.cloudsim.container.utils.IDs;
 import org.cloudbus.cloudsim.container.vmSelectionPolicies.PowerContainerVmSelectionPolicy;
 import org.cloudbus.cloudsim.container.vmSelectionPolicies.PowerContainerVmSelectionPolicyMaximumUsage;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -220,7 +221,9 @@ public class ContainerCloudSimExample1 {
              * S2: Use properties input the paraments
              */
             Properties properties = new Properties();
+            Properties properties1 = new Properties();
             InputStream inputStream = null;
+            InputStream inputStream2 = null;
             LoadGeneratorInput loadGeneratorInput = new LoadGeneratorInput();
             EcsInput ecsInput = new EcsInput();
             K8sInput k8sInput = new K8sInput();
@@ -228,14 +231,18 @@ public class ContainerCloudSimExample1 {
             RedisInput redisInput = new RedisInput();
             ContainerInput containerInput = new ContainerInput();
             RegressionParament regressionParament = new RegressionParament();
+            AdjustParament adjustParament = new AdjustParament();
             try {
                 inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
+                inputStream2 = new FileInputStream("modules/cloudsim/src/main/resources/parament.properties");
+                properties1.load(inputStream2);
                 //ecs init
                 regressionParament = setregressionParament(properties);
                 ecsInput = setEcsInput(properties);
                 k8sInput = setK8sInput(properties);
                 slbInput = setslbInput(properties);
+                adjustParament = setAdjustParament(properties1);
                 redisInput =setRedisInput(properties);
                 containerInput = setContainerInput(properties);
                 ecsmipspercore=ecsInput.getEcsMIPSpercore();
@@ -274,10 +281,11 @@ public class ContainerCloudSimExample1 {
             int ramp_up = loadGeneratorInput.getRamp_up();
             int ramp_down = loadGeneratorInput.getRamp_down();
             int duration = loadGeneratorInput.getLoadduration();
-            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput);
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down);
-            GW_K8S gw_k8S = new GW_K8S(0,cloudlets,loadnumber,ramp_down);
-            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down);
+            List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput,adjustParament);
+            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
+            GW_K8S gw_k8S = new GW_K8S(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,k8sInput);
+            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput);
+            MockService mockService = new MockService(0);
             int flag = 1;
             /**
             * S2: Requests are going through SLB_GW
@@ -290,6 +298,9 @@ public class ContainerCloudSimExample1 {
             int loadnumberpertime = 0;
             for(time=0;time<ramp_down;time++) {
                 loadnumberpertime = 0;
+                for(ContainerCloudlet cloudlet1:cloudlets){
+                    cloudlet1.setState(0);
+                }
                 for (ContainerCloudlet cloudlet:cloudlets){
                     cloudlet.setState(1);   //submitting state
                     cloudlet.setStarttime(time);
@@ -297,13 +308,19 @@ public class ContainerCloudSimExample1 {
                     if(loadnumberpertime >= ((double)time*(double)loadnumber/(double)ramp_up)){
                         break;
                     }
+
+                    if(loadnumberpertime>=((double)(ramp_down-time)*(double)loadnumber/(double)(ramp_down-duration-ramp_up))){
+                        break;
+                    }
+
                     if(loadnumberpertime >= loadnumber){
                         break;
                     }
                 }
-                slb_gw.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
-                gw_k8S.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
-                nfr.process(cloudlets,flag,regressionParament,loadGeneratorInput,time);
+                slb_gw.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
+                gw_k8S.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
+                nfr.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
+                mockService.processEvent(loadnumberpertime,25);
             }
             slbsiemensList = slb_gw.getSlbsiemensList();
             k8ssiemensList = gw_k8S.getK8ssiemensList();
@@ -326,6 +343,8 @@ public class ContainerCloudSimExample1 {
                 Plotpictures.plotpicture(ramp_down,siemensList.getAverageresponsetimelist(),siemensList.getName()+"平均响应时间随时间的关系","response time");
 
             }
+            Plotpictures.plotpicture(ramp_down,mockService.getMockservicesiemensList().getQpslist(),mockService.getName()+"qps随时间的关系","qps");
+            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
 //            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
 
 

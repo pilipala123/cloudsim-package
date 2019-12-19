@@ -294,7 +294,7 @@ public class Redis extends Container {
         List<SiemensVmresources> siemensVmresourcesList = createsiemnesVmresources(vmnumber);
         List<SiemensContainerresource> siemensContainerresourceList = createVmResource(containernumber, vmnumber, cpuresources, memoryresources, cloudletMinParament.getMaxtimelength());
 
-        List<BindContainer> bindCloudletlist = createbindCloudlet(cloudletList);
+        List<BindContainer> bindCloudletlist = createbindCloudlet(cloudletList,1);
         bindCloudletlist.sort(Comparator.comparingInt(BindContainer::getStarttime));
         bindCloudletlist.forEach(bindContainer -> bindContainer.setHandletime(1));
         int current_connection = 0, pre_connection = 0;

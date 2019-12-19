@@ -16,26 +16,34 @@ import java.util.List;
 public class MockService {
     int responseTime; //It can be defined as a constant value
     String name;
-    String serviceId;
+    int serviceId;
+    private SiemensList mockservicesiemensList;
+
+    public SiemensList getMockservicesiemensList() {
+        return mockservicesiemensList;
+    }
+
+    public void setMockservicesiemensList(SiemensList mockservicesiemensList) {
+        this.mockservicesiemensList = mockservicesiemensList;
+    }
+
+    public int getResponseTime() {
+        return responseTime;
+    }
 
     /**
      * The construct method will be called by Siemens NFR instances.
-     * @param name
      * @param serviceId
-     * @param responseTime
      */
-    public MockService(String name, String serviceId, int responseTime,SiemensList siemensList){
-        this.name = name;
+    public MockService(int serviceId){
         this.serviceId = serviceId;
-        this.responseTime = responseTime;
         String label = "Mockservice";
         int time = 200;
-        double qpsbase = 6.5;
-        List<Double> qpslist = new ArrayList<>();
-        for(int i=0;i<siemensList.getLoadnumber().size();i++){
-            qpslist.add(qpsbase*(double)siemensList.getLoadnumber().get(i));
-        }
-        Plotpictures.plotpicture(time,qpslist,label+"qps随时间的关系","qps");
+
+        setMockservicesiemensList(new SiemensList());
+        getMockservicesiemensList().setAverageresponsetimelist(new ArrayList<>());
+        getMockservicesiemensList().setQpslist(new ArrayList<>());
+//        Plotpictures.plotpicture(time,qpslist,label+"qps随时间的关系","qps");
     }
 
     int getResponeTime(){
@@ -54,12 +62,21 @@ public class MockService {
         this.name = name;
     }
 
-    public String getServiceId() {
+    public int getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(String serviceId) {
+    public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
+    }
+
+    public void processEvent(int loadpernumber,double responsetime){
+        String label = "Mockservice";
+        double qpsbase = 6.5;
+        getMockservicesiemensList().setName(label);
+        getMockservicesiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
+        getMockservicesiemensList().getAverageresponsetimelist().add(responsetime);
+
     }
 
 

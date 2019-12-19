@@ -1,9 +1,7 @@
 package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.Host;
-import org.cloudbus.cloudsim.container.InputParament.EcsInput;
-import org.cloudbus.cloudsim.container.InputParament.K8sInput;
-import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
+import org.cloudbus.cloudsim.container.InputParament.*;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
 import org.cloudbus.cloudsim.container.core.util.Calculatebw;
 import org.cloudbus.cloudsim.container.core.util.SiemensUtils;
@@ -29,6 +27,15 @@ public class GW_K8S extends Host {
     private int containernumber;
 
     private int vmnumber;
+    private int mipsability;
+
+    public int getMipsability() {
+        return mipsability;
+    }
+
+    public void setMipsability(int mipsability) {
+        this.mipsability = mipsability;
+    }
 
     public int getCpuresources() {
         return cpuresources;
@@ -74,12 +81,15 @@ public class GW_K8S extends Host {
      *
      * @param id
      */
-    public GW_K8S(int id,List<ContainerCloudlet> cloudletList,int loadnumber,int ramp_down) {
+    public GW_K8S(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
+                  AdjustParament adjustParament, EcsInput ecsInput,K8sInput k8sInput) {
         super(id);
         int containernumber = 18;
         int vmnumber =9;
         int cpuresources= 550;
         int memoryresources = 550;
+        int mipsability = 100;
+        setMipsability(mipsability);
         setCpuresources(cpuresources);
         setMemoryresources(memoryresources);
         setContainernumber(containernumber);
@@ -125,12 +135,16 @@ public class GW_K8S extends Host {
                      int flag,
                      RegressionParament regressionParament,
                      LoadGeneratorInput loadGeneratorInput,
+                        AdjustParament adjustParament,
                         int time){
         try {
-
+            int mipsparament = adjustParament.getK8smipsparament();
+            int mipsability = getMipsability();
+            double mips = (double)mipsability/(double)mipsparament;
+            int responsetimeparament = adjustParament.getK8sresponsetimeparament();
             this.k8ssiemensList = processRequests(cloudletList,cpuresources,memoryresources,
-                    "K8s",loadGeneratorInput,containernumber,vmnumber,100,
-                    100,time,this.k8ssiemensList);
+                    "K8s",loadGeneratorInput,containernumber,vmnumber,mips,
+                    responsetimeparament,time,this.k8ssiemensList);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

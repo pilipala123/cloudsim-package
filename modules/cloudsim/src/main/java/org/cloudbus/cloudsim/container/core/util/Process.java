@@ -13,9 +13,9 @@ import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.*;
 import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.calculateregressionusage;
 
 public class Process {
-    public static SiemensList processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources,
+    public static SiemensList  processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources,
                                               String name, LoadGeneratorInput loadGeneratorInput,
-                                              int containernumber,int vmnumber,int mipsparament,
+                                              int containernumber,int vmnumber,double mips,
                                               int responsetimeparament,int time,
                                               SiemensList siemensList) throws FileNotFoundException {
 
@@ -23,11 +23,10 @@ public class Process {
 
         CloudletMinParament cloudletMinParament = siemensList.getCloudletMinParament();
 //        cloudletMinParament.setcloudletMinParament(cloudletList,containernumber);
-
-        List<BindContainer> bindCloudletlist =createbindCloudlet(cloudletList);
+        List<BindContainer> bindCloudletlist =createbindCloudlet(cloudletList,mips);
         siemensList.setName(name);
         siemensList = SchedulePolicy.schedulepolicy(bindCloudletlist,cloudletMinParament,
-                containernumber,cpuresources,memoryresources,siemensList,mipsparament,responsetimeparament,time);
+                containernumber,cpuresources,memoryresources,siemensList,responsetimeparament,time);
 
 
 //        siemensList = calculateregressionusage(siemensList,loadGeneratorInput,presentstarttimecloudletnumber,0.026174,-0.07892);

@@ -1,6 +1,8 @@
 package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.Host;
+import org.cloudbus.cloudsim.container.InputParament.AdjustParament;
+import org.cloudbus.cloudsim.container.InputParament.EcsInput;
 import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
@@ -28,6 +30,15 @@ public class ServiceLoadBalancerNFR extends Host {
     private int containernumber;
 
     private int vmnumber;
+    private int mipsability;
+
+    public int getMipsability() {
+        return mipsability;
+    }
+
+    public void setMipsability(int mipsability) {
+        this.mipsability = mipsability;
+    }
 
     public int getCpuresources() {
         return cpuresources;
@@ -74,12 +85,15 @@ public class ServiceLoadBalancerNFR extends Host {
      *
      * @param id
      */
-    public ServiceLoadBalancerNFR(int id,List<ContainerCloudlet> cloudletList,int loadnumber,int ramp_down) {
+    public ServiceLoadBalancerNFR(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
+                                  AdjustParament adjustParament, EcsInput ecsInput) {
         super(id);
         int containernumber = 18;
         int vmnumber =9;
         int cpuresources= 700;
         int memoryresources = 600;
+        int mipsability = 100;
+        setMipsability(mipsability);
         setCpuresources(cpuresources);
         setMemoryresources(memoryresources);
         setContainernumber(containernumber);
@@ -117,12 +131,16 @@ public class ServiceLoadBalancerNFR extends Host {
                         int flag,
                         RegressionParament regressionParament,
                         LoadGeneratorInput loadGeneratorInput,
+                        AdjustParament adjustParament,
                         int time){
         try {
-
+            int mipsparament = adjustParament.getNfrmipsparament();
+            int mipsability = getMipsability();
+            double mips = (double)mipsability/(double)mipsparament;
+            int responsetimeparament = adjustParament.getNfrresponsetimeparament();
             this.nfrsiemensList = processRequests(cloudletList,cpuresources,
                     memoryresources,"NFR",loadGeneratorInput,containernumber,
-                    vmnumber,100,100,time,this.nfrsiemensList);
+                    vmnumber,mips,responsetimeparament,time,this.nfrsiemensList);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.nfrsiemensList);
 
         } catch (FileNotFoundException e) {

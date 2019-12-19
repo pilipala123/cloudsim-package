@@ -16,7 +16,6 @@ public class SchedulePolicy {
                                              int cpuresources,
                                              int memoryresources,
                                              SiemensList siemensList,
-                                             int mipsparaments,
                                              int responsetimeparment,
                                              int time) {
         int startcloudletnumber=0;
@@ -29,9 +28,8 @@ public class SchedulePolicy {
         double sumqps = 0;
         double qpsmaxthreshold = 1.1;
         int presentfinishcloudletnumber = 0;
+        int laststartcloudletnumber =0,overloadcontainernumber = 0;
         int finishloadnumber = siemensList.getFinishloadnumber();
-        int laststartcloudletnumber = 0;
-        int overloadcontainernumber = 0;
         List<SiemensVmresources>  siemensVmresourcesList = siemensList.getSiemensVmresourcesList();
         List<SiemensContainerresource> siemensContainerresourceList = siemensList.getSiemensContainerresourceList();
 
@@ -77,7 +75,7 @@ public class SchedulePolicy {
                 siemensList.getAverageresponsetimelist().add(0.0);
             }
             else {
-                siemensList.getAverageresponsetimelist().add(sumresponsetime / finishloadnumber);
+                siemensList.getAverageresponsetimelist().add(responsetimeparment*sumresponsetime / finishloadnumber);
             }
         }
 
@@ -184,7 +182,7 @@ public class SchedulePolicy {
         if ((remaincpuresources >= containercpurequest)
                 && (remainmemoryresources >= containermemoryrequest)) {
             flag= 1;
-            containerhandletime = (int) bindContainer.getHandletime();
+            containerhandletime = (int)(bindContainer.getHandletime());
             siemensContainerresource.changeCpuarraypool(remaincpuresources, containercpurequest, time, containerhandletime);
             siemensContainerresource.changeMemoryarraypool(remainmemoryresources, containermemoryrequest, time, containerhandletime);
             bindContainer.setFinishtime(time + containerhandletime);

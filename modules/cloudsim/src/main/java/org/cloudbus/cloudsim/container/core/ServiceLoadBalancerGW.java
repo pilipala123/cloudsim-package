@@ -1,6 +1,7 @@
 package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.Host;
+import org.cloudbus.cloudsim.container.InputParament.AdjustParament;
 import org.cloudbus.cloudsim.container.InputParament.EcsInput;
 import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.InputParament.SlbInput;
@@ -24,6 +25,20 @@ public class ServiceLoadBalancerGW extends Host {
     private int containernumber;
 
     private int vmnumber;
+
+    private int mipsability;
+
+    public int getMipsability() {
+        return mipsability;
+    }
+
+    public void setMipsability(int mipsability) {
+        this.mipsability = mipsability;
+    }
+
+    public void setQps(int qps) {
+        this.qps = qps;
+    }
 
     public int getCpuresources() {
         return cpuresources;
@@ -72,12 +87,15 @@ public class ServiceLoadBalancerGW extends Host {
      * @param id
 
      */
-    public ServiceLoadBalancerGW(int id,List<ContainerCloudlet> cloudletList,int loadnumber,int ramp_down){
+    public ServiceLoadBalancerGW(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
+                                 AdjustParament adjustParament,EcsInput ecsInput,SlbInput slbInput){
         super(id);
         int containernumber = 18;
         int vmnumber =9;
         int cpuresources= 1000;
         int memoryresources = 1000;
+        int mipsablility  =100;
+        setMipsability(mipsablility);
         setCpuresources(cpuresources);
         setMemoryresources(memoryresources);
         setContainernumber(containernumber);
@@ -117,12 +135,16 @@ public class ServiceLoadBalancerGW extends Host {
                                int flag,
                                RegressionParament regressionParament,
                                LoadGeneratorInput loadGeneratorInput,
+                        AdjustParament adjustParament,
                         int time){
         try {
-
+            int mipsparament = adjustParament.getSlbmipsparament();
+            int mipsability = getMipsability();
+            double mips = (double)mipsability/(double)mipsparament;
+            int responsetimeparament = adjustParament.getSlbresponsetimeparament();
             this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
                     "SLB",loadGeneratorInput,containernumber,vmnumber,
-                    100,100,time,this.slbsiemensList);
+                    mips,responsetimeparament,time,this.slbsiemensList);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
 
         } catch (FileNotFoundException e) {

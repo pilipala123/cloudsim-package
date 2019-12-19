@@ -37,15 +37,16 @@ public class SiemensUtils {
 
     }
 
-    public static List<BindContainer> createbindCloudlet(List<ContainerCloudlet> cloudletList){
+    public static List<BindContainer> createbindCloudlet(List<ContainerCloudlet> cloudletList,double mips){
         List<BindContainer> bindContainerList = new ArrayList<>();
         int containerid = 0;
 
         for (ContainerCloudlet cloudlet:cloudletList){
             if(cloudlet.getState()==1) {
+                int cloudletlength =(int) ((double)cloudlet.getCloudletLength()/mips);
                 BindContainer bindContainer = new BindContainer(cloudlet.getCpurequest(),
                         cloudlet.getMemoryrequest(), cloudlet.getCloudletId(), containerid,
-                        cloudlet.getState(), cloudlet.getStarttime(), (int) cloudlet.getCloudletLength());
+                        cloudlet.getState(), cloudlet.getStarttime(), cloudletlength);
                 bindContainerList.add(bindContainer);
                 cloudlet.setContainerId(bindContainer.getId());
                 containerid++;
