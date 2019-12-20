@@ -4,6 +4,7 @@ import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.container.InputParament.AdjustParament;
 import org.cloudbus.cloudsim.container.InputParament.EcsInput;
 import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
+import org.cloudbus.cloudsim.container.InputParament.NfrInput;
 import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
@@ -86,7 +87,7 @@ public class ServiceLoadBalancerNFR extends Host {
      * @param id
      */
     public ServiceLoadBalancerNFR(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
-                                  AdjustParament adjustParament, EcsInput ecsInput) {
+                                  AdjustParament adjustParament, EcsInput ecsInput, NfrInput nfrInput) {
         super(id);
         int containernumber = 18;
         int vmnumber =9;

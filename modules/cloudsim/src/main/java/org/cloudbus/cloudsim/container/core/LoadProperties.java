@@ -2,6 +2,7 @@ package org.cloudbus.cloudsim.container.core;
 
 import org.cloudbus.cloudsim.container.InputParament.*;
 import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
+import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class LoadProperties {
             printEcsInput(ecsInput);
             ContainerInput containerInput = setContainerInput(properties);
             printContainerInput(containerInput);
-            K8sInput k8sInput = setK8sInput(properties);
+            K8sInput k8sInput = setk8sInput(properties);
             printK8sInput(k8sInput);
             LoadGeneratorInput loadGeneratorInput = setLoadGeneratorInput(properties);
             printLoadGeneratorInput(loadGeneratorInput);
@@ -101,13 +102,13 @@ public class LoadProperties {
         System.out.println("ContainerDiskSize:"+containerInput.getContainerDiskSize());
     }
 
-    public static K8sInput setK8sInput(Properties properties){
-        K8sInput k8sInput = new K8sInput();
-        k8sInput.setECSNumbers(Integer.parseInt(properties.getProperty("ECSNumbers")));
-        k8sInput.setK8smoney(Integer.parseInt(properties.getProperty("k8smoney")));
-        k8sInput.setPodNumbersineachECS(Integer.parseInt(properties.getProperty("PodNumbersineachECS")));
-        return k8sInput;
-    }
+//    public static K8sInput setK8sInput(Properties properties){
+//        K8sInput k8sInput = new K8sInput();
+//        k8sInput.setECSNumbers(Integer.parseInt(properties.getProperty("ECSNumbers")));
+//        k8sInput.setK8smoney(Integer.parseInt(properties.getProperty("k8smoney")));
+//        k8sInput.setPodNumbersineachECS(Integer.parseInt(properties.getProperty("PodNumbersineachECS")));
+//        return k8sInput;
+//    }
 
     public void printK8sInput(K8sInput k8sInput){
         System.out.println("ECSNumbers:"+k8sInput.getECSNumbers());
@@ -138,16 +139,21 @@ public class LoadProperties {
 
     public static SlbInput setslbInput(Properties properties){
         SlbInput slbInput = new SlbInput();
-        slbInput.setSlbCPUQuota(Integer.parseInt(properties.getProperty("SlbCPUQuota")));
-        slbInput.setSlbmoney(Integer.parseInt(properties.getProperty("Slbmoney")));
-        slbInput.setSlbLatency(Integer.parseInt(properties.getProperty("SlbLatency")));
-        slbInput.setSlbLoadbalancertype(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbLoaddistributionstrategy(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbMaxconnections(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbMaxinboundbandwidth(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbMaxoutboundbandwidth(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbMaxQPS(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbMemoryQuota(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbCPUQuota(Integer.parseInt(properties.getProperty("SlbCPUQuota")));
+//        slbInput.setSlbmoney(Integer.parseInt(properties.getProperty("Slbmoney")));
+//        slbInput.setSlbLatency(Integer.parseInt(properties.getProperty("SlbLatency")));
+//        slbInput.setSlbLoadbalancertype(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbLoaddistributionstrategy(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbMaxconnections(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbMaxinboundbandwidth(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbMaxoutboundbandwidth(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbMaxQPS(Integer.parseInt(properties.getProperty("Loadnumbers")));
+//        slbInput.setSlbMemoryQuota(Integer.parseInt(properties.getProperty("Loadnumbers")));
+        slbInput.setSlbECSnumber(Integer.parseInt(properties.getProperty("SlbECSnumber")));
+        slbInput.setSlbmaxqps(Integer.parseInt(properties.getProperty("Slbmaxqps")));
+        slbInput.setSlbnetworkbandwidth(Integer.parseInt(properties.getProperty("Slbnetworkbandwidth")));
+        slbInput.setSlbcontainernumber(Integer.parseInt(properties.getProperty("Slbcontainernumber")));
+        slbInput.setSlbcpucore(Double.parseDouble(properties.getProperty("Slbcpucore")));
         return slbInput;
     }
 
@@ -194,6 +200,25 @@ public class LoadProperties {
         System.out.println("maxinboundbandwidth:" + redisInput.getRedisMaxinboundbandwidth());
         System.out.println("maxoutboundbandwidth:" + redisInput.getRedisMaxoutboundbandwidth());
     }
+
+    public static K8sInput setk8sInput(Properties properties){
+        K8sInput k8sInput = new K8sInput();
+        k8sInput.setECSNumbers(Integer.parseInt(properties.getProperty("K8sECSnumber")));
+        k8sInput.setK8smaxqps(Integer.parseInt(properties.getProperty("K8smaxqps")));
+        k8sInput.setK8snetworkbandwidth(Integer.parseInt(properties.getProperty("K8snetworkbandwidth")));
+        k8sInput.setK8scontainernumber(Integer.parseInt(properties.getProperty("K8scontainernumber")));
+        return k8sInput;
+    }
+
+    public static NfrInput setnfrInput(Properties properties){
+        NfrInput nfrInput= new NfrInput();
+        nfrInput.setNfrcontainernumber(Integer.parseInt(properties.getProperty("Nfrcontainernumber")));
+        nfrInput.setNfrECSnumber(Integer.parseInt(properties.getProperty("NfrECSnumber")));
+        nfrInput.setNfrnetworkbandwidth(Integer.parseInt(properties.getProperty("Nfrnetworkbandwidth")));
+        nfrInput.setNfrmaxqps(Integer.parseInt(properties.getProperty("Nfrmaxqps")));
+        return nfrInput;
+    }
+
 
     public static TablestoreInput settablestoreInput(Properties properties){
         TablestoreInput tablestoreInput = new TablestoreInput();

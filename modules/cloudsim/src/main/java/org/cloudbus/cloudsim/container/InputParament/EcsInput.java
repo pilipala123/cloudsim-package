@@ -10,6 +10,8 @@ public class EcsInput {
     private int EcsMIPSpercore;
     private int EcsServiceType;
 
+
+
     public int getEcsCPUQuota() {
         return EcsCPUQuota;
     }

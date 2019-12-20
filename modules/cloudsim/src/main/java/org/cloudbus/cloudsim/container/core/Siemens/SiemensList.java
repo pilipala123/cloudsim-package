@@ -221,7 +221,7 @@ public class SiemensList {
         this.load2qps = load2qps;
     }
 
-    public SiemensList(){
+    public  SiemensList(){
 
     }
     public SiemensList(List<ContainerCloudlet> cloudletList, int containernumber,
@@ -233,9 +233,6 @@ public class SiemensList {
         setHostregressioncpuusagelist(new ArrayList<>());
         setQpslist(new ArrayList<>());
         setRunningcloudletnumberlist(new ArrayList<>());
-        setStartcloudletnumberList(new ArrayList<>());
-        setFinishcloudletnumber(new ArrayList<>());
-        setStatus(0);
         setState(0);
         setHostbwusagelist(new ArrayList<>());
         setInputFlow(new ArrayList<>());
@@ -244,6 +241,8 @@ public class SiemensList {
         setDeferedbindContainerslist(new ArrayList<>());
         setProcessbindContainerslist(new ArrayList<>());
         setFinishloadnumber(0);
+        setFinishcloudletnumber(new ArrayList<>());
+        setStartcloudletnumberList(new ArrayList<>());
         setCloudletMinParament(new CloudletMinParament());
         cloudletMinParament.setcloudletMinParament(cloudletList,containernumber,loadnumber);
         setSiemensVmresourcesList(createsiemnesVmresources(vmnumber));

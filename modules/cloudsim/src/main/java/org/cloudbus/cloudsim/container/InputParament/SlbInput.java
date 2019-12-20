@@ -10,7 +10,52 @@ public class SlbInput {
     private int SlbCPUQuota;
     private int SlbMemoryQuota;
     private int Slbmoney;
+    private int SlbECSnumber;
+    private int Slbcontainernumber;
+    private int Slbmaxqps;
+    private int Slbnetworkbandwidth;
 
+    private double Slbcpucore;
+
+    public double getSlbcpucore() {
+        return Slbcpucore;
+    }
+
+    public void setSlbcpucore(double slbcpucore) {
+        Slbcpucore = slbcpucore;
+    }
+
+    public int getSlbECSnumber() {
+        return SlbECSnumber;
+    }
+
+    public void setSlbECSnumber(int slbECSnumber) {
+        SlbECSnumber = slbECSnumber;
+    }
+
+    public int getSlbcontainernumber() {
+        return Slbcontainernumber;
+    }
+
+    public void setSlbcontainernumber(int slbcontainernumber) {
+        Slbcontainernumber = slbcontainernumber;
+    }
+
+    public int getSlbmaxqps() {
+        return Slbmaxqps;
+    }
+
+    public void setSlbmaxqps(int slbmaxqps) {
+        Slbmaxqps = slbmaxqps;
+    }
+
+    public int getSlbnetworkbandwidth() {
+        return Slbnetworkbandwidth;
+    }
+
+    public void setSlbnetworkbandwidth(int slbnetworkbandwidth) {
+        Slbnetworkbandwidth = slbnetworkbandwidth;
+    }
     public int getSlbmoney() {
         return Slbmoney;
     }

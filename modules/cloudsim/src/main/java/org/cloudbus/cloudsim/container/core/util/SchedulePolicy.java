@@ -35,8 +35,15 @@ public class SchedulePolicy {
 
         List<BindContainer> lastdeferbindcloudCloudletlist = siemensList.getDeferedbindContainerslist();
         List<BindContainer> lastprocessbindcloudCloudletlist = siemensList.getProcessbindContainerslist();
-        lastdeferbindcloudCloudletlist.addAll(bindCloudletlist);
+        int size1 = lastdeferbindcloudCloudletlist.size();
+        int size2 = lastprocessbindcloudCloudletlist.size();
+        int addnumber = 0;
+        while (size1+size2+addnumber<bindCloudletlist.size()) {
 
+            lastdeferbindcloudCloudletlist.add(bindCloudletlist.get(addnumber));
+            addnumber++;
+        }
+//        System.out.println("time"+ time + "s   "+(size1+size2+addnumber));
         List<BindContainer> presentdefbindcloudCloudletlist= new ArrayList<>();
         List<BindContainer> presentprocessbindcloudletlist = new ArrayList<>();
         presentdefbindcloudCloudletlist.addAll(lastdeferbindcloudCloudletlist);
@@ -59,7 +66,7 @@ public class SchedulePolicy {
         for(BindContainer processbindContainer: lastprocessbindcloudCloudletlist){
             runningcloudletnumber++;
             if(processbindContainer.getFinishtime() == time){
-                sumresponsetime = sumresponsetime+processbindContainer.getEveryresponsetime();
+                sumresponsetime = sumresponsetime+responsetimeparment*processbindContainer.getEveryresponsetime();
                 presentfinishcloudletnumber++;
                 presentprocessbindcloudletlist.remove(processbindContainer);
             }
@@ -75,13 +82,14 @@ public class SchedulePolicy {
                 siemensList.getAverageresponsetimelist().add(0.0);
             }
             else {
-                siemensList.getAverageresponsetimelist().add(responsetimeparment*sumresponsetime / finishloadnumber);
+                siemensList.getAverageresponsetimelist().add(sumresponsetime / finishloadnumber);
             }
+            siemensList.setFinishloadnumber(finishloadnumber);
         }
 
 //        System.out.println("processcloudletnumber" + siemensList.getProcessbindContainerslist().get(time-1));
-
-        System.out.println("time:"+time+ siemensList.getName()+": average response time is "+ siemensList.getAverageresponsetimelist().get(time));
+//
+        System.out.println("time:"+time+ "s"+ siemensList.getName()+": average response time is "+ siemensList.getAverageresponsetimelist().get(time));
 
         for (BindContainer bindContainer : lastdeferbindcloudCloudletlist) {
             roundrobinnumber=0;

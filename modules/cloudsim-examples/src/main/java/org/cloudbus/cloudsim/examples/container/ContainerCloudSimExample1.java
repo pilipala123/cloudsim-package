@@ -232,6 +232,7 @@ public class ContainerCloudSimExample1 {
             ContainerInput containerInput = new ContainerInput();
             RegressionParament regressionParament = new RegressionParament();
             AdjustParament adjustParament = new AdjustParament();
+            NfrInput nfrInput = new NfrInput();
             try {
                 inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
                 properties.load(inputStream);
@@ -240,15 +241,12 @@ public class ContainerCloudSimExample1 {
                 //ecs init
                 regressionParament = setregressionParament(properties);
                 ecsInput = setEcsInput(properties);
-                k8sInput = setK8sInput(properties);
+                k8sInput = setk8sInput(properties);
                 slbInput = setslbInput(properties);
+                nfrInput = setnfrInput(properties);
                 adjustParament = setAdjustParament(properties1);
                 redisInput =setRedisInput(properties);
                 containerInput = setContainerInput(properties);
-                ecsmipspercore=ecsInput.getEcsMIPSpercore();
-                ecsmemory = ecsInput.getEcsMemoryQuota();
-                ecscpuquote = ecsInput.getEcsCPUQuota();
-                ecsbw = ecsInput.getEcsOutboundbandwidth();
 
                 //k8s init
 
@@ -284,7 +282,7 @@ public class ContainerCloudSimExample1 {
             List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput,adjustParament);
             ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
             GW_K8S gw_k8S = new GW_K8S(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,k8sInput);
-            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput);
+            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,nfrInput);
             MockService mockService = new MockService(0);
             int flag = 1;
             /**
@@ -331,11 +329,13 @@ public class ContainerCloudSimExample1 {
             Calculatebw.calculateregressionbw("k8s","nfr",flag,regressionParament,k8ssiemensList,ramp_down);
             Calculatebw.calculateregressionbw("nfr","k8s",flag,regressionParament,nfrsiemensList,ramp_down);
             Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,k8ssiemensList,ramp_down);
-
+            //将获取到的结果类做成列表
             siemensListList.add(slbsiemensList);
             siemensListList.add(k8ssiemensList);
             siemensListList.add(nfrsiemensList);
             for (SiemensList siemensList:siemensListList){
+
+                //绘制图形
                 Plotpictures.plotpicture(ramp_down,siemensList.getQpslist(),siemensList.getName()+"qps随时间的关系","qps");
                 Plotpictures.plotpicture(ramp_down,siemensList.getLoadnumber(),siemensList.getName()+"负载产生数量随时间的关系","load");
                 Plotpictures.plotpicture(ramp_down,siemensList.getHostcpuusagelist(),siemensList.getName()+"CPU利用率随时间的关系","CPU");

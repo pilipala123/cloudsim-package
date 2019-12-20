@@ -90,8 +90,11 @@ public class ServiceLoadBalancerGW extends Host {
     public ServiceLoadBalancerGW(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                                  AdjustParament adjustParament,EcsInput ecsInput,SlbInput slbInput){
         super(id);
-        int containernumber = 18;
-        int vmnumber =9;
+        int containernumber = slbInput.getSlbcontainernumber();
+        int vmnumber =slbInput.getSlbECSnumber();
+        int maxqps = slbInput.getSlbmaxqps();
+        int networkbandwidth = slbInput.getSlbnetworkbandwidth();
+        double cpucore = slbInput.getSlbcpucore();
         int cpuresources= 1000;
         int memoryresources = 1000;
         int mipsablility  =100;
