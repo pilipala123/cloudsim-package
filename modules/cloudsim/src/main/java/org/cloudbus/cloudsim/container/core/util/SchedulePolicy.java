@@ -89,7 +89,7 @@ public class SchedulePolicy {
 
 //        System.out.println("processcloudletnumber" + siemensList.getProcessbindContainerslist().get(time-1));
 //
-        System.out.println("time:"+time+ "s"+ siemensList.getName()+": average response time is "+ siemensList.getAverageresponsetimelist().get(time));
+        System.out.println("time: "+time+ " s"+ siemensList.getName()+": average response time is "+ siemensList.getAverageresponsetimelist().get(time));
 
         for (BindContainer bindContainer : lastdeferbindcloudCloudletlist) {
             roundrobinnumber=0;
@@ -143,7 +143,7 @@ public class SchedulePolicy {
         siemensList.getRunningcloudletnumberlist().add(runningcloudletnumber);
 
 //        presentstarttimecloudletnumber = startcloudletnumber - laststartcloudletnumber;
-        siemensList.getLoadnumber().add((double) bindCloudletlist.size());
+        siemensList.getLoadnumber().add((double) bindCloudletlist.stream().mapToInt(BindContainer::getOperations).sum());
 
 
         //计算cpu和带宽利用率

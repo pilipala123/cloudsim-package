@@ -281,6 +281,8 @@ public class ContainerCloudSimExample1 {
             int duration = loadGeneratorInput.getLoadduration();
             List<ContainerCloudlet> cloudlets = loadGeneratorMDSP.generateContainerCloudletsFromList(loadGeneratorInput,adjustParament);
             ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
+            Redis redis = new Redis(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
+
             GW_K8S gw_k8S = new GW_K8S(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,k8sInput);
             ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,nfrInput);
             MockService mockService = new MockService(0);
@@ -289,6 +291,7 @@ public class ContainerCloudSimExample1 {
             * S2: Requests are going through SLB_GW
             */
             SiemensList slbsiemensList=null;
+            SiemensList redisSiementsList;
             SiemensList k8ssiemensList= null;
             SiemensList nfrsiemensList=null;
             List<SiemensList> siemensListList = new ArrayList<>();
@@ -316,11 +319,13 @@ public class ContainerCloudSimExample1 {
                     }
                 }
                 slb_gw.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
+                redis.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 gw_k8S.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 nfr.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 mockService.processEvent(loadnumberpertime,25);
             }
             slbsiemensList = slb_gw.getSlbsiemensList();
+            redisSiementsList = redis.getSiemensList();
             k8ssiemensList = gw_k8S.getK8ssiemensList();
             nfrsiemensList = nfr.getNfrsiemensList();
             Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,slbsiemensList,ramp_down);
@@ -331,6 +336,7 @@ public class ContainerCloudSimExample1 {
             Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,k8ssiemensList,ramp_down);
             //将获取到的结果类做成列表
             siemensListList.add(slbsiemensList);
+            siemensListList.add(redisSiementsList);
             siemensListList.add(k8ssiemensList);
             siemensListList.add(nfrsiemensList);
             for (SiemensList siemensList:siemensListList){

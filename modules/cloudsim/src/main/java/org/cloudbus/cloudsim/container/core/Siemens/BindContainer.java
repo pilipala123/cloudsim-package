@@ -102,4 +102,14 @@ public class BindContainer extends Container {
         setStarttime(starttime);
         setHandletime(handletime);
     }
+
+    private int operations = 1;
+
+    public int getOperations() {
+        return operations;
+    }
+
+    public void setOperations(int operations) {
+        this.operations = operations;
+    }
 }

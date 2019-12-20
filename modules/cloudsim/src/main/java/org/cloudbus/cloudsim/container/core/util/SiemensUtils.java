@@ -49,6 +49,7 @@ public class SiemensUtils {
                         cloudlet.getState(), cloudlet.getStarttime(), cloudletlength);
                 bindContainerList.add(bindContainer);
                 cloudlet.setContainerId(bindContainer.getId());
+                bindContainer.setOperations(cloudlet.getOperation());
                 containerid++;
             }
         }
