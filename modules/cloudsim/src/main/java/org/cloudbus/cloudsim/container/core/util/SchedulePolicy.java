@@ -17,14 +17,14 @@ public class SchedulePolicy {
                                              int memoryresources,
                                              SiemensList siemensList,
                                              int responsetimeparment,
-                                             int time) {
+                                             int time,double qps) {
         int startcloudletnumber=0;
         int runningcloudletnumber =0;
         int presentstarttimecloudletnumber, lasttimestartcloudletnumber = 0;
         int roundrobinorder = 0,roundrobinnumber;
         int flag = 0;
         double responsetime=0,sumresponsetime = 0;
-        double qps = 6.5,qpsthreshold = 0.9;
+        double qpsthreshold = 0.9;
         double sumqps = 0;
         double qpsmaxthreshold = 1.1;
         int presentfinishcloudletnumber = 0;

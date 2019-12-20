@@ -21,7 +21,7 @@ public class ServiceLoadBalancerNFR extends Host {
 
     private int responseTime;
 
-    private int qps;
+    private double qps;
 
     private SiemensList nfrsiemensList;
     private int cpuresources;
@@ -87,12 +87,20 @@ public class ServiceLoadBalancerNFR extends Host {
      * @param id
      */
     public ServiceLoadBalancerNFR(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
-                                  AdjustParament adjustParament, EcsInput ecsInput, NfrInput nfrInput) {
+                                  AdjustParament adjustParament, EcsInput ecsInput, NfrInput nfrInput ) {
         super(id);
-        int containernumber = 18;
-        int vmnumber =9;
-        int cpuresources= 700;
-        int memoryresources = 600;
+        setQps(8.8);
+        int containernumber = nfrInput.getNfrcontainernumber();
+        int vmnumber =nfrInput.getNfrECSnumber();
+        int maxqps = nfrInput.getNfrmaxqps();
+        int networkbandwidth = nfrInput.getNfrnetworkbandwidth();
+        double cpucore = nfrInput.getCpucore();
+        int ecscore = ecsInput.getEcsCPUQuota();
+        double ecsmips = ecsInput.getEcsMIPSpercore();
+        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
+        double cpunumber=125.4;
+        int cpuresources= (int)cpunumber*ecscore;
+        int memoryresources = 500;
         int mipsability = 100;
         setMipsability(mipsability);
         setCpuresources(cpuresources);
@@ -105,7 +113,7 @@ public class ServiceLoadBalancerNFR extends Host {
         setNfrsiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
                 cpuresources,memoryresources,loadnumber,ramp_down));
 
-        setQps(100);
+//        setQps(100);
     }
 
     public int getResponseTime(){
@@ -116,11 +124,11 @@ public class ServiceLoadBalancerNFR extends Host {
         this.responseTime = responseTime;
     }
 
-    public int getQps(){
+    public double getQps(){
         return qps;
     }
 
-    public void setQps(int qps){
+    public void setQps(double qps){
         this.qps = qps;
     }
 
@@ -141,7 +149,7 @@ public class ServiceLoadBalancerNFR extends Host {
             int responsetimeparament = adjustParament.getNfrresponsetimeparament();
             this.nfrsiemensList = processRequests(cloudletList,cpuresources,
                     memoryresources,"NFR",loadGeneratorInput,containernumber,
-                    vmnumber,mips,responsetimeparament,time,this.nfrsiemensList);
+                    vmnumber,mips,responsetimeparament,time,this.nfrsiemensList,this.qps);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.nfrsiemensList);
 
         } catch (FileNotFoundException e) {

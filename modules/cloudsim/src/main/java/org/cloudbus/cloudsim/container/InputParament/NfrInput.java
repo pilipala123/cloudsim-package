@@ -5,7 +5,15 @@ public class NfrInput {
     private int Nfrcontainernumber;
     private int Nfrmaxqps;
     private int Nfrnetworkbandwidth;
+    private double cpucore;
 
+    public double getCpucore() {
+        return cpucore;
+    }
+
+    public void setCpucore(double cpucore) {
+        this.cpucore = cpucore;
+    }
 
     public int getNfrECSnumber() {
         return NfrECSnumber;

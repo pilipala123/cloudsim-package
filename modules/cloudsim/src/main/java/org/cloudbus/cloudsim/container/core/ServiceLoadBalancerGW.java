@@ -17,7 +17,7 @@ import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
 public class ServiceLoadBalancerGW extends Host {
 
     private int responseTime;
-    private int qps;
+    private double qps;
     private int cpuresources;
 
     private int memoryresources;
@@ -36,7 +36,7 @@ public class ServiceLoadBalancerGW extends Host {
         this.mipsability = mipsability;
     }
 
-    public void setQps(int qps) {
+    public void setQps(double qps) {
         this.qps = qps;
     }
 
@@ -90,13 +90,19 @@ public class ServiceLoadBalancerGW extends Host {
     public ServiceLoadBalancerGW(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                                  AdjustParament adjustParament,EcsInput ecsInput,SlbInput slbInput){
         super(id);
+        setQps(8.8);
         int containernumber = slbInput.getSlbcontainernumber();
         int vmnumber =slbInput.getSlbECSnumber();
         int maxqps = slbInput.getSlbmaxqps();
         int networkbandwidth = slbInput.getSlbnetworkbandwidth();
+        int ecscore = ecsInput.getEcsCPUQuota();
+        int ecspermips = ecsInput.getEcsMIPSpercore();
         double cpucore = slbInput.getSlbcpucore();
-        int cpuresources= 1000;
-        int memoryresources = 1000;
+        double cpunumber = 125;
+        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
+
+        int cpuresources= (int)(ecscore*cpunumber);
+        int memoryresources = 500;
         int mipsablility  =100;
         setMipsability(mipsablility);
         setCpuresources(cpuresources);
@@ -119,20 +125,11 @@ public class ServiceLoadBalancerGW extends Host {
         this.responseTime = responseTime;
     }
 
-    public int getQps(){
+    public double getQps(){
 
         return qps;
     }
 
-//    public void setQps(int money){
-//        if (money ==0){
-//            this.qps = 1000;
-//        }
-//        else {
-//            double qpscaculate = Double.valueOf(money)*0.263;
-//            this.qps =(int)(qpscaculate) ;
-//        }
-//    }
 
     public void process(List<ContainerCloudlet> cloudletList,
                                int flag,
@@ -147,7 +144,7 @@ public class ServiceLoadBalancerGW extends Host {
             int responsetimeparament = adjustParament.getSlbresponsetimeparament();
             this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
                     "SLB",loadGeneratorInput,containernumber,vmnumber,
-                    mips,responsetimeparament,time,this.slbsiemensList);
+                    mips,responsetimeparament,time,this.slbsiemensList,this.qps);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
 
         } catch (FileNotFoundException e) {

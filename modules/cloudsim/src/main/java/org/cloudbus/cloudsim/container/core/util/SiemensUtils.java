@@ -68,7 +68,7 @@ public class SiemensUtils {
         int hostcpuusage=0,hostbwusage=0;
         double responsetime=0;
         int finishtime=0;
-        double threshold = 1.1;
+        double threshold = 1.05;
         double hostcpu,hostbw;
         for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
             siemensVmresources.setCpuusage(0);

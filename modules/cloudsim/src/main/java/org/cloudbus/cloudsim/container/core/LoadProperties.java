@@ -207,6 +207,7 @@ public class LoadProperties {
         k8sInput.setK8smaxqps(Integer.parseInt(properties.getProperty("K8smaxqps")));
         k8sInput.setK8snetworkbandwidth(Integer.parseInt(properties.getProperty("K8snetworkbandwidth")));
         k8sInput.setK8scontainernumber(Integer.parseInt(properties.getProperty("K8scontainernumber")));
+        k8sInput.setK8scpucore(Double.parseDouble(properties.getProperty("K8scpucore")));
         return k8sInput;
     }
 
@@ -216,6 +217,7 @@ public class LoadProperties {
         nfrInput.setNfrECSnumber(Integer.parseInt(properties.getProperty("NfrECSnumber")));
         nfrInput.setNfrnetworkbandwidth(Integer.parseInt(properties.getProperty("Nfrnetworkbandwidth")));
         nfrInput.setNfrmaxqps(Integer.parseInt(properties.getProperty("Nfrmaxqps")));
+        nfrInput.setCpucore(Double.parseDouble(properties.getProperty("Nfrcpucore")));
         return nfrInput;
     }
 

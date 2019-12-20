@@ -9,13 +9,13 @@ public class K8sInput {
     private int K8scontainernumber;
     private int K8smaxqps;
     private int K8snetworkbandwidth;
-    private int K8scpucore;
+    private double K8scpucore;
 
-    public int getK8scpucore() {
+    public double getK8scpucore() {
         return K8scpucore;
     }
 
-    public void setK8scpucore(int k8scpucore) {
+    public void setK8scpucore(double k8scpucore) {
         K8scpucore = k8scpucore;
     }
 

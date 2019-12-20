@@ -16,7 +16,11 @@ public class GW_K8S extends Host {
 
     private int responseTime;
 
-    private int qps;
+    public void setQps(double qps) {
+        this.qps = qps;
+    }
+
+    private double qps;
 
     private SiemensList k8ssiemensList;
 
@@ -84,10 +88,18 @@ public class GW_K8S extends Host {
     public GW_K8S(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                   AdjustParament adjustParament, EcsInput ecsInput,K8sInput k8sInput) {
         super(id);
-        int containernumber = 18;
-        int vmnumber =9;
-        int cpuresources= 550;
-        int memoryresources = 550;
+        setQps(8.8);
+        int containernumber = k8sInput.getK8scontainernumber();
+        int vmnumber =k8sInput.getECSNumbers();
+        double cpucore = k8sInput.getK8scpucore();
+        int maxqps = k8sInput.getK8smaxqps();
+        int networkbandwidth = k8sInput.getK8snetworkbandwidth();
+        int ecscore = ecsInput.getEcsCPUQuota();
+        int ecspermips = ecsInput.getEcsMIPSpercore();
+        double cpunumber = 125.5;
+        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
+        int cpuresources= (int)(ecscore*cpunumber);
+        int memoryresources = 500;
         int mipsability = 100;
         setMipsability(mipsability);
         setCpuresources(cpuresources);
@@ -101,7 +113,7 @@ public class GW_K8S extends Host {
                 cpuresources,memoryresources,loadnumber,ramp_down));
 
 //        setQps(k8smoneycost);
-        System.out.println("The GWK8s QPS is "+qps);
+//        System.out.println("The GWK8s QPS is "+qps);
     }
 
     public int getResponseTime(){
@@ -112,20 +124,20 @@ public class GW_K8S extends Host {
         this.responseTime = responseTime;
     }
 
-    public int getQps(){
+    public double getQps(){
 
         return qps;
     }
 
-    public void setQps(int money){
-        if (money ==0){
-            this.qps = 1000;
-        }
-        else {
-            double qpscaculate = Double.valueOf(money)*0.263;
-            this.qps =(int)(qpscaculate) ;
-        }
-    }
+//    public void setQps(int money){
+//        if (money ==0){
+//            this.qps = 1000;
+//        }
+//        else {
+//            double qpscaculate = Double.valueOf(money)*0.263;
+//            this.qps =(int)(qpscaculate) ;
+//        }
+//    }
 
     /**
      * Process the requests and generate response time
@@ -144,7 +156,7 @@ public class GW_K8S extends Host {
             int responsetimeparament = adjustParament.getK8sresponsetimeparament();
             this.k8ssiemensList = processRequests(cloudletList,cpuresources,memoryresources,
                     "K8s",loadGeneratorInput,containernumber,vmnumber,mips,
-                    responsetimeparament,time,this.k8ssiemensList);
+                    responsetimeparament,time,this.k8ssiemensList,this.qps);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

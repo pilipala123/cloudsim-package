@@ -291,6 +291,7 @@ public class ContainerCloudSimExample1 {
             SiemensList slbsiemensList=null;
             SiemensList k8ssiemensList= null;
             SiemensList nfrsiemensList=null;
+            SiemensList mockservicesiemenslist = null;
             List<SiemensList> siemensListList = new ArrayList<>();
             int time =0;
             int loadnumberpertime = 0;
@@ -323,6 +324,7 @@ public class ContainerCloudSimExample1 {
             slbsiemensList = slb_gw.getSlbsiemensList();
             k8ssiemensList = gw_k8S.getK8ssiemensList();
             nfrsiemensList = nfr.getNfrsiemensList();
+            mockservicesiemenslist = mockService.getMockservicesiemensList();
             Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,slbsiemensList,ramp_down);
             Calculatebw.calculateregressionbw("k8s","slb",flag,regressionParament,k8ssiemensList,ramp_down);
             Calculatebw.calculateregressionbw("k8s","redis",flag,regressionParament,k8ssiemensList,ramp_down);
@@ -333,18 +335,19 @@ public class ContainerCloudSimExample1 {
             siemensListList.add(slbsiemensList);
             siemensListList.add(k8ssiemensList);
             siemensListList.add(nfrsiemensList);
+
             for (SiemensList siemensList:siemensListList){
 
                 //绘制图形
-                Plotpictures.plotpicture(ramp_down,siemensList.getQpslist(),siemensList.getName()+"qps随时间的关系","qps");
-                Plotpictures.plotpicture(ramp_down,siemensList.getLoadnumber(),siemensList.getName()+"负载产生数量随时间的关系","load");
-                Plotpictures.plotpicture(ramp_down,siemensList.getHostcpuusagelist(),siemensList.getName()+"CPU利用率随时间的关系","CPU");
-                Plotpictures.plotpicture(ramp_down,siemensList.getHostmemoryusagelist(),siemensList.getName()+"内存利用率随时间的关系","memory");
-                Plotpictures.plotpicture(ramp_down,siemensList.getAverageresponsetimelist(),siemensList.getName()+"平均响应时间随时间的关系","response time");
+                Plotpictures.plotpicture(ramp_down,siemensList.getQpslist(),siemensList.getName()+" qps随时间的关系","qps(/sec)");
+                Plotpictures.plotpicture(ramp_down,siemensList.getLoadnumber(),siemensList.getName()+" 负载产生数量随时间的关系","load(vu)");
+                Plotpictures.plotpicture(ramp_down,siemensList.getHostcpuusagelist(),siemensList.getName()+" CPU利用率随时间的关系","CPU(%)");
+                Plotpictures.plotpicture(ramp_down,siemensList.getHostmemoryusagelist(),siemensList.getName()+" 内存利用率随时间的关系","memory(%)");
+                Plotpictures.plotpicture(ramp_down,siemensList.getAverageresponsetimelist(),siemensList.getName()+" 平均响应时间随时间的关系","response time(ms)");
 
             }
-            Plotpictures.plotpicture(ramp_down,mockService.getMockservicesiemensList().getQpslist(),mockService.getName()+"qps随时间的关系","qps");
-            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
+//            Plotpictures.plotpicture(ramp_down,mockService.getMockservicesiemensList().getAverageresponsetimelist(),mockService.getName()+"qps随时间的关系","qps");
+            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,mockservicesiemenslist,ramp_down);
 //            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
 
 
