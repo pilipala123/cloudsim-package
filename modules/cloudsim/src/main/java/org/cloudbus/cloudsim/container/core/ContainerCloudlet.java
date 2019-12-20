@@ -11,7 +11,6 @@ import java.util.List;
 public class ContainerCloudlet extends Cloudlet {
     public int containerId = -1;
 
-
     public ContainerCloudlet(int cloudletId, long cloudletLength, int pesNumber, long cloudletFileSize, long cloudletOutputSize, UtilizationModel utilizationModelCpu, UtilizationModel utilizationModelRam, UtilizationModel utilizationModelBw) {
 
         super(cloudletId, cloudletLength, pesNumber, cloudletFileSize, cloudletOutputSize, utilizationModelCpu, utilizationModelRam, utilizationModelBw);
@@ -37,5 +36,15 @@ public class ContainerCloudlet extends Cloudlet {
 
     public void setContainerId(int containerId) {
         this.containerId = containerId;
+    }
+
+    private int operation = 1;
+
+    public int getOperation() {
+        return operation;
+    }
+
+    public void setOperation(int operation) {
+        this.operation = operation;
     }
 }
