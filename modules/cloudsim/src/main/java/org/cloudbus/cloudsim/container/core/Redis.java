@@ -30,7 +30,7 @@ public class Redis extends Host {
     private int avg_ram;
 
     private int responseTime;
-    private int qps;
+    private double qps;
     private int cpuresources;
 
     private int memoryresources;
@@ -42,23 +42,24 @@ public class Redis extends Host {
     private SiemensList siemensList;
 
     double pre_response_time = 0;
-    float per_qps = 6.5f, coefficient = 1.0f;
+    float per_qps = 8f, coefficient = 1.0f;
     int pre_operation, current_operation = 0;
 
     public Redis(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down
             , AdjustParament adjustParament, EcsInput ecsInput, SlbInput slbInput) {
         super(id);
-        int containernumber = 18;
-        int vmnumber = 9;
-        int cpuresources = 250;
-        int memoryresources = 250;
+        setQps(8.8);
+        int containernumber = 2;
+        int vmnumber = 1;
+        int cpuresources = 100;
+        int memoryresources = 100;
         setCpuresources(cpuresources);
         setMemoryresources(memoryresources);
         setContainernumber(containernumber);
         setVmnumber(vmnumber);
 
         setSiemensList(new SiemensList(cloudletList, containernumber, vmnumber
-                , cpuresources, memoryresources, loadnumber, ramp_down));
+                , cpuresources, memoryresources, loadnumber, ramp_down *2));
         init();
     }
 
@@ -83,11 +84,11 @@ public class Redis extends Host {
         this.responseTime = responseTime;
     }
 
-    public int getQps() {
+    public double getQps() {
         return qps;
     }
 
-    public void setQps(int qps) {
+    public void setQps(double qps) {
         this.qps = qps;
     }
 
@@ -141,12 +142,12 @@ public class Redis extends Host {
         List<ContainerCloudlet> current_operation = loadOperation(cloudletList, time);
         try {
             siemensList = processRequests(current_operation, cpuresources, memoryresources, "redis"
-                    , loadGeneratorInput, containernumber, vmnumber, 1, 1, time, siemensList);
+                    , loadGeneratorInput, containernumber, vmnumber, 1, 1, time, siemensList, qps);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        updateCoefficient(time);
+//        updateCoefficient(time);
 
         setResponseTime(this.siemensList.getFinishtime());
     }
@@ -162,26 +163,45 @@ public class Redis extends Host {
         if (0 == connection) {
             return current_load;
         }
+
         ContainerCloudlet first = current_load.get(0);
 
-        this.current_operation = Float.valueOf(connection * per_qps * coefficient).intValue();
-        int cloudletLength = Math.max(1, Double.valueOf((double) 1000 / model.getMax_qps() * current_operation * 100 / cpuresources).intValue());
-        int resource = getResource(connection);
 
-        System.out.println(String.format("connection: %d\tlength: %d\tresource: %d", 1, cloudletLength, resource));
-        ContainerCloudlet containerCloudlet = new ContainerCloudlet(1, cloudletLength, first.getNumberOfPes()
-                , first.getCloudletFileSize(), first.getCloudletOutputSize(), first.getUtilizationModelCpu()
-                , first.getUtilizationModelRam(), first.getUtilizationModelBw());
-        containerCloudlet.setUserId(first.getUserId());
-        containerCloudlet.setVmId(first.getVmId());
-        containerCloudlet.setCpurequest(resource);
-        containerCloudlet.setBwrequest(first.getBwrequest());
-        containerCloudlet.setMemoryrequest(resource);
-        containerCloudlet.setQps(6.5);
-        containerCloudlet.setState(1);
-        containerCloudlet.setOperation(this.current_operation);
+        //每个操作执行时间：1000/model.getMax_qps()
+        //每个连接占用资源：100/model.getMax_connection()
 
-        return Lists.newArrayList(containerCloudlet);
+        //按占用1个单位资源重新分配，则每个请求是model.getMax_connection()/100个请求
+        List<ContainerCloudlet> loads = Lists.newArrayListWithExpectedSize(10);
+
+        //Double.valueOf(model.getMax_qps() / (per_qps * 1000)).intValue();//
+        int re_load_size = this.model.getMax_connection() / 100;
+        double per_length = (double) 1000 / model.getMax_qps();
+        int id = 0;
+
+        while (0 != connection) {
+            int current_load_size = connection <= re_load_size ? connection : re_load_size;
+            connection -= current_load_size;
+
+            int cloudletLength = Math.max(1, Double.valueOf(Math.ceil(per_length * current_load_size * per_qps * coefficient)).intValue());
+
+            ContainerCloudlet containerCloudlet = new ContainerCloudlet(id++, cloudletLength, first.getNumberOfPes()
+                    , first.getCloudletFileSize(), first.getCloudletOutputSize(), first.getUtilizationModelCpu()
+                    , first.getUtilizationModelRam(), first.getUtilizationModelBw());
+            containerCloudlet.setUserId(first.getUserId());
+            containerCloudlet.setVmId(first.getVmId());
+            containerCloudlet.setCpurequest(1);
+            containerCloudlet.setBwrequest(first.getBwrequest());
+            containerCloudlet.setMemoryrequest(1);
+            containerCloudlet.setQps(6.5);
+            containerCloudlet.setState(1);
+            containerCloudlet.setOperation(Float.valueOf(current_load_size * per_qps * coefficient).intValue());
+            containerCloudlet.setStarttime(time);
+
+            loads.add(containerCloudlet);
+        }
+
+//        System.err.println(String.format("connection: %d\tloads: %d", current_load.size(), loads.size()));
+        return loads;
     }
 
     private void updateCoefficient(int time) {
@@ -199,7 +219,7 @@ public class Redis extends Host {
     }
 
     private int getResource(int connection) {
-        return Math.max(1, Double.valueOf((double) cpuresources / model.getMax_connection() * connection).intValue());
+        return Math.max(1, Double.valueOf((double) 100 / model.getMax_connection() * connection).intValue());
     }
 
 
