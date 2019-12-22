@@ -63,14 +63,15 @@ public class SiemensUtils {
                                              int time,
                                              int containernumber,
                                              int cpuresource,
-                                             int bwresource){
+                                             int memoryresource,
+                                             double responsetimethreshold,
+                                             double responsetimeratio){
         int containercpuusage,containerbwusage;
-        int vmcpuusage,vmbwusage;
-        int hostcpuusage=0,hostbwusage=0;
+        int vmcpuusage,vmmemoryusage;
+        int hostcpuusage=0,hostmemoryusage=0;
         double responsetime=0;
         int finishtime=0;
-        double threshold = 1.05;
-        double hostcpu,hostbw;
+        double hostcpu,hostmemory;
         for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
             siemensVmresources.setCpuusage(0);
             siemensVmresources.setBwusage(0);
@@ -100,31 +101,31 @@ public class SiemensUtils {
 
             }
             vmcpuusage = siemensVmresources.getCpuusage();
-            vmbwusage = siemensVmresources.getBwusage();
+            vmmemoryusage = siemensVmresources.getBwusage();
 
 //                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Cpu usage is " + vmcpuusage);
 //                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Bw usage is " + vmbwusage);
             hostcpuusage = hostcpuusage + vmcpuusage;
-            hostbwusage =hostbwusage +vmbwusage;
+            hostmemoryusage =hostmemoryusage +vmmemoryusage;
 
         }
 //        hostcpuusage= hostcpuusage/containernumber;
 //        hostbwusage=hostbwusage/containernumber;
         hostcpu=(double)hostcpuusage*100.0/(double)containernumber/(double)cpuresource;
-        hostbw = (double)hostbwusage*100.0/(double)containernumber/(double)bwresource;
+        hostmemory = (double)hostmemoryusage*100.0/(double)containernumber/(double)memoryresource;
 //        System.out.println("At time:" + time + "ms " + " Cpu usage is " + hostcpu);
 //        System.out.println("At time:" + time + "ms " + " Bw usage is " + hostbw);
 
-        if(hostbw>=90||hostcpu>=90){
+        if(hostmemory>=responsetimethreshold||hostcpu>=responsetimethreshold){
             for(BindContainer bindContainer:processbindContainerList){
 
                 responsetime = bindContainer.getEveryresponsetime();
-                bindContainer.setEveryresponsetime(responsetime*threshold);
+                bindContainer.setEveryresponsetime(responsetime*responsetimeratio*((hostcpu-responsetimethreshold)*(hostcpu-responsetimethreshold)/10000+1));
 
             }
         }
         siemensList.getHostcpuusagelist().add(hostcpu);
-        siemensList.getHostmemoryusagelist().add(hostbw);
+        siemensList.getHostmemoryusagelist().add(hostmemory);
         return siemensList;
     }
 

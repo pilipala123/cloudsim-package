@@ -6,6 +6,51 @@ public class NfrInput {
     private int Nfrmaxqps;
     private int Nfrnetworkbandwidth;
     private double cpucore;
+    private double Nfrqpsperload;
+    private double Nfrqpsthreshold;
+    private double Nfrqpsratio;
+    private double Nfrresponsetimethreshold;
+    private double Nfrresponsetimeratio;
+
+    public double getNfrqpsthreshold() {
+        return Nfrqpsthreshold;
+    }
+
+    public void setNfrqpsthreshold(double nfrqpsthreshold) {
+        Nfrqpsthreshold = nfrqpsthreshold;
+    }
+
+    public double getNfrqpsratio() {
+        return Nfrqpsratio;
+    }
+
+    public void setNfrqpsratio(double nfrqpsratio) {
+        Nfrqpsratio = nfrqpsratio;
+    }
+
+    public double getNfrresponsetimethreshold() {
+        return Nfrresponsetimethreshold;
+    }
+
+    public void setNfrresponsetimethreshold(double nfrresponsetimethreshold) {
+        Nfrresponsetimethreshold = nfrresponsetimethreshold;
+    }
+
+    public double getNfrresponsetimeratio() {
+        return Nfrresponsetimeratio;
+    }
+
+    public void setNfrresponsetimeratio(double nfrresponsetimeratio) {
+        Nfrresponsetimeratio = nfrresponsetimeratio;
+    }
+
+    public double getNfrqpsperload() {
+        return Nfrqpsperload;
+    }
+
+    public void setNfrqpsperload(double nfrqpsperload) {
+        Nfrqpsperload = nfrqpsperload;
+    }
 
     public double getCpucore() {
         return cpucore;

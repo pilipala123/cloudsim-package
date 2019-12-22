@@ -20,9 +20,8 @@ public class CalculateSumResponsetime {
             finishnumber = 0;
 
             for(SiemensList siemensList:siemensLists){
-
-                sumresponse_time = sumresponse_time + siemensList.getAverageresponsetimelist().get(i) * siemensList.getFinishcloudletnumber().get(i);
-                finishnumber = finishnumber + siemensList.getFinishcloudletnumber().get(i);
+                sumresponse_time = sumresponse_time + siemensList.getAvgperresponsetimelist().get(i) * siemensList.getPresentfinishcloudletnumberlist().get(i);
+                finishnumber = finishnumber + siemensList.getPresentfinishcloudletnumberlist().get(i);
 
             }
             finishnumber = finishnumber/siemensLists.size();

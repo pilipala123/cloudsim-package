@@ -28,10 +28,36 @@ public class SiemensList {
     private int finishloadnumber;
     private List<Integer> finishcloudletnumber;
     private String name;
-
+    private List<Double> avgperresponsetimelist;
     private CloudletMinParament cloudletMinParament;
     private List<SiemensVmresources> siemensVmresourcesList;
     private List<SiemensContainerresource> siemensContainerresourceList;
+    private List<Integer> presentfinishcloudletnumberlist;
+    private int maxloadnumber;
+
+    public int getMaxloadnumber() {
+        return maxloadnumber;
+    }
+
+    public void setMaxloadnumber(int maxloadnumber) {
+        this.maxloadnumber = maxloadnumber;
+    }
+
+    public List<Integer> getPresentfinishcloudletnumberlist() {
+        return presentfinishcloudletnumberlist;
+    }
+
+    public void setPresentfinishcloudletnumberlist(List<Integer> presentfinishcloudletnumberlist) {
+        this.presentfinishcloudletnumberlist = presentfinishcloudletnumberlist;
+    }
+
+    public List<Double> getAvgperresponsetimelist() {
+        return avgperresponsetimelist;
+    }
+
+    public void setAvgperresponsetimelist(List<Double> avgperresponsetimelist) {
+        this.avgperresponsetimelist = avgperresponsetimelist;
+    }
 
     public CloudletMinParament getCloudletMinParament() {
         return cloudletMinParament;
@@ -241,9 +267,11 @@ public class SiemensList {
         setDeferedbindContainerslist(new ArrayList<>());
         setProcessbindContainerslist(new ArrayList<>());
         setFinishloadnumber(0);
+        setAvgperresponsetimelist(new ArrayList<>());
         setFinishcloudletnumber(new ArrayList<>());
         setStartcloudletnumberList(new ArrayList<>());
         setCloudletMinParament(new CloudletMinParament());
+        setPresentfinishcloudletnumberlist(new ArrayList<>());
         cloudletMinParament.setcloudletMinParament(cloudletList,containernumber,loadnumber);
         setSiemensVmresourcesList(createsiemnesVmresources(vmnumber));
         ramp_down = ramp_down+cloudletMinParament.getMaxtimelength();

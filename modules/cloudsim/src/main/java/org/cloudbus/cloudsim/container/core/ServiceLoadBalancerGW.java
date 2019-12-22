@@ -28,6 +28,43 @@ public class ServiceLoadBalancerGW extends Host {
 
     private int mipsability;
 
+    private double qpsthreshold;
+    private double qpsratio;
+    private double responsetimethreshold;
+    private double responsetimeratio;
+
+    public double getQpsthreshold() {
+        return qpsthreshold;
+    }
+
+    public void setQpsthreshold(double qpsthreshold) {
+        this.qpsthreshold = qpsthreshold;
+    }
+
+    public double getQpsratio() {
+        return qpsratio;
+    }
+
+    public void setQpsratio(double qpsratio) {
+        this.qpsratio = qpsratio;
+    }
+
+    public double getResponsetimethreshold() {
+        return responsetimethreshold;
+    }
+
+    public void setResponsetimethreshold(double responsetimethreshold) {
+        this.responsetimethreshold = responsetimethreshold;
+    }
+
+    public double getResponsetimeratio() {
+        return responsetimeratio;
+    }
+
+    public void setResponsetimeratio(double responsetimeratio) {
+        this.responsetimeratio = responsetimeratio;
+    }
+
     public int getMipsability() {
         return mipsability;
     }
@@ -90,7 +127,13 @@ public class ServiceLoadBalancerGW extends Host {
     public ServiceLoadBalancerGW(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                                  AdjustParament adjustParament,EcsInput ecsInput,SlbInput slbInput){
         super(id);
-        setQps(8.8);
+        double qps = slbInput.getSlbQpsperload();
+        this.qpsthreshold = slbInput.getSlbqpsthreshold();
+        this.qpsratio = slbInput.getSlbqpsratio();
+        this.responsetimethreshold = slbInput.getSlbresponsetimethreshold();
+        this.responsetimeratio = slbInput.getSlbresponsetimeratio();
+        System.out.println(qps+" "+qpsthreshold+" "+qpsratio+" "+responsetimeratio+" "+responsetimethreshold);
+        setQps(qps);
         int containernumber = slbInput.getSlbcontainernumber();
         int vmnumber =slbInput.getSlbECSnumber();
         int maxqps = slbInput.getSlbmaxqps();
@@ -98,10 +141,10 @@ public class ServiceLoadBalancerGW extends Host {
         int ecscore = ecsInput.getEcsCPUQuota();
         int ecspermips = ecsInput.getEcsMIPSpercore();
         double cpucore = slbInput.getSlbcpucore();
-        double cpunumber = 125;
+        double cpunumber = adjustParament.getSlbcpuparament();
         System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
 
-        int cpuresources= (int)(ecscore*cpunumber);
+        int cpuresources= (int)((double)ecscore*cpunumber*(double)vmnumber/(double)containernumber);
         int memoryresources = 500;
         int mipsablility  =100;
         setMipsability(mipsablility);
@@ -144,7 +187,8 @@ public class ServiceLoadBalancerGW extends Host {
             int responsetimeparament = adjustParament.getSlbresponsetimeparament();
             this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
                     "SLB",loadGeneratorInput,containernumber,vmnumber,
-                    mips,responsetimeparament,time,this.slbsiemensList,this.qps);
+                    mips,responsetimeparament,time,this.slbsiemensList,this.qps,this.qpsratio,this.qpsthreshold,
+                    this.responsetimethreshold,this.responsetimeratio);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
 
         } catch (FileNotFoundException e) {

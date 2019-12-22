@@ -17,7 +17,9 @@ public class Process {
                                               String name, LoadGeneratorInput loadGeneratorInput,
                                               int containernumber,int vmnumber,double mips,
                                               int responsetimeparament,int time,
-                                              SiemensList siemensList,double qps) throws FileNotFoundException {
+                                              SiemensList siemensList,double qps,
+                                               double qpsratio,double qpsthreshold,
+                                               double responsetimethreshold,double responsetimeratio) throws FileNotFoundException {
 
         int finishcloudletnumber,presentstarttimecloudletnumber=0;
 
@@ -25,16 +27,11 @@ public class Process {
 //        cloudletMinParament.setcloudletMinParament(cloudletList,containernumber);
         List<BindContainer> bindCloudletlist =createbindCloudlet(cloudletList,mips);
         siemensList.setName(name);
-        siemensList = SchedulePolicy.schedulepolicy(bindCloudletlist,cloudletMinParament,
-                containernumber,cpuresources,memoryresources,siemensList,responsetimeparament,time,qps);
+        siemensList.setMaxloadnumber(cloudletList.size());
+        siemensList = SchedulePolicy.schedulepolicy(bindCloudletlist,
+                containernumber,cpuresources,memoryresources,siemensList,responsetimeparament,time,
+                qps,qpsthreshold,qpsratio,responsetimethreshold,responsetimeratio);
 
-
-//        siemensList = calculateregressionusage(siemensList,loadGeneratorInput,presentstarttimecloudletnumber,0.026174,-0.07892);
-//        time = siemensList.getFinishtime();
-
-//        System.out.println("finish cloudlet numbers is "+finishcloudletnumber);
-//        System.out.println("The finish time of Siemens is "+time+"ms");
-//        System.out.println("The Response Time of GWslb is "+ response_time+"ms");
         return siemensList;
     }
 }

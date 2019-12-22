@@ -29,6 +29,10 @@ public class GW_K8S extends Host {
     private int memoryresources;
 
     private int containernumber;
+    private double qpsthreshold;
+    private double qpsratio;
+    private double responsetimethreshold;
+    private double responsetimeratio;
 
     private int vmnumber;
     private int mipsability;
@@ -88,7 +92,13 @@ public class GW_K8S extends Host {
     public GW_K8S(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                   AdjustParament adjustParament, EcsInput ecsInput,K8sInput k8sInput) {
         super(id);
-        setQps(8.8);
+        double qps = k8sInput.getK8sqpsperload();
+        this.qpsthreshold = k8sInput.getK8sqpsthreshold();
+        this.qpsratio = k8sInput.getK8sqpsratio();
+        this.responsetimethreshold = k8sInput.getK8sresponsetimethreshold();
+        this.responsetimeratio = k8sInput.getK8sresponsetimeratio();
+        System.out.println(qps+" "+qpsthreshold+" "+qpsratio+" "+responsetimeratio+" "+responsetimethreshold);
+        setQps(qps);
         int containernumber = k8sInput.getK8scontainernumber();
         int vmnumber =k8sInput.getECSNumbers();
         double cpucore = k8sInput.getK8scpucore();
@@ -96,9 +106,9 @@ public class GW_K8S extends Host {
         int networkbandwidth = k8sInput.getK8snetworkbandwidth();
         int ecscore = ecsInput.getEcsCPUQuota();
         int ecspermips = ecsInput.getEcsMIPSpercore();
-        double cpunumber = 125.5;
+        double cpunumber = adjustParament.getK8scpuparament();
         System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
-        int cpuresources= (int)(ecscore*cpunumber);
+        int cpuresources= (int)(ecscore*cpunumber*(double)vmnumber/(double)containernumber);
         int memoryresources = 500;
         int mipsability = 100;
         setMipsability(mipsability);
@@ -156,7 +166,8 @@ public class GW_K8S extends Host {
             int responsetimeparament = adjustParament.getK8sresponsetimeparament();
             this.k8ssiemensList = processRequests(cloudletList,cpuresources,memoryresources,
                     "K8s",loadGeneratorInput,containernumber,vmnumber,mips,
-                    responsetimeparament,time,this.k8ssiemensList,this.qps);
+                    responsetimeparament,time,this.k8ssiemensList,this.qps,this.qpsratio,this.qpsthreshold,
+                    this.responsetimethreshold,this.responsetimeratio);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

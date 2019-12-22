@@ -142,7 +142,7 @@ public class Redis extends Host {
         List<ContainerCloudlet> current_operation = loadOperation(cloudletList, time);
         try {
             siemensList = processRequests(current_operation, cpuresources, memoryresources, "redis"
-                    , loadGeneratorInput, containernumber, vmnumber, 1, 1, time, siemensList, qps);
+                    , loadGeneratorInput, containernumber, vmnumber, 1, 1, time, siemensList, qps,0.8,1.05,65,1.18);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

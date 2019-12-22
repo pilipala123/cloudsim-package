@@ -7,6 +7,8 @@ import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.Properties;
 
 public class LoadProperties {
@@ -154,6 +156,11 @@ public class LoadProperties {
         slbInput.setSlbnetworkbandwidth(Integer.parseInt(properties.getProperty("Slbnetworkbandwidth")));
         slbInput.setSlbcontainernumber(Integer.parseInt(properties.getProperty("Slbcontainernumber")));
         slbInput.setSlbcpucore(Double.parseDouble(properties.getProperty("Slbcpucore")));
+        slbInput.setSlbQpsperload(Double.parseDouble(properties.getProperty("Slbqpsperload")));
+        slbInput.setSlbqpsratio(Double.parseDouble(properties.getProperty("Slbqpsratio")));
+        slbInput.setSlbqpsthreshold(Double.parseDouble(properties.getProperty("Slbqpsthreshold")));
+        slbInput.setSlbresponsetimeratio(Double.parseDouble(properties.getProperty("Slbresponsetimeratio")));
+        slbInput.setSlbresponsetimethreshold(Double.parseDouble(properties.getProperty("Slbresponsetimethreshold")));
         return slbInput;
     }
 
@@ -208,6 +215,11 @@ public class LoadProperties {
         k8sInput.setK8snetworkbandwidth(Integer.parseInt(properties.getProperty("K8snetworkbandwidth")));
         k8sInput.setK8scontainernumber(Integer.parseInt(properties.getProperty("K8scontainernumber")));
         k8sInput.setK8scpucore(Double.parseDouble(properties.getProperty("K8scpucore")));
+        k8sInput.setK8sqpsperload(Double.parseDouble(properties.getProperty("K8sqpsperload")));
+        k8sInput.setK8sqpsratio(Double.parseDouble(properties.getProperty("K8sqpsratio")));
+        k8sInput.setK8sqpsthreshold(Double.parseDouble(properties.getProperty("K8sqpsthreshold")));
+        k8sInput.setK8sresponsetimeratio(Double.parseDouble(properties.getProperty("K8sresponsetimeratio")));
+        k8sInput.setK8sresponsetimethreshold(Double.parseDouble(properties.getProperty("K8sresponsetimethreshold")));
         return k8sInput;
     }
 
@@ -218,6 +230,11 @@ public class LoadProperties {
         nfrInput.setNfrnetworkbandwidth(Integer.parseInt(properties.getProperty("Nfrnetworkbandwidth")));
         nfrInput.setNfrmaxqps(Integer.parseInt(properties.getProperty("Nfrmaxqps")));
         nfrInput.setCpucore(Double.parseDouble(properties.getProperty("Nfrcpucore")));
+        nfrInput.setNfrqpsratio(Double.parseDouble(properties.getProperty("Nfrqpsratio")));
+        nfrInput.setNfrqpsperload(Double.parseDouble(properties.getProperty("Nfrqpsperload")));
+        nfrInput.setNfrqpsthreshold(Double.parseDouble(properties.getProperty("Nfrqpsthreshold")));
+        nfrInput.setNfrresponsetimeratio(Double.parseDouble(properties.getProperty("Nfrresponsetimeratio")));
+        nfrInput.setNfrresponsetimethreshold(Double.parseDouble(properties.getProperty("Nfrresponsetimethreshold")));
         return nfrInput;
     }
 

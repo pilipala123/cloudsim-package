@@ -30,6 +30,11 @@ public class ServiceLoadBalancerNFR extends Host {
 
     private int containernumber;
 
+    private double qpsthreshold;
+    private double qpsratio;
+    private double responsetimethreshold;
+    private double responsetimeratio;
+
     private int vmnumber;
     private int mipsability;
 
@@ -89,7 +94,13 @@ public class ServiceLoadBalancerNFR extends Host {
     public ServiceLoadBalancerNFR(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                                   AdjustParament adjustParament, EcsInput ecsInput, NfrInput nfrInput ) {
         super(id);
-        setQps(8.8);
+        double qps = nfrInput.getNfrqpsperload();
+        this.qpsthreshold = nfrInput.getNfrqpsthreshold();
+        this.qpsratio = nfrInput.getNfrqpsratio();
+        this.responsetimethreshold = nfrInput.getNfrresponsetimethreshold();
+        this.responsetimeratio = nfrInput.getNfrresponsetimeratio();
+        System.out.println(qps+" "+qpsthreshold+" "+qpsratio+" "+responsetimeratio+" "+responsetimethreshold);
+        setQps(qps);
         int containernumber = nfrInput.getNfrcontainernumber();
         int vmnumber =nfrInput.getNfrECSnumber();
         int maxqps = nfrInput.getNfrmaxqps();
@@ -98,8 +109,8 @@ public class ServiceLoadBalancerNFR extends Host {
         int ecscore = ecsInput.getEcsCPUQuota();
         double ecsmips = ecsInput.getEcsMIPSpercore();
         System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
-        double cpunumber=125.4;
-        int cpuresources= (int)cpunumber*ecscore;
+        double cpunumber=adjustParament.getNfrcpuparament();
+        int cpuresources= (int)(cpunumber*ecscore*(double)vmnumber/(double)containernumber);
         int memoryresources = 500;
         int mipsability = 100;
         setMipsability(mipsability);
@@ -149,7 +160,8 @@ public class ServiceLoadBalancerNFR extends Host {
             int responsetimeparament = adjustParament.getNfrresponsetimeparament();
             this.nfrsiemensList = processRequests(cloudletList,cpuresources,
                     memoryresources,"NFR",loadGeneratorInput,containernumber,
-                    vmnumber,mips,responsetimeparament,time,this.nfrsiemensList,this.qps);
+                    vmnumber,mips,responsetimeparament,time,this.nfrsiemensList,this.qps,this.qpsratio,this.qpsthreshold,
+                    this.responsetimethreshold,this.responsetimeratio);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.nfrsiemensList);
 
         } catch (FileNotFoundException e) {

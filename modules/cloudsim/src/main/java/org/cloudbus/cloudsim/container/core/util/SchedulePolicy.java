@@ -11,24 +11,27 @@ public class SchedulePolicy {
 
 
     public static SiemensList schedulepolicy(List<BindContainer> bindCloudletlist,
-                                             CloudletMinParament cloudletMinParament,
                                              int containernumber,
                                              int cpuresources,
                                              int memoryresources,
                                              SiemensList siemensList,
                                              int responsetimeparment,
-                                             int time,double qps) {
+                                             int time,double qps,
+                                             double qpsthreshold,
+                                             double qpsratio,
+                                             double responsetimethreshold,
+                                             double responsetimeratio) {
         int startcloudletnumber=0;
         int runningcloudletnumber =0;
         int presentstarttimecloudletnumber, lasttimestartcloudletnumber = 0;
         int roundrobinorder = 0,roundrobinnumber;
         int flag = 0;
         double responsetime=0,sumresponsetime = 0;
-        double qpsthreshold = 0.9;
         double sumqps = 0;
-        double qpsmaxthreshold = 1.1;
         int presentfinishcloudletnumber = 0;
         int laststartcloudletnumber =0,overloadcontainernumber = 0;
+        int qpstime=0;
+        double qpsnumber = 0;
         int finishloadnumber = siemensList.getFinishloadnumber();
         List<SiemensVmresources>  siemensVmresourcesList = siemensList.getSiemensVmresourcesList();
         List<SiemensContainerresource> siemensContainerresourceList = siemensList.getSiemensContainerresourceList();
@@ -38,6 +41,9 @@ public class SchedulePolicy {
         int size1 = lastdeferbindcloudCloudletlist.size();
         int size2 = lastprocessbindcloudCloudletlist.size();
         int addnumber = 0;
+        double persumresponsetime =0;
+        startcloudletnumber=0;
+        int maxloadnumber = siemensList.getMaxloadnumber();
         while (size1+size2+addnumber<bindCloudletlist.size()) {
 
             lastdeferbindcloudCloudletlist.add(bindCloudletlist.get(addnumber));
@@ -62,15 +68,19 @@ public class SchedulePolicy {
             siemensList.getStartcloudletnumberList().add(startcloudletnumber);
         }
 
-
+        persumresponsetime=0;
         for(BindContainer processbindContainer: lastprocessbindcloudCloudletlist){
             runningcloudletnumber++;
             if(processbindContainer.getFinishtime() == time){
                 sumresponsetime = sumresponsetime+responsetimeparment*processbindContainer.getEveryresponsetime();
                 presentfinishcloudletnumber++;
+                persumresponsetime = persumresponsetime+responsetimeparment*processbindContainer.getEveryresponsetime();
                 presentprocessbindcloudletlist.remove(processbindContainer);
             }
         }
+        siemensList.getPresentfinishcloudletnumberlist().add(presentfinishcloudletnumber);
+
+        siemensList.getAvgperresponsetimelist().add(persumresponsetime/presentfinishcloudletnumber);
         if(time == 0){
             siemensList.getAverageresponsetimelist().add(0.0);
             siemensList.getStartcloudletnumberList().add(0);
@@ -147,24 +157,30 @@ public class SchedulePolicy {
 
 
         //计算cpu和带宽利用率
-        siemensList = calculateusage(siemensVmresourcesList, lastprocessbindcloudCloudletlist,siemensContainerresourceList, siemensList, time, containernumber, cpuresources, memoryresources);
+        siemensList = calculateusage(siemensVmresourcesList, lastprocessbindcloudCloudletlist,
+                siemensContainerresourceList, siemensList, time, containernumber, cpuresources,
+                memoryresources,responsetimethreshold,responsetimeratio);
         //计算当前时间的平均响应时间
 //        siemensList = calculateaverageresponsetime(siemensList, bindCloudletlist, time,responsetimeparment);
 
-        if(time>10) {
-            if (siemensList.getAverageresponsetimelist().get(time) / siemensList.getStartcloudletnumberList().get(time)
-                    > qpsmaxthreshold * siemensList.getAverageresponsetimelist().get(time - 1) / siemensList.getStartcloudletnumberList().get(time - 1)) {
-                siemensList.setState(1);
-            }
-        }
-        if (siemensList.getState() ==0) {
-            sumqps = qps * (double) runningcloudletnumber;
-            siemensList.getQpslist().add(sumqps);
-        }
-        else{
-            sumqps = qps * (double) runningcloudletnumber* qpsthreshold;
-            siemensList.getQpslist().add(sumqps);
-        }
+//        if(siemensList.getHostcpuusagelist().get(time)>qpsthreshold) {
+//
+//            siemensList.setState(1);
+//
+//
+//        }
+//        if(siemensList.getLoadnumber().get(time)!=maxloadnumber&&runningcloudletnumber>siemensList.getLoadnumber().get(time)){
+//            siemensList.setState(0);
+//        }
+//        if (siemensList.getState() ==0) {
+        sumqps = qps * (double) runningcloudletnumber*qpsratio/(2+(Math.pow((siemensList.getHostcpuusagelist().get(time)/100),3))*0.6);
+        siemensList.getQpslist().add(sumqps);
+        qpsnumber=sumqps;
+//        }
+//        else if(siemensList.getState() ==1){
+//            sumqps = qps * (double) runningcloudletnumber* qpsratio+(1-qpsratio)*qpsnumber;
+//            siemensList.getQpslist().add(sumqps);
+//        }
 
 
 

@@ -14,8 +14,54 @@ public class SlbInput {
     private int Slbcontainernumber;
     private int Slbmaxqps;
     private int Slbnetworkbandwidth;
-
+    private double SlbQpsperload;
     private double Slbcpucore;
+    private double Slbqpsthreshold;
+    private double Slbqpsratio;
+    private double Slbresponsetimethreshold;
+    private double Slbresponsetimeratio;
+
+    public double getSlbqpsthreshold() {
+        return Slbqpsthreshold;
+    }
+
+    public void setSlbqpsthreshold(double slbqpsthreshold) {
+        Slbqpsthreshold = slbqpsthreshold;
+    }
+
+    public double getSlbqpsratio() {
+        return Slbqpsratio;
+    }
+
+    public void setSlbqpsratio(double slbqpsratio) {
+        Slbqpsratio = slbqpsratio;
+    }
+
+    public double getSlbresponsetimethreshold() {
+        return Slbresponsetimethreshold;
+    }
+
+    public void setSlbresponsetimethreshold(double slbresponsetimethreshold) {
+        Slbresponsetimethreshold = slbresponsetimethreshold;
+    }
+
+    public double getSlbresponsetimeratio() {
+        return Slbresponsetimeratio;
+    }
+
+    public void setSlbresponsetimeratio(double slbresponsetimeratio) {
+        Slbresponsetimeratio = slbresponsetimeratio;
+    }
+
+    public double getSlbQpsperload() {
+        return SlbQpsperload;
+    }
+
+    public void setSlbQpsperload(double slbQpsperload) {
+        SlbQpsperload = slbQpsperload;
+    }
+
+
 
     public double getSlbcpucore() {
         return Slbcpucore;

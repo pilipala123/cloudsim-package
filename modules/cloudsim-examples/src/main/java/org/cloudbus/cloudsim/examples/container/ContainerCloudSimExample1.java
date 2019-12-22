@@ -320,13 +320,13 @@ public class ContainerCloudSimExample1 {
                     }
                 }
                 slb_gw.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
-                redis.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
+//                redis.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 gw_k8S.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 nfr.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 mockService.processEvent(loadnumberpertime,25);
             }
             slbsiemensList = slb_gw.getSlbsiemensList();
-            redisSiementsList = redis.getSiemensList();
+//            redisSiementsList = redis.getSiemensList();
             k8ssiemensList = gw_k8S.getK8ssiemensList();
             nfrsiemensList = nfr.getNfrsiemensList();
             mockservicesiemenslist = mockService.getMockservicesiemensList();
@@ -338,13 +338,14 @@ public class ContainerCloudSimExample1 {
             Calculatebw.calculateregressionbw("nfr","gwtma",flag,regressionParament,k8ssiemensList,ramp_down);
             //将获取到的结果类做成列表
             siemensListList.add(slbsiemensList);
-            siemensListList.add(redisSiementsList);
+//            siemensListList.add(redisSiementsList);
             siemensListList.add(k8ssiemensList);
             siemensListList.add(nfrsiemensList);
 
             for (SiemensList siemensList:siemensListList){
 
                 //绘制图形
+                Plotpictures.plotpicture(ramp_down,siemensList.getAvgperresponsetimelist(),siemensList.getName()+"每个时刻的平均响应时间","rt");
                 Plotpictures.plotpicture(ramp_down,siemensList.getQpslist(),siemensList.getName()+" qps随时间的关系","qps(/sec)");
                 Plotpictures.plotpicture(ramp_down,siemensList.getLoadnumber(),siemensList.getName()+" 负载产生数量随时间的关系","load(vu)");
                 Plotpictures.plotpicture(ramp_down,siemensList.getHostcpuusagelist(),siemensList.getName()+" CPU利用率随时间的关系","CPU(%)");
