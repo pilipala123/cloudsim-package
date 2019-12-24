@@ -8,7 +8,7 @@ public class AdjustParament {
     private int slbmemoryparament;
     private int slbmipsparament;
     private int slbresponsetimeparament;
-    private int k8scpuparament;
+    private double k8scpuparament;
     private int k8smemoryparamnet;
     private int k8smipsparament;
     private int k8sresponsetimeparament;
@@ -18,14 +18,41 @@ public class AdjustParament {
     private int nfrresponsetimeparament;
     private int cpurandomnumber;
     private int lengthrandomnumber;
-    private int memoryrandomnumber;
+    private int bwrandomnumber;
+    private double packetsizerandom;
+    private double basepacketsize;
+    private double k8sbwparament;
 
-    public int getMemoryrandomnumber() {
-        return memoryrandomnumber;
+    public double getK8sbwparament() {
+        return k8sbwparament;
     }
 
-    public void setMemoryrandomnumber(int memoryrandomnumber) {
-        this.memoryrandomnumber = memoryrandomnumber;
+    public void setK8sbwparamnet(double k8sbwparament) {
+        this.k8sbwparament = k8sbwparament;
+    }
+
+    public double getBasepacketsize() {
+        return basepacketsize;
+    }
+
+    public void setBasepacketsize(double basepacketsize) {
+        this.basepacketsize = basepacketsize;
+    }
+
+    public double getPacketsizerandom() {
+        return packetsizerandom;
+    }
+
+    public void setPacketsizerandom(double packetsizerandom) {
+        this.packetsizerandom = packetsizerandom;
+    }
+
+    public int getBwrandomnumber() {
+        return bwrandomnumber;
+    }
+
+    public void setBwrandomnumber(int bwrandomnumber) {
+        this.bwrandomnumber = bwrandomnumber;
     }
 
     public int getLengthrandomnumber() {
@@ -100,11 +127,11 @@ public class AdjustParament {
         this.slbresponsetimeparament = slbresponsetimeparament;
     }
 
-    public int getK8scpuparament() {
+    public double getK8scpuparament() {
         return k8scpuparament;
     }
 
-    public void setK8scpuparament(int k8scpuparament) {
+    public void setK8scpuparament(double k8scpuparament) {
         this.k8scpuparament = k8scpuparament;
     }
 

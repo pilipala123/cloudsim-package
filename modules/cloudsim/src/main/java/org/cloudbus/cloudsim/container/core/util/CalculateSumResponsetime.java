@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CalculateSumResponsetime {
 
-    public static void calculateresultresponsetime(List<SiemensList> siemensLists,SiemensList mocksiemenslist,int ramp_down){
+    public static void calculateresultresponsetime(List<SiemensList> siemensLists,List<SiemensList>  siemensListList,int ramp_down){
         List<Double> responsetime_list = new ArrayList<>();
         double response_time = 0,sumresponse_time = 0;
         int finishnumber= 0;
@@ -29,7 +29,9 @@ public class CalculateSumResponsetime {
                 response_time =0;
             }
             else {
-                response_time = sumresponse_time / finishnumber+mocksiemenslist.getAverageresponsetimelist().get(i);
+                for(SiemensList siemensList2:siemensListList) {
+                    response_time = sumresponse_time / finishnumber + siemensList2.getAverageresponsetimelist().get(i);
+                }
             }
             responsetime_list.add(response_time);
             i++;

@@ -38,6 +38,15 @@ public class BindContainer extends Container {
     private int memoryusage;
     private int Cloudletid;
     private int bwusage;
+    private double packetsize;
+
+    public double getPacketsize() {
+        return packetsize;
+    }
+
+    public void setPacketsize(double packetsize) {
+        this.packetsize = packetsize;
+    }
 
     public int getBwusage() {
         return bwusage;
@@ -93,14 +102,15 @@ public class BindContainer extends Container {
     public BindContainer(int id, int userId, double mips, int numberOfPes, int ram, long bw, List<ContainerCloudlet> cloudletList) {
         super(id, userId, mips, numberOfPes, ram, bw, cloudletList);
     }
-    public BindContainer(int cpuusage, int memoryusage, int cloudletid, int containerid, int nowstate,int starttime, int handletime){
+    public BindContainer(int cpuusage, int bwusage, int cloudletid, int containerid, int nowstate,int starttime, int handletime,double packetsize){
         setCpuusage(cpuusage);
-        setMemoryusage(memoryusage);
+        setBwusage(bwusage);
         setCloudletid(cloudletid);
         setId(containerid);
         setState(nowstate);
         setStarttime(starttime);
         setHandletime(handletime);
+        setPacketsize(packetsize);
     }
 
     private int operations = 1;

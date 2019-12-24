@@ -13,25 +13,48 @@ import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.*;
 import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.calculateregressionusage;
 
 public class Process {
-    public static SiemensList  processRequests(List<ContainerCloudlet> cloudletList, int cpuresources, int memoryresources,
-                                              String name, LoadGeneratorInput loadGeneratorInput,
-                                              int containernumber,int vmnumber,double mips,
-                                              int responsetimeparament,int time,
-                                              SiemensList siemensList,double qps,
-                                               double qpsratio,double qpsthreshold,
-                                               double responsetimethreshold,double responsetimeratio) throws FileNotFoundException {
 
-        int finishcloudletnumber,presentstarttimecloudletnumber=0;
+    /**
+     *
+     * @param cloudletList the input loads
+     * @param cpuresources the container cpuresources
+     * @param bwresources the container bwresources
+     * @param name the part name
+     * @param containernumber the container numbers
+     * @param mips the mips
+     * @param responsetimeparament
+     * @param time
+     * @param siemensList
+     * @param qps
+     * @param qpsratio
+     * @param qpsthreshold
+     * @param responsetimethreshold
+     * @param responsetimeratio
+     * @return
+     * @throws FileNotFoundException
+     */
 
-        CloudletMinParament cloudletMinParament = siemensList.getCloudletMinParament();
-//        cloudletMinParament.setcloudletMinParament(cloudletList,containernumber);
+    public static SiemensList  processRequests(List<ContainerCloudlet> cloudletList,
+                                               int cpuresources,
+                                               int bwresources,
+                                               String name,
+                                               SiemensList siemensList,
+                                               int containernumber,
+                                               int vmnumber,
+                                               double mips,
+                                               int responsetimeparament,
+                                               int time,
+                                               double qps,
+                                               double qpsratio,
+                                               double qpsthreshold,
+                                               double responsetimethreshold,
+                                               double responsetimeratio,
+                                               int bandwidth) throws FileNotFoundException {
         List<BindContainer> bindCloudletlist =createbindCloudlet(cloudletList,mips);
         siemensList.setName(name);
-        siemensList.setMaxloadnumber(cloudletList.size());
         siemensList = SchedulePolicy.schedulepolicy(bindCloudletlist,
-                containernumber,cpuresources,memoryresources,siemensList,responsetimeparament,time,
-                qps,qpsthreshold,qpsratio,responsetimethreshold,responsetimeratio);
-
+                containernumber,vmnumber,cpuresources,bwresources,siemensList,responsetimeparament,time,
+                qps,qpsthreshold,qpsratio,responsetimethreshold,responsetimeratio,bandwidth);
         return siemensList;
     }
 }

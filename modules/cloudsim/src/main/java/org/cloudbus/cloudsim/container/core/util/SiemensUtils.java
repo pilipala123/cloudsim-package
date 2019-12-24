@@ -4,21 +4,19 @@ import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
-import org.yunji.cloudsimrd.load.LoadGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SiemensUtils {
-    public static List<SiemensContainerresource> createVmResource(int containernumber, int vmnumber, int cpuresources, int memoryresources, int maxlength){
+    public static List<SiemensContainerresource> createVmResource(int containernumber, int vmnumber, int cpuresources, int bwresources, int maxlength){
         List<SiemensContainerresource> siemensContainerresourceList =new ArrayList<>();
         int containereveryvm = (int)containernumber/vmnumber;
         for(Integer i=0;i<containernumber;i++){
             SiemensContainerresource siemensContainerresource = new SiemensContainerresource();
             siemensContainerresource.setId(i);
             siemensContainerresource.initCpuarraypool(cpuresources,maxlength);
-            siemensContainerresource.initMemoryarraypool(memoryresources,maxlength);
-            siemensContainerresource.initBwarraypool(memoryresources,maxlength);
+            siemensContainerresource.initBwarraypool(bwresources,maxlength);
             siemensContainerresource.setSiemensVmid((int)(i/containereveryvm));
             siemensContainerresourceList.add(siemensContainerresource);
 
@@ -45,8 +43,8 @@ public class SiemensUtils {
             if(cloudlet.getState()==1) {
                 int cloudletlength =(int) ((double)cloudlet.getCloudletLength()/mips);
                 BindContainer bindContainer = new BindContainer(cloudlet.getCpurequest(),
-                        cloudlet.getMemoryrequest(), cloudlet.getCloudletId(), containerid,
-                        cloudlet.getState(), cloudlet.getStarttime(), cloudletlength);
+                        cloudlet.getBwrequest(), cloudlet.getCloudletId(), containerid,
+                        cloudlet.getState(), cloudlet.getStarttime(), cloudletlength,cloudlet.getPacketsize());
                 bindContainerList.add(bindContainer);
                 cloudlet.setContainerId(bindContainer.getId());
                 bindContainer.setOperations(cloudlet.getOperation());
@@ -62,16 +60,22 @@ public class SiemensUtils {
                                              SiemensList siemensList,
                                              int time,
                                              int containernumber,
+                                             int vmnumber,
                                              int cpuresource,
-                                             int memoryresource,
+                                             int bwresource,
                                              double responsetimethreshold,
-                                             double responsetimeratio){
+                                             double responsetimeratio,
+                                             double packetsize,
+                                             int bandwidth){
         int containercpuusage,containerbwusage;
-        int vmcpuusage,vmmemoryusage;
-        int hostcpuusage=0,hostmemoryusage=0;
+        int vmcpuusage,vmbwusage;
+        int hostcpuusage=0,hostbwusage=0;
         double responsetime=0;
         int finishtime=0;
-        double hostcpu,hostmemory;
+        double hostcpu,hostbw;
+        int containerflag =0;
+        int vmflag=0;
+        double outputhostbwusage = 0;
         for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
             siemensVmresources.setCpuusage(0);
             siemensVmresources.setBwusage(0);
@@ -86,12 +90,14 @@ public class SiemensUtils {
                         containercpuusage++;
                     }
                 }
-                for (int j = 0; j<siemensContainerresource.getMemoryarraypool().length; j++){
-                    if (siemensContainerresource.getMemoryarraypool()[j][time] == 1) {
+                for (int j = 0; j<siemensContainerresource.getBwarraypool().length; j++){
+                    if (siemensContainerresource.getBwarraypool()[j][time] == 1) {
                         containerbwusage++;
                     }
                 }
-
+                if(siemensContainerresource.getId()==containerflag) {
+                    siemensList.getContainercpuusagelist().add(100*containercpuusage / (double) cpuresource);
+                }
                 siemensVmresources.addCpuusage(containercpuusage);
                 siemensVmresources.addBwusage(containerbwusage);
 
@@ -101,22 +107,32 @@ public class SiemensUtils {
 
             }
             vmcpuusage = siemensVmresources.getCpuusage();
-            vmmemoryusage = siemensVmresources.getBwusage();
+            if(siemensVmresources.getId()==vmflag) {
+                siemensList.getVmcpuusagelist().add((double) vmcpuusage*100*vmnumber/containernumber/(double)cpuresource);
+            }
+            vmbwusage = siemensVmresources.getBwusage();
 
 //                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Cpu usage is " + vmcpuusage);
 //                System.out.println("At time:" + time + "ms VM:" + siemensVmresources.getId() + " Bw usage is " + vmbwusage);
             hostcpuusage = hostcpuusage + vmcpuusage;
-            hostmemoryusage =hostmemoryusage +vmmemoryusage;
+            hostbwusage =hostbwusage +vmbwusage;
 
         }
 //        hostcpuusage= hostcpuusage/containernumber;
 //        hostbwusage=hostbwusage/containernumber;
         hostcpu=(double)hostcpuusage*100.0/(double)containernumber/(double)cpuresource;
-        hostmemory = (double)hostmemoryusage*100.0/(double)containernumber/(double)memoryresource;
+        if(time==0){
+            outputhostbwusage = 0;
+        }
+        else {
+            outputhostbwusage = hostbwusage - packetsize * siemensList.getFinishcloudletnumber().get(time-1);
+        }
+        hostbw = (double)hostbwusage*bandwidth/(double)containernumber/(double)bwresource;
+        outputhostbwusage = (double)outputhostbwusage*bandwidth/(double)containernumber/(double)bwresource;
 //        System.out.println("At time:" + time + "ms " + " Cpu usage is " + hostcpu);
 //        System.out.println("At time:" + time + "ms " + " Bw usage is " + hostbw);
 
-        if(hostmemory>=responsetimethreshold||hostcpu>=responsetimethreshold){
+        if(hostcpu>=responsetimethreshold){
             for(BindContainer bindContainer:processbindContainerList){
 
                 responsetime = bindContainer.getEveryresponsetime();
@@ -124,8 +140,9 @@ public class SiemensUtils {
 
             }
         }
+        siemensList.getHostoutputbwusage().add(outputhostbwusage);
         siemensList.getHostcpuusagelist().add(hostcpu);
-        siemensList.getHostmemoryusagelist().add(hostmemory);
+        siemensList.getHostbwusagelist().add(hostbw);
         return siemensList;
     }
 

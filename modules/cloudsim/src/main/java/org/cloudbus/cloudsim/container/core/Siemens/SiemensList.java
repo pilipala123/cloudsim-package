@@ -3,6 +3,7 @@ package org.cloudbus.cloudsim.container.core.Siemens;
 import org.apache.commons.math3.util.Pair;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 
+import javax.swing.event.ListDataEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,10 @@ import static org.cloudbus.cloudsim.container.core.util.SiemensUtils.createsiemn
 public class SiemensList {
     private List<Double> hostcpuusagelist;
     private List<Double> hostmemoryusagelist;
+    private List<Double> containercpuusagelist;
+    private List<Double> vmcpuusagelist;
     private List<Double> averageresponsetimelist;
+    private List<Double> hostoutputbwusage;
     private List<Double> loadnumber;
     private List<Double> hostbwusagelist;
     private List<Double> inputFlow;
@@ -33,14 +37,29 @@ public class SiemensList {
     private List<SiemensVmresources> siemensVmresourcesList;
     private List<SiemensContainerresource> siemensContainerresourceList;
     private List<Integer> presentfinishcloudletnumberlist;
-    private int maxloadnumber;
 
-    public int getMaxloadnumber() {
-        return maxloadnumber;
+    public List<Double> getHostoutputbwusage() {
+        return hostoutputbwusage;
     }
 
-    public void setMaxloadnumber(int maxloadnumber) {
-        this.maxloadnumber = maxloadnumber;
+    public void setHostoutputbwusage(List<Double> hostoutputbwusage) {
+        this.hostoutputbwusage = hostoutputbwusage;
+    }
+
+    public List<Double> getContainercpuusagelist() {
+        return containercpuusagelist;
+    }
+
+    public void setContainercpuusagelist(List<Double> containercpuusagelist) {
+        this.containercpuusagelist = containercpuusagelist;
+    }
+
+    public List<Double> getVmcpuusagelist() {
+        return vmcpuusagelist;
+    }
+
+    public void setVmcpuusagelist(List<Double> vmcpuusagelist) {
+        this.vmcpuusagelist = vmcpuusagelist;
     }
 
     public List<Integer> getPresentfinishcloudletnumberlist() {
@@ -251,7 +270,7 @@ public class SiemensList {
 
     }
     public SiemensList(List<ContainerCloudlet> cloudletList, int containernumber,
-                       int vmnumber,int cpuresources,int memoryresources,int loadnumber,int ramp_down) {
+                       int vmnumber,int cpuresources,int bwresources,int loadnumber,int ramp_down) {
         setAverageresponsetimelist(new ArrayList<>());
         setHostmemoryusagelist(new ArrayList<>());
         setHostcpuusagelist(new ArrayList<>());
@@ -266,15 +285,18 @@ public class SiemensList {
         setLoad2qps(new ArrayList<>());
         setDeferedbindContainerslist(new ArrayList<>());
         setProcessbindContainerslist(new ArrayList<>());
+        setContainercpuusagelist(new ArrayList<>());
+        setVmcpuusagelist(new ArrayList<>());
         setFinishloadnumber(0);
         setAvgperresponsetimelist(new ArrayList<>());
         setFinishcloudletnumber(new ArrayList<>());
         setStartcloudletnumberList(new ArrayList<>());
+        setHostoutputbwusage(new ArrayList<>());
         setCloudletMinParament(new CloudletMinParament());
         setPresentfinishcloudletnumberlist(new ArrayList<>());
         cloudletMinParament.setcloudletMinParament(cloudletList,containernumber,loadnumber);
         setSiemensVmresourcesList(createsiemnesVmresources(vmnumber));
         ramp_down = ramp_down+cloudletMinParament.getMaxtimelength();
-        setSiemensContainerresourceList(createVmResource(containernumber,vmnumber,cpuresources,memoryresources,ramp_down));
+        setSiemensContainerresourceList(createVmResource(containernumber,vmnumber,cpuresources,bwresources,ramp_down));
     }
 }

@@ -15,56 +15,41 @@ import java.util.List;
 import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
 
 public class ServiceLoadBalancerGW extends Host {
-
     private int responseTime;
     private double qps;
     private int cpuresources;
-
     private int memoryresources;
-
     private int containernumber;
-
     private int vmnumber;
-
     private int mipsability;
-
     private double qpsthreshold;
     private double qpsratio;
     private double responsetimethreshold;
     private double responsetimeratio;
-
     public double getQpsthreshold() {
         return qpsthreshold;
     }
-
     public void setQpsthreshold(double qpsthreshold) {
         this.qpsthreshold = qpsthreshold;
     }
-
     public double getQpsratio() {
         return qpsratio;
     }
-
     public void setQpsratio(double qpsratio) {
         this.qpsratio = qpsratio;
     }
-
     public double getResponsetimethreshold() {
         return responsetimethreshold;
     }
-
     public void setResponsetimethreshold(double responsetimethreshold) {
         this.responsetimethreshold = responsetimethreshold;
     }
-
     public double getResponsetimeratio() {
         return responsetimeratio;
     }
-
     public void setResponsetimeratio(double responsetimeratio) {
         this.responsetimeratio = responsetimeratio;
     }
-
     public int getMipsability() {
         return mipsability;
     }
@@ -119,10 +104,14 @@ public class ServiceLoadBalancerGW extends Host {
     }
 
     /**
-     * Creates a new Container-based Redis object.
      *
-     * @param id
-
+     * @param id  Slb id
+     * @param cloudletList the input Loads
+     * @param loadnumber  the max loadnumber which is set in the input paraments
+     * @param ramp_down  the time when loads reach the max loadnumber
+     * @param adjustParament  the input adjustparaments which can be set to get better results
+     * @param ecsInput  the ecs input which is read from ecsInput
+     * @param slbInput  the slb input which is read from ecsInput
      */
     public ServiceLoadBalancerGW(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
                                  AdjustParament adjustParament,EcsInput ecsInput,SlbInput slbInput){
@@ -160,6 +149,7 @@ public class ServiceLoadBalancerGW extends Host {
                 cpuresources,memoryresources,loadnumber,ramp_down));
 
     }
+
     public int getResponseTime(){
         return responseTime;
     }
@@ -172,12 +162,25 @@ public class ServiceLoadBalancerGW extends Host {
 
         return qps;
     }
+    public void processEvent(int loadpernumber,double responsetime){
+        String label = "Slb_gw";
+        double qpsbase = this.qps;
+        getSlbsiemensList().setName(label);
+        getSlbsiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
+        getSlbsiemensList().getAverageresponsetimelist().add(responsetime);
 
+    }
+
+
+    /**
+     *
+     * @param cloudletList the input Loads
+
+     * @param adjustParament the adjustparament which are used to get better results
+     * @param time the real time
+     */
 
     public void process(List<ContainerCloudlet> cloudletList,
-                               int flag,
-                               RegressionParament regressionParament,
-                               LoadGeneratorInput loadGeneratorInput,
                         AdjustParament adjustParament,
                         int time){
         try {
@@ -186,9 +189,9 @@ public class ServiceLoadBalancerGW extends Host {
             double mips = (double)mipsability/(double)mipsparament;
             int responsetimeparament = adjustParament.getSlbresponsetimeparament();
             this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
-                    "SLB",loadGeneratorInput,containernumber,vmnumber,
-                    mips,responsetimeparament,time,this.slbsiemensList,this.qps,this.qpsratio,this.qpsthreshold,
-                    this.responsetimethreshold,this.responsetimeratio);
+                    "SLB",this.slbsiemensList,containernumber,vmnumber,
+                    mips,responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
+                    this.responsetimethreshold,this.responsetimeratio,200);
 //            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
 
         } catch (FileNotFoundException e) {

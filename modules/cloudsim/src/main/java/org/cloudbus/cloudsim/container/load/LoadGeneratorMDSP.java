@@ -61,11 +61,13 @@ public class LoadGeneratorMDSP {
         // number of cpus
         int pesNumber = 1;
         int cloudletcpurequest = adjustParament.getCloudletcpurequest();
-        int cloudletmemoryrequest = adjustParament.getCloudletmemoryrequest();
+        int cloudletbwrequest = adjustParament.getCloudletmemoryrequest();
         int cloudletcpurandom = adjustParament.getCpurandomnumber();
-        int cloudletmemoryrandom = adjustParament.getMemoryrandomnumber();
+        int cloudletbwrandom = adjustParament.getBwrandomnumber();
         int cloudletlength = adjustParament.getCloudletlength();
         int cloudletlengthrandom = adjustParament.getLengthrandomnumber();
+        double packetsizerandom = adjustParament.getPacketsizerandom();
+        double basepacketsize = adjustParament.getBasepacketsize();
         UtilizationModel utilizationModel = new UtilizationModelFull();
         List<ContainerCloudlet> containerCloudlets = new ArrayList<>();
         int clocktime = 1;
@@ -80,12 +82,11 @@ public class LoadGeneratorMDSP {
             cloudlet.setVmId(vmId);
             cloudlet.setCloudletLength(length);
             int cpurequest = (int) (Math.random() * cloudletcpurandom) + cloudletcpurequest;     //单个任务的cpu需求
-            int bwrequest = (int) (Math.random() * 8) + 2;
-            int memoryrequest = (int) (Math.random() * cloudletmemoryrandom) + cloudletmemoryrequest;//单个任务的带宽需求
-            int cloudlethandle = (int) (Math.random() * 10) + 5;
+            int bwrequest = (int) (Math.random() * cloudletbwrandom) + cloudletbwrequest;//单个任务的带宽需求
+            double packetsize =basepacketsize;
             cloudlet.setCpurequest(cpurequest);
             cloudlet.setBwrequest(bwrequest);
-            cloudlet.setMemoryrequest(memoryrequest);
+            cloudlet.setPacketsize(packetsize);
             cloudlet.setQps(6.5);
             cloudlet.setState(0);   //waiting state
             containerCloudlets.add(cloudlet);

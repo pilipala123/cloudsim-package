@@ -308,8 +308,8 @@ public class LoadProperties {
         adjustParament.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
         adjustParament.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
         adjustParament.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
-        adjustParament.setK8scpuparament(Integer.parseInt(properties.getProperty("k8scpuparament")));
-        adjustParament.setK8smemoryparamnet(Integer.parseInt(properties.getProperty("k8smemoryparament")));
+        adjustParament.setK8scpuparament(Double.parseDouble(properties.getProperty("k8scpuparament")));
+        adjustParament.setK8sbwparamnet(Double.parseDouble(properties.getProperty("k8sbwparament")));
         adjustParament.setK8smipsparament(Integer.parseInt(properties.getProperty("k8smipsparament")));
         adjustParament.setK8sresponsetimeparament(Integer.parseInt(properties.getProperty("k8sresponsetimeparament")));
         adjustParament.setNfrcpuparament(Integer.parseInt(properties.getProperty("nfrcpuparament")));
@@ -321,8 +321,10 @@ public class LoadProperties {
         adjustParament.setSlbresponsetimeparament(Integer.parseInt(properties.getProperty("slbresponsetimeparament")));
         adjustParament.setSlbmipsparament(Integer.parseInt(properties.getProperty("slbmipsparament")));
         adjustParament.setCpurandomnumber(Integer.parseInt(properties.getProperty("cpurandomnumber")));
-        adjustParament.setMemoryrandomnumber(Integer.parseInt(properties.getProperty("memoryrandomnumber")));
+        adjustParament.setBwrandomnumber(Integer.parseInt(properties.getProperty("bwrandomnumber")));
         adjustParament.setLengthrandomnumber(Integer.parseInt(properties.getProperty("lengthrandomnumber")));
+        adjustParament.setBasepacketsize(Double.valueOf(properties.getProperty("basepacketsize")));
+        adjustParament.setPacketsizerandom(Double.valueOf(properties.getProperty("packetsizerandom")));
         return adjustParament;
 
     }

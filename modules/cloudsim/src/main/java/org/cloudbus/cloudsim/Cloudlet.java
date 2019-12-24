@@ -24,9 +24,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
  * @todo The documentation is wrong. Cloudlet isn't extending any class.
  */
 public class Cloudlet {
-
-
-
     private int starttime;
     private double qps;
     private int cloudlethandletime;
@@ -34,6 +31,15 @@ public class Cloudlet {
     private int state;
     private int memoryrequest;
     private int bwrequest;
+    private double packetsize;
+
+    public double getPacketsize() {
+        return packetsize;
+    }
+
+    public void setPacketsize(double packetsize) {
+        this.packetsize = packetsize;
+    }
 
     public int getBwrequest() {
         return bwrequest;

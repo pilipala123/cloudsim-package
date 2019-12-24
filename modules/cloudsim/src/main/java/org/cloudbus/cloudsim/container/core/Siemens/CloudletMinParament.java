@@ -79,6 +79,7 @@ public class CloudletMinParament {
         setMemoryrequest(0);
         setMincpurequest(10);
         setMaxtimelength(0);
+        setMinbwrequest(10);
 
     }
 

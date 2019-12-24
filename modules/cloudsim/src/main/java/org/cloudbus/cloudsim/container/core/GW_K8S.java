@@ -3,8 +3,6 @@ package org.cloudbus.cloudsim.container.core;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.container.InputParament.*;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
-import org.cloudbus.cloudsim.container.core.util.Calculatebw;
-import org.cloudbus.cloudsim.container.core.util.SiemensUtils;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -26,7 +24,7 @@ public class GW_K8S extends Host {
 
     private int cpuresources;
 
-    private int memoryresources;
+    private int bwresources;
 
     private int containernumber;
     private double qpsthreshold;
@@ -36,6 +34,15 @@ public class GW_K8S extends Host {
 
     private int vmnumber;
     private int mipsability;
+    private int networkbandwidth;
+
+    public int getNetworkbandwidth() {
+        return networkbandwidth;
+    }
+
+    public void setNetworkbandwidth(int networkbandwidth) {
+        this.networkbandwidth = networkbandwidth;
+    }
 
     public int getMipsability() {
         return mipsability;
@@ -53,12 +60,12 @@ public class GW_K8S extends Host {
         this.cpuresources = cpuresources;
     }
 
-    public int getMemoryresources() {
-        return memoryresources;
+    public int getBwresources() {
+        return bwresources;
     }
 
-    public void setMemoryresources(int memoryresources) {
-        this.memoryresources = memoryresources;
+    public void setBwresources(int bwresources) {
+        this.bwresources = bwresources;
     }
 
     public int getContainernumber() {
@@ -103,24 +110,26 @@ public class GW_K8S extends Host {
         int vmnumber =k8sInput.getECSNumbers();
         double cpucore = k8sInput.getK8scpucore();
         int maxqps = k8sInput.getK8smaxqps();
-        int networkbandwidth = k8sInput.getK8snetworkbandwidth();
+        this.networkbandwidth = k8sInput.getK8snetworkbandwidth();
         int ecscore = ecsInput.getEcsCPUQuota();
         int ecspermips = ecsInput.getEcsMIPSpercore();
         double cpunumber = adjustParament.getK8scpuparament();
+        double bwnubmer = adjustParament.getK8sbwparament();
         System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
         int cpuresources= (int)(ecscore*cpunumber*(double)vmnumber/(double)containernumber);
-        int memoryresources = 500;
+        int bwresources = (int)(networkbandwidth*bwnubmer/(double)containernumber);
         int mipsability = 100;
         setMipsability(mipsability);
         setCpuresources(cpuresources);
-        setMemoryresources(memoryresources);
+        setBwresources(bwresources);
         setContainernumber(containernumber);
         setVmnumber(vmnumber);
         /**
          * Functions to calculate response time and qps will be added here
          */
         setK8ssiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
-                cpuresources,memoryresources,loadnumber,ramp_down));
+                cpuresources,bwresources,loadnumber,ramp_down));
+        this.k8ssiemensList.setState(1);
 
 //        setQps(k8smoneycost);
 //        System.out.println("The GWK8s QPS is "+qps);
@@ -154,9 +163,6 @@ public class GW_K8S extends Host {
      * @param cloudletList
      */
     public void process(List<ContainerCloudlet> cloudletList,
-                     int flag,
-                     RegressionParament regressionParament,
-                     LoadGeneratorInput loadGeneratorInput,
                         AdjustParament adjustParament,
                         int time){
         try {
@@ -164,10 +170,10 @@ public class GW_K8S extends Host {
             int mipsability = getMipsability();
             double mips = (double)mipsability/(double)mipsparament;
             int responsetimeparament = adjustParament.getK8sresponsetimeparament();
-            this.k8ssiemensList = processRequests(cloudletList,cpuresources,memoryresources,
-                    "K8s",loadGeneratorInput,containernumber,vmnumber,mips,
-                    responsetimeparament,time,this.k8ssiemensList,this.qps,this.qpsratio,this.qpsthreshold,
-                    this.responsetimethreshold,this.responsetimeratio);
+            this.k8ssiemensList = processRequests(cloudletList,cpuresources, bwresources,
+                    "Gw_K8s",this.k8ssiemensList,containernumber,vmnumber,mips,
+                    responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
+                    this.responsetimethreshold,this.responsetimeratio,this.networkbandwidth);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
