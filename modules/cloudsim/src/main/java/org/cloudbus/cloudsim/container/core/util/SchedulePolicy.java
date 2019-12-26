@@ -16,12 +16,13 @@ public class SchedulePolicy {
                                              int cpuresources,
                                              int bwresources,
                                              SiemensList siemensList,
-                                             int responsetimeparment,
+                                             double responsetimeparment,
                                              int time,double qps,
                                              double qpsthreshold,
                                              double qpsratio,
                                              double responsetimethreshold,
                                              double responsetimeratio,
+                                             double responsetimeratio2,
                                              int bandwidth) {
         int startcloudletnumber=0;
         int runningcloudletnumber =0;
@@ -42,7 +43,6 @@ public class SchedulePolicy {
         int size2 = lastprocessbindcloudCloudletlist.size();
         int addnumber = 0;
         double persumresponsetime =0;
-        startcloudletnumber=0;
         while (size1+size2+addnumber<bindCloudletlist.size()) {
 
             lastdeferbindcloudCloudletlist.add(bindCloudletlist.get(addnumber));
@@ -98,7 +98,7 @@ public class SchedulePolicy {
 
 //        System.out.println("processcloudletnumber" + siemensList.getProcessbindContainerslist().get(time-1));
 //
-        System.out.println("time: "+time+ " s"+ siemensList.getName()+": average response time is "+ siemensList.getAverageresponsetimelist().get(time));
+        System.out.println("time: "+time+ "s "+ siemensList.getName()+": average response time is "+ siemensList.getAvgperresponsetimelist().get(time)+"ms");
 
         for (BindContainer bindContainer : lastdeferbindcloudCloudletlist) {
             roundrobinnumber=0;
@@ -156,7 +156,7 @@ public class SchedulePolicy {
         //计算cpu和带宽利用率
         siemensList = calculateusage(siemensVmresourcesList, lastprocessbindcloudCloudletlist,
                 siemensContainerresourceList, siemensList, time, containernumber,vmnumber,cpuresources,
-                bwresources,responsetimethreshold,responsetimeratio,packetsize,bandwidth);
+                bwresources,responsetimethreshold,responsetimeratio,responsetimeratio2,packetsize,bandwidth);
         sumqps = qps * (double) runningcloudletnumber*qpsratio/(2+(Math.pow((siemensList.getHostcpuusagelist().get(time)/100),3))*qpsthreshold);
         siemensList.getQpslist().add(sumqps);
 

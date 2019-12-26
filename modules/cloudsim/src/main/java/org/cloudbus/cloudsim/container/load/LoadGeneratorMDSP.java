@@ -38,8 +38,7 @@ public class LoadGeneratorMDSP {
 
 
 
-    public List<ContainerCloudlet> generateContainerCloudletsFromList(LoadGeneratorInput loadGeneratorInput,
-                                                                      AdjustParament adjustParament) {
+    public List<ContainerCloudlet> generateContainerCloudletsFromList(LoadGeneratorInput loadGeneratorInput) {
         System.out.println("Load Generator: generating loads......\n");
         List<ContainerCloudlet> resultList = new ArrayList<>();
         int number = loadGeneratorInput.getLoadnumbers();
@@ -48,26 +47,27 @@ public class LoadGeneratorMDSP {
         int endtime = loadGeneratorInput.getRamp_down();
         double timerange = (double)number/(double)ramp_up;
         loadGeneratorInput.setTimerange(timerange);
-        resultList.addAll(generateContainerCloudlets(number,endtime,timerange,adjustParament));
+        resultList.addAll(generateContainerCloudlets(number,endtime,timerange,loadGeneratorInput));
         return resultList;
     }
 
 
-    public List<ContainerCloudlet> generateContainerCloudlets(Integer number,int endtime,double timerange,AdjustParament adjustParament) {
+    public List<ContainerCloudlet> generateContainerCloudlets(Integer number,int endtime,double timerange,LoadGeneratorInput loadGeneratorInput) {
         long fileSize = 300;
         long outputSize = 300;
         int basetime = 1;
         int id = 0;
         // number of cpus
         int pesNumber = 1;
-        int cloudletcpurequest = adjustParament.getCloudletcpurequest();
-        int cloudletbwrequest = adjustParament.getCloudletmemoryrequest();
-        int cloudletcpurandom = adjustParament.getCpurandomnumber();
-        int cloudletbwrandom = adjustParament.getBwrandomnumber();
-        int cloudletlength = adjustParament.getCloudletlength();
-        int cloudletlengthrandom = adjustParament.getLengthrandomnumber();
-        double packetsizerandom = adjustParament.getPacketsizerandom();
-        double basepacketsize = adjustParament.getBasepacketsize();
+
+        int cloudletcpurequest = loadGeneratorInput.getCloudletcpurequest();
+        int cloudletbwrequest = loadGeneratorInput.getCloudletmemoryrequest();
+        int cloudletcpurandom = loadGeneratorInput.getCpurandomnumber();
+        int cloudletbwrandom = loadGeneratorInput.getBwrandomnumber();
+        int cloudletlength = loadGeneratorInput.getCloudletlength();
+        int cloudletlengthrandom = loadGeneratorInput.getLengthrandomnumber();
+        double packetsizerandom = loadGeneratorInput.getPacketsizerandom();
+        double basepacketsize = loadGeneratorInput.getBasepacketsize();
         UtilizationModel utilizationModel = new UtilizationModelFull();
         List<ContainerCloudlet> containerCloudlets = new ArrayList<>();
         int clocktime = 1;

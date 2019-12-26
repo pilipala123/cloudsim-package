@@ -57,7 +57,7 @@ public class LoadProperties {
     }
     public static EcsInput setEcsInput(Properties properties){
         EcsInput ecsInput = new EcsInput();
-        ecsInput.setEcsCPUQuota(Integer.parseInt(properties.getProperty("EcsCPUQuota")));
+
         ecsInput.setEcsDiskIO(Integer.parseInt(properties.getProperty("EcsDiskIO")));
         ecsInput.setEcsDiskSize(Integer.parseInt(properties.getProperty("EcsDiskSize")));
         ecsInput.setEcsInboundbandwidth(Integer.parseInt(properties.getProperty("EcsInboundbandwidth")));
@@ -122,11 +122,19 @@ public class LoadProperties {
         LoadGeneratorInput loadGeneratorInput = new LoadGeneratorInput();
         loadGeneratorInput.setLoadnumbers(Integer.parseInt(properties.getProperty("Loadnumbers")));
         loadGeneratorInput.setLoadduration(Integer.parseInt(properties.getProperty("Loadduration")));
-        loadGeneratorInput.setConcurrentrequest(Integer.parseInt(properties.getProperty("Concurrentrequest")));
-        loadGeneratorInput.setRequestinterval(Integer.parseInt(properties.getProperty("Requestinterval")));
+//        loadGeneratorInput.setConcurrentrequest(Integer.parseInt(properties.getProperty("Concurrentrequest")));
+//        loadGeneratorInput.setRequestinterval(Integer.parseInt(properties.getProperty("Requestinterval")));
         loadGeneratorInput.setRamp_up(Integer.parseInt(properties.getProperty("Ramp_up")));
         loadGeneratorInput.setRamp_down(Integer.parseInt(properties.getProperty("Ramp_down")));
-        loadGeneratorInput.setPrecision(Double.parseDouble(properties.getProperty("precision")));
+        loadGeneratorInput.setCpurandomnumber(Integer.parseInt(properties.getProperty("cpurandomnumber")));
+        loadGeneratorInput.setBwrandomnumber(Integer.parseInt(properties.getProperty("bwrandomnumber")));
+        loadGeneratorInput.setLengthrandomnumber(Integer.parseInt(properties.getProperty("lengthrandomnumber")));
+        loadGeneratorInput.setBasepacketsize(Double.valueOf(properties.getProperty("basepacketsize")));
+        loadGeneratorInput.setPacketsizerandom(Double.valueOf(properties.getProperty("packetsizerandom")));
+        loadGeneratorInput.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
+        loadGeneratorInput.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
+        loadGeneratorInput.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
+//        loadGeneratorInput.setPrecision(Double.parseDouble(properties.getProperty("precision")));
         return loadGeneratorInput;
     }
 
@@ -214,12 +222,19 @@ public class LoadProperties {
         k8sInput.setK8smaxqps(Integer.parseInt(properties.getProperty("K8smaxqps")));
         k8sInput.setK8snetworkbandwidth(Integer.parseInt(properties.getProperty("K8snetworkbandwidth")));
         k8sInput.setK8scontainernumber(Integer.parseInt(properties.getProperty("K8scontainernumber")));
-        k8sInput.setK8scpucore(Double.parseDouble(properties.getProperty("K8scpucore")));
+        k8sInput.setK8scpucore(Double.parseDouble(properties.getProperty("K8secscpucore")));
         k8sInput.setK8sqpsperload(Double.parseDouble(properties.getProperty("K8sqpsperload")));
         k8sInput.setK8sqpsratio(Double.parseDouble(properties.getProperty("K8sqpsratio")));
         k8sInput.setK8sqpsthreshold(Double.parseDouble(properties.getProperty("K8sqpsthreshold")));
         k8sInput.setK8sresponsetimeratio(Double.parseDouble(properties.getProperty("K8sresponsetimeratio")));
         k8sInput.setK8sresponsetimethreshold(Double.parseDouble(properties.getProperty("K8sresponsetimethreshold")));
+        k8sInput.setK8scpuparament(Double.parseDouble(properties.getProperty("k8scpuparament")));
+        k8sInput.setK8sbwparamnet(Double.parseDouble(properties.getProperty("k8sbwparament")));
+        k8sInput.setK8smipsparament(Integer.parseInt(properties.getProperty("k8smipsparament")));
+        k8sInput.setK8sresponsetimeparament(Double.parseDouble(properties.getProperty("k8sresponsetimeparament")));
+        k8sInput.setK8smipsability(Double.valueOf(properties.getProperty("k8smipsability")));
+        k8sInput.setName(properties.getProperty("name"));
+        k8sInput.setResponsetimeratio2(Double.parseDouble(properties.getProperty("K8sresponsetimeratio2")));
         return k8sInput;
     }
 
@@ -305,14 +320,8 @@ public class LoadProperties {
 
     public static AdjustParament setAdjustParament(Properties properties){
         AdjustParament adjustParament = new AdjustParament();
-        adjustParament.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
-        adjustParament.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
-        adjustParament.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
-        adjustParament.setK8scpuparament(Double.parseDouble(properties.getProperty("k8scpuparament")));
-        adjustParament.setK8sbwparamnet(Double.parseDouble(properties.getProperty("k8sbwparament")));
-        adjustParament.setK8smipsparament(Integer.parseInt(properties.getProperty("k8smipsparament")));
-        adjustParament.setK8sresponsetimeparament(Integer.parseInt(properties.getProperty("k8sresponsetimeparament")));
-        adjustParament.setNfrcpuparament(Integer.parseInt(properties.getProperty("nfrcpuparament")));
+
+         adjustParament.setNfrcpuparament(Integer.parseInt(properties.getProperty("nfrcpuparament")));
         adjustParament.setNfrmemoryparament(Integer.parseInt(properties.getProperty("nfrmemoryparament")));
         adjustParament.setNfrresponsetimeparament(Integer.parseInt(properties.getProperty("nfrresponsetimeparament")));
         adjustParament.setNfrmipsparament(Integer.parseInt(properties.getProperty("nfrmipsparament")));
@@ -320,11 +329,7 @@ public class LoadProperties {
         adjustParament.setSlbmemoryparament(Integer.parseInt(properties.getProperty("slbmemoryparament")));
         adjustParament.setSlbresponsetimeparament(Integer.parseInt(properties.getProperty("slbresponsetimeparament")));
         adjustParament.setSlbmipsparament(Integer.parseInt(properties.getProperty("slbmipsparament")));
-        adjustParament.setCpurandomnumber(Integer.parseInt(properties.getProperty("cpurandomnumber")));
-        adjustParament.setBwrandomnumber(Integer.parseInt(properties.getProperty("bwrandomnumber")));
-        adjustParament.setLengthrandomnumber(Integer.parseInt(properties.getProperty("lengthrandomnumber")));
-        adjustParament.setBasepacketsize(Double.valueOf(properties.getProperty("basepacketsize")));
-        adjustParament.setPacketsizerandom(Double.valueOf(properties.getProperty("packetsizerandom")));
+
         return adjustParament;
 
     }

@@ -23,7 +23,7 @@ public class SiemensList {
     private List<Double> qps;
     private List<Pair<Integer, Integer>> load2qps;
     private List<Double> qpslist;
-    private int state;    //qps是否进入阈值
+    private int state;    //是否需要画图
     private List<Integer> runningcloudletnumberlist;
     private List<Integer> startcloudletnumberList;
     private List<BindContainer> deferedbindContainerslist;

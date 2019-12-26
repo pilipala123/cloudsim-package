@@ -1,10 +1,10 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class K8sInput {
+public class K8sInput implements Comparable<K8sInput>{
+    private int id;
     private int ECSNumbers;
-
+    private int EcsCPUQuota;
     private int K8smoney;
-
     private int K8sECSnumber;
     private int K8scontainernumber;
     private int K8smaxqps;
@@ -15,6 +15,77 @@ public class K8sInput {
     private double K8sqpsratio;
     private double K8sresponsetimethreshold;
     private double K8sresponsetimeratio;
+    private double k8scpuparament;
+    private double k8sbwparamnet;
+    private int k8smipsparament;
+    private double k8sresponsetimeparament;
+    private double k8smipsability;
+    private String name;
+    private double responsetimeratio2;
+
+    public double getResponsetimeratio2() {
+        return responsetimeratio2;
+    }
+
+    public void setResponsetimeratio2(double responsetimeratio2) {
+        this.responsetimeratio2 = responsetimeratio2;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getK8smipsability() {
+        return k8smipsability;
+    }
+
+    public void setK8smipsability(double k8smipsability) {
+        this.k8smipsability = k8smipsability;
+    }
+
+    public double getK8scpuparament() {
+        return k8scpuparament;
+    }
+
+    public void setK8scpuparament(double k8scpuparament) {
+        this.k8scpuparament = k8scpuparament;
+    }
+
+    public double getK8sbwparamnet() {
+        return k8sbwparamnet;
+    }
+
+    public void setK8sbwparamnet(double k8sbwparamnet) {
+        this.k8sbwparamnet = k8sbwparamnet;
+    }
+
+    public int getK8smipsparament() {
+        return k8smipsparament;
+    }
+
+    public void setK8smipsparament(int k8smipsparament) {
+        this.k8smipsparament = k8smipsparament;
+    }
+
+    public double getK8sresponsetimeparament() {
+        return k8sresponsetimeparament;
+    }
+
+    public void setK8sresponsetimeparament(double k8sresponsetimeparament) {
+        this.k8sresponsetimeparament = k8sresponsetimeparament;
+    }
 
     public double getK8sqpsthreshold() {
         return K8sqpsthreshold;
@@ -121,4 +192,9 @@ public class K8sInput {
     }
 
     private int PodNumbersineachECS;
+
+    @Override
+    public int compareTo(K8sInput k8sInput) {
+        return this.id - k8sInput.getId();
+    }
 }

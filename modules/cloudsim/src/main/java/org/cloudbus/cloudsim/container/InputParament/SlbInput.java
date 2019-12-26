@@ -20,6 +20,42 @@ public class SlbInput {
     private double Slbqpsratio;
     private double Slbresponsetimethreshold;
     private double Slbresponsetimeratio;
+    private int slbcpuparament;
+    private int slbmemoryparament;
+    private int slbmipsparament;
+    private int slbresponsetimeparament;
+
+    public int getSlbcpuparament() {
+        return slbcpuparament;
+    }
+
+    public void setSlbcpuparament(int slbcpuparament) {
+        this.slbcpuparament = slbcpuparament;
+    }
+
+    public int getSlbmemoryparament() {
+        return slbmemoryparament;
+    }
+
+    public void setSlbmemoryparament(int slbmemoryparament) {
+        this.slbmemoryparament = slbmemoryparament;
+    }
+
+    public int getSlbmipsparament() {
+        return slbmipsparament;
+    }
+
+    public void setSlbmipsparament(int slbmipsparament) {
+        this.slbmipsparament = slbmipsparament;
+    }
+
+    public int getSlbresponsetimeparament() {
+        return slbresponsetimeparament;
+    }
+
+    public void setSlbresponsetimeparament(int slbresponsetimeparament) {
+        this.slbresponsetimeparament = slbresponsetimeparament;
+    }
 
     public double getSlbqpsthreshold() {
         return Slbqpsthreshold;

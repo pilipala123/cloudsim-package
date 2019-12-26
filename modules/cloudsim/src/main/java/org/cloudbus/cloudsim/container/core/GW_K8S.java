@@ -97,7 +97,7 @@ public class GW_K8S extends Host {
      * @param id
      */
     public GW_K8S(int id, List<ContainerCloudlet> cloudletList, int loadnumber, int ramp_down,
-                  AdjustParament adjustParament, EcsInput ecsInput,K8sInput k8sInput) {
+                 K8sInput k8sInput) {
         super(id);
         double qps = k8sInput.getK8sqpsperload();
         this.qpsthreshold = k8sInput.getK8sqpsthreshold();
@@ -108,17 +108,15 @@ public class GW_K8S extends Host {
         setQps(qps);
         int containernumber = k8sInput.getK8scontainernumber();
         int vmnumber =k8sInput.getECSNumbers();
-        double cpucore = k8sInput.getK8scpucore();
+        double ecscpucore = k8sInput.getK8scpucore();
         int maxqps = k8sInput.getK8smaxqps();
         this.networkbandwidth = k8sInput.getK8snetworkbandwidth();
-        int ecscore = ecsInput.getEcsCPUQuota();
-        int ecspermips = ecsInput.getEcsMIPSpercore();
-        double cpunumber = adjustParament.getK8scpuparament();
-        double bwnubmer = adjustParament.getK8sbwparament();
-        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+cpucore);
-        int cpuresources= (int)(ecscore*cpunumber*(double)vmnumber/(double)containernumber);
+        double cpunumber = k8sInput.getK8scpuparament();
+        double bwnubmer = k8sInput.getK8sbwparamnet();
+        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+ecscpucore);
+        int cpuresources= (int)(ecscpucore*cpunumber*(double)vmnumber/(double)containernumber);
         int bwresources = (int)(networkbandwidth*bwnubmer/(double)containernumber);
-        int mipsability = 100;
+        int mipsability = (int)k8sInput.getK8smipsability();
         setMipsability(mipsability);
         setCpuresources(cpuresources);
         setBwresources(bwresources);
@@ -163,17 +161,19 @@ public class GW_K8S extends Host {
      * @param cloudletList
      */
     public void process(List<ContainerCloudlet> cloudletList,
-                        AdjustParament adjustParament,
+                        K8sInput k8sInput,
                         int time){
         try {
-            int mipsparament = adjustParament.getK8smipsparament();
+            int mipsparament = k8sInput.getK8smipsparament();
             int mipsability = getMipsability();
+            String name = k8sInput.getName();
             double mips = (double)mipsability/(double)mipsparament;
-            int responsetimeparament = adjustParament.getK8sresponsetimeparament();
+            double responsetimeratio2 = k8sInput.getResponsetimeratio2();
+            double responsetimeparament = k8sInput.getK8sresponsetimeparament();
             this.k8ssiemensList = processRequests(cloudletList,cpuresources, bwresources,
-                    "Gw_K8s",this.k8ssiemensList,containernumber,vmnumber,mips,
+                    name,this.k8ssiemensList,containernumber,vmnumber,mips,
                     responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
-                    this.responsetimethreshold,this.responsetimeratio,this.networkbandwidth);
+                    this.responsetimethreshold,this.responsetimeratio,responsetimeratio2,this.networkbandwidth);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -143,36 +143,36 @@ public class ServiceLoadBalancerNFR extends Host {
         this.qps = qps;
     }
 
-    public void processEvent(int loadpernumber,double responsetime){
+    public void processEvent(int loadpernumber,double responsetime) {
         String label = "Slb_NFR";
         double qpsbase = this.qps;
         getNfrsiemensList().setName(label);
-        getNfrsiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
+        getNfrsiemensList().getQpslist().add(qpsbase * (double) loadpernumber);
         getNfrsiemensList().getAverageresponsetimelist().add(responsetime);
 
+//    }
+//    /**
+//     * Process the requests and generate response time
+//     * @param cloudletList
+//     */
+//    public void process(List<ContainerCloudlet> cloudletList,
+//                        AdjustParament adjustParament,
+//                        int time){
+//        try {
+//            int mipsparament = adjustParament.getNfrmipsparament();
+//            int mipsability = getMipsability();
+//            double mips = (double)mipsability/(double)mipsparament;
+//            int responsetimeparament = adjustParament.getNfrresponsetimeparament();
+//            this.nfrsiemensList = processRequests(cloudletList,cpuresources,
+//                    memoryresources,"NFR",this.nfrsiemensList,containernumber,
+//                    vmnumber,mips,responsetimeparament, time,this.qps,this.qpsratio,
+//                    this.qpsthreshold, this.responsetimethreshold,this.responsetimeratio,2,200);
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        setResponseTime(this.nfrsiemensList.getFinishtime());
+//    }
     }
-    /**
-     * Process the requests and generate response time
-     * @param cloudletList
-     */
-    public void process(List<ContainerCloudlet> cloudletList,
-                        AdjustParament adjustParament,
-                        int time){
-        try {
-            int mipsparament = adjustParament.getNfrmipsparament();
-            int mipsability = getMipsability();
-            double mips = (double)mipsability/(double)mipsparament;
-            int responsetimeparament = adjustParament.getNfrresponsetimeparament();
-            this.nfrsiemensList = processRequests(cloudletList,cpuresources,
-                    memoryresources,"NFR",this.nfrsiemensList,containernumber,
-                    vmnumber,mips,responsetimeparament, time,this.qps,this.qpsratio,
-                    this.qpsthreshold, this.responsetimethreshold,this.responsetimeratio,200);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        setResponseTime(this.nfrsiemensList.getFinishtime());
-    }
-
 }

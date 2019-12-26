@@ -1,5 +1,6 @@
 package org.cloudbus.cloudsim.container.core.util;
 
+import org.cloudbus.cloudsim.container.InputParament.K8sInput;
 import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
@@ -65,17 +66,18 @@ public class SiemensUtils {
                                              int bwresource,
                                              double responsetimethreshold,
                                              double responsetimeratio,
+                                             double responsetimeratio2,
                                              double packetsize,
                                              int bandwidth){
         int containercpuusage,containerbwusage;
         int vmcpuusage,vmbwusage;
         int hostcpuusage=0,hostbwusage=0;
         double responsetime=0;
-        int finishtime=0;
         double hostcpu,hostbw;
         int containerflag =0;
         int vmflag=0;
         double outputhostbwusage = 0;
+
         for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
             siemensVmresources.setCpuusage(0);
             siemensVmresources.setBwusage(0);
@@ -118,8 +120,7 @@ public class SiemensUtils {
             hostbwusage =hostbwusage +vmbwusage;
 
         }
-//        hostcpuusage= hostcpuusage/containernumber;
-//        hostbwusage=hostbwusage/containernumber;
+
         hostcpu=(double)hostcpuusage*100.0/(double)containernumber/(double)cpuresource;
         if(time==0){
             outputhostbwusage = 0;
@@ -129,14 +130,12 @@ public class SiemensUtils {
         }
         hostbw = (double)hostbwusage*bandwidth/(double)containernumber/(double)bwresource;
         outputhostbwusage = (double)outputhostbwusage*bandwidth/(double)containernumber/(double)bwresource;
-//        System.out.println("At time:" + time + "ms " + " Cpu usage is " + hostcpu);
-//        System.out.println("At time:" + time + "ms " + " Bw usage is " + hostbw);
 
         if(hostcpu>=responsetimethreshold){
             for(BindContainer bindContainer:processbindContainerList){
 
                 responsetime = bindContainer.getEveryresponsetime();
-                bindContainer.setEveryresponsetime(responsetime*responsetimeratio*((hostcpu-responsetimethreshold)*(hostcpu-responsetimethreshold)/10000+1));
+                bindContainer.setEveryresponsetime(responsetime*responsetimeratio*(Math.pow((hostcpu-responsetimethreshold)/100,2)+1)*(Math.pow(siemensList.getDeferedbindContainerslist().size()/siemensList.getLoadnumber().get(time),2)+responsetimeratio2));
 
             }
         }
@@ -168,33 +167,33 @@ public class SiemensUtils {
 //        bwusage =
         return siemensList;
     }
-
-    public static SiemensList calculateaverageresponsetime(SiemensList siemensList,List<BindContainer> bindCloudletlist,int time,int responsetimeparaments){
-        double sumreponsetime = 0;
-        int presentfinishcloudletnumber = 0;
-        double averagereponsetime =0;
-        for(BindContainer bindContainer : bindCloudletlist){
-            if (bindContainer.getState()==4) {
-                double perresponsetime = bindContainer.getEveryresponsetime();
-                sumreponsetime= sumreponsetime+perresponsetime;
-                presentfinishcloudletnumber++;
-            }
-            else if(bindContainer.getState()==0){
-                break;
-            }
-        }
-        siemensList.getFinishcloudletnumber().add(presentfinishcloudletnumber);
-        if(presentfinishcloudletnumber==0){
-            System.out.println("At time:"+ time +"ms averageresponsetime:"+ averagereponsetime+"ms");
-        }
-        else {
-            averagereponsetime = sumreponsetime*responsetimeparaments / (double)presentfinishcloudletnumber;
-            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
-        }
-
-        siemensList.getAverageresponsetimelist().add(averagereponsetime);
-        return siemensList;
-    }
+//
+//    public static SiemensList calculateaverageresponsetime(SiemensList siemensList,List<BindContainer> bindCloudletlist,int time,int responsetimeparaments){
+//        double sumreponsetime = 0;
+//        int presentfinishcloudletnumber = 0;
+//        double averagereponsetime =0;
+//        for(BindContainer bindContainer : bindCloudletlist){
+//            if (bindContainer.getState()==4) {
+//                double perresponsetime = bindContainer.getEveryresponsetime();
+//                sumreponsetime= sumreponsetime+perresponsetime;
+//                presentfinishcloudletnumber++;
+//            }
+//            else if(bindContainer.getState()==0){
+//                break;
+//            }
+//        }
+//        siemensList.getFinishcloudletnumber().add(presentfinishcloudletnumber);
+//        if(presentfinishcloudletnumber==0){
+//            System.out.println("At time:"+ time +"ms averageresponsetime:"+ averagereponsetime+"ms");
+//        }
+//        else {
+//            averagereponsetime = sumreponsetime*responsetimeparaments / (double)presentfinishcloudletnumber;
+//            System.out.println("At time:" + time + "ms averageresponsetime:" + averagereponsetime + "ms");
+//        }
+//
+//        siemensList.getAverageresponsetimelist().add(averagereponsetime);
+//        return siemensList;
+//    }
 
 
 

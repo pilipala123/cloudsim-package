@@ -42,19 +42,20 @@ public class Process {
                                                int containernumber,
                                                int vmnumber,
                                                double mips,
-                                               int responsetimeparament,
+                                               double responsetimeparament,
                                                int time,
                                                double qps,
                                                double qpsratio,
                                                double qpsthreshold,
                                                double responsetimethreshold,
                                                double responsetimeratio,
+                                               double responsetimeratio2,
                                                int bandwidth) throws FileNotFoundException {
         List<BindContainer> bindCloudletlist =createbindCloudlet(cloudletList,mips);
         siemensList.setName(name);
         siemensList = SchedulePolicy.schedulepolicy(bindCloudletlist,
                 containernumber,vmnumber,cpuresources,bwresources,siemensList,responsetimeparament,time,
-                qps,qpsthreshold,qpsratio,responsetimethreshold,responsetimeratio,bandwidth);
+                qps,qpsthreshold,qpsratio,responsetimethreshold,responsetimeratio,responsetimeratio2,bandwidth);
         return siemensList;
     }
 }

@@ -180,26 +180,26 @@ public class ServiceLoadBalancerGW extends Host {
      * @param time the real time
      */
 
-    public void process(List<ContainerCloudlet> cloudletList,
-                        AdjustParament adjustParament,
-                        int time){
-        try {
-            int mipsparament = adjustParament.getSlbmipsparament();
-            int mipsability = getMipsability();
-            double mips = (double)mipsability/(double)mipsparament;
-            int responsetimeparament = adjustParament.getSlbresponsetimeparament();
-            this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
-                    "SLB",this.slbsiemensList,containernumber,vmnumber,
-                    mips,responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
-                    this.responsetimethreshold,this.responsetimeratio,200);
-//            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        setResponseTime(this.slbsiemensList.getFinishtime());
-    }
+//    public void process(List<ContainerCloudlet> cloudletList,
+//                        AdjustParament adjustParament,
+//                        int time){
+//        try {
+//            int mipsparament = adjustParament.getSlbmipsparament();
+//            int mipsability = getMipsability();
+//            double mips = (double)mipsability/(double)mipsparament;
+//            int responsetimeparament = adjustParament.getSlbresponsetimeparament();
+//            this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
+//                    "SLB",this.slbsiemensList,containernumber,vmnumber,
+//                    mips,responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
+//                    this.responsetimethreshold,this.responsetimeratio,1,200);
+////            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        setResponseTime(this.slbsiemensList.getFinishtime());
+//    }
 
 
 
