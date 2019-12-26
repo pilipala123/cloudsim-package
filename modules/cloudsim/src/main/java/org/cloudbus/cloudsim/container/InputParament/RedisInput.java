@@ -1,6 +1,6 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class RedisInput {
+public class RedisInput extends PartInput{
     private int redisMemoryQuota;
     private int redisNodes;
     private int redisConnectionPerNumber;

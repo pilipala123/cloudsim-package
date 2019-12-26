@@ -134,6 +134,9 @@ public class LoadProperties {
         loadGeneratorInput.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
         loadGeneratorInput.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
         loadGeneratorInput.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
+        loadGeneratorInput.setNfrresponsetime(Integer.parseInt(properties.getProperty("nfrresponsetime")));
+        loadGeneratorInput.setSlbresponsetime(Integer.parseInt(properties.getProperty("slbresponsetime")));
+        loadGeneratorInput.setMockserviceresponsetime(Integer.parseInt(properties.getProperty("mockserviceresponsetime")));
 //        loadGeneratorInput.setPrecision(Double.parseDouble(properties.getProperty("precision")));
         return loadGeneratorInput;
     }

@@ -2,6 +2,7 @@ package org.cloudbus.cloudsim.container.core.util;
 
 import org.cloudbus.cloudsim.container.InputParament.K8sInput;
 import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
+import org.cloudbus.cloudsim.container.InputParament.PartInput;
 import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
@@ -77,7 +78,6 @@ public class SiemensUtils {
         int containerflag =0;
         int vmflag=0;
         double outputhostbwusage = 0;
-
         for(SiemensVmresources siemensVmresources : siemensVmresourcesList) {
             siemensVmresources.setCpuusage(0);
             siemensVmresources.setBwusage(0);

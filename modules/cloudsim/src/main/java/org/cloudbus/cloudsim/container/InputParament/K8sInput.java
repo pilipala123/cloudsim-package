@@ -1,6 +1,6 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class K8sInput implements Comparable<K8sInput>{
+public class K8sInput extends PartInput implements Comparable<K8sInput>{
     private int id;
     private int ECSNumbers;
     private int EcsCPUQuota;

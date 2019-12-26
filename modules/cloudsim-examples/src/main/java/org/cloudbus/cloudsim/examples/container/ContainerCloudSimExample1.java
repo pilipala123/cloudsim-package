@@ -197,7 +197,7 @@ public class ContainerCloudSimExample1 {
 
             LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
 //            MathUtil mathUtil = new MathUtil();
-            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
+//            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
 
             /**
              * S2: Use Load generator generate loads
@@ -257,15 +257,15 @@ public class ContainerCloudSimExample1 {
                 /**
                  * S6:run the simulation
                  */
-                slb_gw.processEvent(loadnumberpertime,3);
+                slb_gw.processEvent(loadnumberpertime,loadGeneratorInput.getSlbresponsetime());
 //                slb_gw.process(cloudlets,adjustParament,time);
 //                redis.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
                 for (int j=0;j<gwpartnumber;j++) {
                     gw_k8SList.get(j).process(cloudlets, k8sInputList.get(j), time);
                 }
-                nfr.processEvent(loadnumberpertime,3);
+                nfr.processEvent(loadnumberpertime,loadGeneratorInput.getNfrresponsetime());
 //                nfr.process(cloudlets,adjustParament,time);
-                mockService.processEvent(loadnumberpertime,100);
+                mockService.processEvent(loadnumberpertime,loadGeneratorInput.getMockserviceresponsetime());
             }
             /**
              * S7:print the results

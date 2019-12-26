@@ -1,6 +1,6 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class EcsInput {
+public class EcsInput extends PartInput{
     private int EcsCPUQuota;
     private int EcsMemoryQuota;
     private int EcsDiskIO;
