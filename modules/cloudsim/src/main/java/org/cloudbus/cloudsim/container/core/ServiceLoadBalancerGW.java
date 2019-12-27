@@ -3,19 +3,18 @@ package org.cloudbus.cloudsim.container.core;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.container.InputParament.AdjustParament;
 import org.cloudbus.cloudsim.container.InputParament.EcsInput;
-import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.InputParament.SlbInput;
 import org.cloudbus.cloudsim.container.core.Siemens.*;
-import org.cloudbus.cloudsim.container.core.util.Calculatebw;
-import org.yunji.cloudsimrd.load.LoadGenerator;
 
-import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
+import static java.lang.Double.NaN;
 
 public class ServiceLoadBalancerGW extends Host {
     private int responseTime;
+    private String name;
+
     private double qps;
     private int cpuresources;
     private int memoryresources;
@@ -26,6 +25,15 @@ public class ServiceLoadBalancerGW extends Host {
     private double qpsratio;
     private double responsetimethreshold;
     private double responsetimeratio;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getQpsthreshold() {
         return qpsthreshold;
     }
@@ -94,14 +102,7 @@ public class ServiceLoadBalancerGW extends Host {
         this.vmnumber = vmnumber;
     }
 
-    private SiemensList slbsiemensList;
-    public SiemensList getSlbsiemensList() {
-        return slbsiemensList;
-    }
 
-    public void setSlbsiemensList(SiemensList slbsiemensList) {
-        this.slbsiemensList = slbsiemensList;
-    }
 
     /**
      *
@@ -145,9 +146,17 @@ public class ServiceLoadBalancerGW extends Host {
         /**
          * Functions to calculate response time and qps will be added here
          */
-        setSlbsiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
+        setSiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
                 cpuresources,memoryresources,loadnumber,ramp_down));
 
+    }
+    public ServiceLoadBalancerGW(int id,String name,int responseTime){
+        super(id);
+        setName(name);
+        setResponseTime(responseTime);
+        setSiemensList(new SiemensList());
+        getSiemensList().setAverageresponsetimelist(new ArrayList<>());
+        getSiemensList().setQpslist(new ArrayList<>());
     }
 
     public int getResponseTime(){
@@ -162,12 +171,14 @@ public class ServiceLoadBalancerGW extends Host {
 
         return qps;
     }
-    public void processEvent(int loadpernumber,double responsetime){
+    public void processEvent(int loadpernumber,int time){
+        super.processEvent(loadpernumber,time);
         String label = "Slb_gw";
         double qpsbase = this.qps;
-        getSlbsiemensList().setName(label);
-        getSlbsiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
-        getSlbsiemensList().getAverageresponsetimelist().add(responsetime);
+        getSiemensList().setName(this.name);
+        getSiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
+        getSiemensList().getAverageresponsetimelist().add((double)this.responseTime);
+        System.out.println("time: "+time+ "s "+ getSiemensList().getName()+": average response time is "+ this.responseTime+"ms");
 
     }
 
@@ -180,7 +191,7 @@ public class ServiceLoadBalancerGW extends Host {
      * @param time the real time
      */
 
-//    public void process(List<ContainerCloudlet> cloudletList,
+//    public void processEvent(List<ContainerCloudlet> cloudletList,
 //                        AdjustParament adjustParament,
 //                        int time){
 //        try {
@@ -188,17 +199,17 @@ public class ServiceLoadBalancerGW extends Host {
 //            int mipsability = getMipsability();
 //            double mips = (double)mipsability/(double)mipsparament;
 //            int responsetimeparament = adjustParament.getSlbresponsetimeparament();
-//            this.slbsiemensList = processRequests(cloudletList,cpuresources,memoryresources,
-//                    "SLB",this.slbsiemensList,containernumber,vmnumber,
+//            this.siemensList = processRequests(cloudletList,cpuresources,memoryresources,
+//                    "SLB",this.siemensList,containernumber,vmnumber,
 //                    mips,responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
 //                    this.responsetimethreshold,this.responsetimeratio,1,200);
-////            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.slbsiemensList);
+////            Calculatebw.calculateregressionbw("slb","k8s",flag,regressionParament,this.siemensList);
 //
 //        } catch (FileNotFoundException e) {
 //            e.printStackTrace();
 //        }
 //
-//        setResponseTime(this.slbsiemensList.getFinishtime());
+//        setResponseTime(this.siemensList.getFinishtime());
 //    }
 
 

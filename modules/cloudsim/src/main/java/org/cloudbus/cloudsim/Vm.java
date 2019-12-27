@@ -55,7 +55,7 @@ public class Vm {
 	/** The PM that hosts the VM. */
 	private Host host;
 
-	/** Indicates if the VM is in migration process. */
+	/** Indicates if the VM is in migration processEvent. */
 	private boolean inMigration;
 	
 	/** NEW Indicates if the VM is in Pause State (e.g. Stop & copy phase)*/

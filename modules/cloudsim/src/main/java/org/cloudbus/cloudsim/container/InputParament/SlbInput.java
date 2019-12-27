@@ -1,6 +1,8 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class SlbInput {
+import sun.security.krb5.internal.PAData;
+
+public class SlbInput extends PartInput {
     private int SlbMaxconnections;
     private int SlbMaxQPS;
     private int SlbMaxinboundbandwidth;
@@ -24,6 +26,35 @@ public class SlbInput {
     private int slbmemoryparament;
     private int slbmipsparament;
     private int slbresponsetimeparament;
+
+    private int id;
+    private String type;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private int slbresponsetime;
+
+    public int getSlbresponsetime() {
+        return slbresponsetime;
+    }
+
+    public void setSlbresponsetime(int slbresponsetime) {
+        this.slbresponsetime = slbresponsetime;
+    }
 
     public int getSlbcpuparament() {
         return slbcpuparament;

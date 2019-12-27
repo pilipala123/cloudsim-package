@@ -413,7 +413,7 @@ public abstract class SimEntity implements Cloneable {
 	public abstract void shutdownEntity();
 
         /**
-         * The run loop to process events fired during the simulation.
+         * The run loop to processEvent events fired during the simulation.
          * The events that will be processed are defined
          * in the {@link #processEvent(org.cloudbus.cloudsim.core.SimEvent)} method.
          * 

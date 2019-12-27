@@ -1,10 +1,11 @@
 package org.cloudbus.cloudsim.container.core;
 
+import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
-import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import static java.lang.Double.NaN;
 
 /**
  * This class defines the Mock Services provided by Siemens. The response time/processing
@@ -13,19 +14,10 @@ import java.util.List;
  * @author Minxian
  *
  */
-public class MockService {
+public class MockService extends Host {
     int responseTime; //It can be defined as a constant value
     String name;
     int serviceId;
-    private SiemensList mockservicesiemensList;
-
-    public SiemensList getMockservicesiemensList() {
-        return mockservicesiemensList;
-    }
-
-    public void setMockservicesiemensList(SiemensList mockservicesiemensList) {
-        this.mockservicesiemensList = mockservicesiemensList;
-    }
 
     public int getResponseTime() {
         return responseTime;
@@ -33,16 +25,16 @@ public class MockService {
 
     /**
      * The construct method will be called by Siemens NFR instances.
-     * @param serviceId
+     * @param id
      */
-    public MockService(int serviceId){
-        this.serviceId = serviceId;
-        String label = "Mockservice";
-        int time = 200;
-
-        setMockservicesiemensList(new SiemensList());
-        getMockservicesiemensList().setAverageresponsetimelist(new ArrayList<>());
-        getMockservicesiemensList().setQpslist(new ArrayList<>());
+    public MockService(int id,String name,int responseTime){
+        super(id);
+        this.serviceId = id;
+        setName(name);
+        setResponseTime(responseTime);
+        setSiemensList(new SiemensList());
+        getSiemensList().setAverageresponsetimelist(new ArrayList<>());
+        getSiemensList().setQpslist(new ArrayList<>());
 //        Plotpictures.plotpicture(time,qpslist,label+"qps随时间的关系","qps");
     }
 
@@ -70,12 +62,13 @@ public class MockService {
         this.serviceId = serviceId;
     }
 
-    public void processEvent(int loadpernumber,double responsetime){
-        String label = "Mockservice";
-        double qpsbase = 6.5;
-        getMockservicesiemensList().setName(label);
-        getMockservicesiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
-        getMockservicesiemensList().getAverageresponsetimelist().add(responsetime);
+    public void processEvent(int loadpernumber,int time){
+        super.processEvent(loadpernumber,time);
+        double qpsbase = 8.8;
+        getSiemensList().setName(this.name);
+        getSiemensList().getQpslist().add(qpsbase*(double)loadpernumber);
+        getSiemensList().getAverageresponsetimelist().add((double)this.responseTime);
+        System.out.println("time: "+time+ "s "+ getSiemensList().getName()+": average response time is "+ this.responseTime+"ms");
 
     }
 

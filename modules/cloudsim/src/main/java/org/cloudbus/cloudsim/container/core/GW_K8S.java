@@ -20,7 +20,7 @@ public class GW_K8S extends Host {
 
     private double qps;
 
-    private SiemensList k8ssiemensList;
+
 
     private int cpuresources;
 
@@ -84,13 +84,7 @@ public class GW_K8S extends Host {
         this.vmnumber = vmnumber;
     }
 
-    public SiemensList getK8ssiemensList() {
-        return k8ssiemensList;
-    }
 
-    public void setK8ssiemensList(SiemensList k8ssiemensList) {
-        this.k8ssiemensList = k8ssiemensList;
-    }
     /**
      * Creates a new Container-based Redis object.
      *
@@ -104,7 +98,7 @@ public class GW_K8S extends Host {
         this.qpsratio = k8sInput.getK8sqpsratio();
         this.responsetimethreshold = k8sInput.getK8sresponsetimethreshold();
         this.responsetimeratio = k8sInput.getK8sresponsetimeratio();
-        System.out.println(qps+" "+qpsthreshold+" "+qpsratio+" "+responsetimeratio+" "+responsetimethreshold);
+//        System.out.println(qps+" "+qpsthreshold+" "+qpsratio+" "+responsetimeratio+" "+responsetimethreshold);
         setQps(qps);
         int containernumber = k8sInput.getK8scontainernumber();
         int vmnumber =k8sInput.getECSNumbers();
@@ -113,7 +107,7 @@ public class GW_K8S extends Host {
         this.networkbandwidth = k8sInput.getK8snetworkbandwidth();
         double cpunumber = k8sInput.getK8scpuparament();
         double bwnubmer = k8sInput.getK8sbwparamnet();
-        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+ecscpucore);
+//        System.out.println(containernumber+" "+vmnumber+" "+maxqps+" "+networkbandwidth+" "+ecscpucore);
         int cpuresources= (int)(ecscpucore*cpunumber*(double)vmnumber/(double)containernumber);
         int bwresources = (int)(networkbandwidth*bwnubmer/(double)containernumber);
         int mipsability = (int)k8sInput.getK8smipsability();
@@ -125,9 +119,9 @@ public class GW_K8S extends Host {
         /**
          * Functions to calculate response time and qps will be added here
          */
-        setK8ssiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
+        setSiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
                 cpuresources,bwresources,loadnumber,ramp_down));
-        this.k8ssiemensList.setState(1);
+        getSiemensList().setState(1);
 
 //        setQps(k8smoneycost);
 //        System.out.println("The GWK8s QPS is "+qps);
@@ -160,9 +154,10 @@ public class GW_K8S extends Host {
      * Process the requests and generate response time
      * @param cloudletList
      */
-    public void process(List<ContainerCloudlet> cloudletList,
-                        K8sInput k8sInput,
-                        int time){
+    public void processEvent(List<ContainerCloudlet> cloudletList,
+                             K8sInput k8sInput,
+                             int time){
+        super.processEvent(cloudletList,k8sInput,time);
         try {
             int mipsparament = k8sInput.getK8smipsparament();
             int mipsability = getMipsability();
@@ -170,16 +165,16 @@ public class GW_K8S extends Host {
             double mips = (double)mipsability/(double)mipsparament;
             double responsetimeratio2 = k8sInput.getResponsetimeratio2();
             double responsetimeparament = k8sInput.getK8sresponsetimeparament();
-            this.k8ssiemensList = processRequests(cloudletList,cpuresources, bwresources,
-                    name,this.k8ssiemensList,containernumber,vmnumber,mips,
+            setSiemensList(processRequests(cloudletList,cpuresources, bwresources,
+                    name,getSiemensList(),containernumber,vmnumber,mips,
                     responsetimeparament,time,this.qps,this.qpsratio,this.qpsthreshold,
-                    this.responsetimethreshold,this.responsetimeratio,responsetimeratio2,this.networkbandwidth);
-
+                    this.responsetimethreshold,this.responsetimeratio,responsetimeratio2,this.networkbandwidth)
+            );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        setResponseTime(this.k8ssiemensList.getFinishtime());
+        setResponseTime(getSiemensList().getFinishtime());
     }
 
 

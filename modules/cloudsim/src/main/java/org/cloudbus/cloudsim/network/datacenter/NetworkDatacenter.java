@@ -80,7 +80,7 @@ public class NetworkDatacenter extends Datacenter {
 	 * @param characteristics the datacenter characteristics
 	 * @param vmAllocationPolicy the vmAllocationPolicy
 	 * @param storageList a List of storage elements, for data simulation
-         * @param schedulingInterval the scheduling delay to process each datacenter received event
+         * @param schedulingInterval the scheduling delay to processEvent each datacenter received event
 	 * 
 	 * @throws Exception  when one of the following scenarios occur:
 	 *         <ul>
@@ -187,7 +187,7 @@ public class NetworkDatacenter extends Datacenter {
 				return;
 			}
 
-			// process this Cloudlet to this CloudResource
+			// processEvent this Cloudlet to this CloudResource
 			cl.setResourceParameter(getId(), getCharacteristics().getCostPerSecond(), getCharacteristics()
 					.getCostPerBw());
 
@@ -203,7 +203,7 @@ public class NetworkDatacenter extends Datacenter {
 			double estimatedFinishTime = scheduler.cloudletSubmit(cl, fileTransferTime);
 
 			if (estimatedFinishTime > 0.0) { // if this cloudlet is in the exec
-				// time to process the cloudlet
+				// time to processEvent the cloudlet
 				estimatedFinishTime += fileTransferTime;
 				send(getId(), estimatedFinishTime, CloudSimTags.VM_DATACENTER_EVENT);
 

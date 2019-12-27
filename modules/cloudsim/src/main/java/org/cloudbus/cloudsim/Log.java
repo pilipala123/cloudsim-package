@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Logger used for performing logging of the simulation process. It provides the ability to
+ * Logger used for performing logging of the simulation processEvent. It provides the ability to
  * substitute the output stream by any OutputStream subclass.
  * 
  * @author Anton Beloglazov

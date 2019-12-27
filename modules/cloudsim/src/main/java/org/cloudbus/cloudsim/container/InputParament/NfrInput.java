@@ -1,6 +1,9 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class NfrInput {
+public class NfrInput extends PartInput{
+    public NfrInput(){
+        super();
+    }
     private int NfrECSnumber;
     private int Nfrcontainernumber;
     private int Nfrmaxqps;
@@ -11,6 +14,35 @@ public class NfrInput {
     private double Nfrqpsratio;
     private double Nfrresponsetimethreshold;
     private double Nfrresponsetimeratio;
+
+    private int id;
+    private String type;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private int nfrresponsetime;
+
+    public int getNfrresponsetime() {
+        return nfrresponsetime;
+    }
+
+    public void setNfrresponsetime(int nfrresponsetime) {
+        this.nfrresponsetime = nfrresponsetime;
+    }
 
     public double getNfrqpsthreshold() {
         return Nfrqpsthreshold;

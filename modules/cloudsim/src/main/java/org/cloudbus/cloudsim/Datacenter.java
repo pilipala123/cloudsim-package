@@ -56,7 +56,7 @@ public class Datacenter extends SimEntity {
 	/** The vm list. */
 	private List<? extends Vm> vmList;
 
-	/** The scheduling delay to process each datacenter received event. */
+	/** The scheduling delay to processEvent each datacenter received event. */
 	private double schedulingInterval;
 
 	/**
@@ -66,7 +66,7 @@ public class Datacenter extends SimEntity {
 	 * @param characteristics the characteristics of the datacenter to be created
 	 * @param storageList a List of storage elements, for data simulation
 	 * @param vmAllocationPolicy the policy to be used to allocate VMs into hosts
-         * @param schedulingInterval the scheduling delay to process each datacenter received event
+         * @param schedulingInterval the scheduling delay to processEvent each datacenter received event
 	 * @throws Exception when one of the following scenarios occur:
 	 *  <ul>
 	 *    <li>creating this entity before initializing CloudSim package
@@ -102,7 +102,7 @@ public class Datacenter extends SimEntity {
 		// If this resource doesn't have any PEs then no useful at all
 		if (getCharacteristics().getNumberOfPes() == 0 && getCharacteristics().getHostList().size() != 0) {
                     throw new Exception(super.getName()
-                        + " : Error - this entity has no PEs. Therefore, can't process any Cloudlets.");
+                        + " : Error - this entity has no PEs. Therefore, can't processEvent any Cloudlets.");
 		}
 		
 		if(getCharacteristics().getNumberOfPes()==0 && getCharacteristics().getHostList().size() == 0) {
@@ -416,7 +416,7 @@ public class Datacenter extends SimEntity {
 	/**
 	 * Process non-default received events that aren't processed by
          * the {@link #processEvent(org.cloudbus.cloudsim.core.SimEvent)} method.
-         * This method should be overridden by subclasses in other to process
+         * This method should be overridden by subclasses in other to processEvent
          * new defined events.
 	 * 
 	 * @param ev information about the event just happened
@@ -737,7 +737,7 @@ public class Datacenter extends SimEntity {
 				return;
 			}
 
-			// process this Cloudlet to this CloudResource
+			// processEvent this Cloudlet to this CloudResource
 			cl.setResourceParameter(
                                 getId(), getCharacteristics().getCostPerSecond(), 
                                 getCharacteristics().getCostPerBw());
@@ -1133,16 +1133,16 @@ public class Datacenter extends SimEntity {
 	/**
 	 * Gets the last time some cloudlet was processed in the datacenter.
 	 * 
-	 * @return the last process time
+	 * @return the last processEvent time
 	 */
 	protected double getLastProcessTime() {
 		return lastProcessTime;
 	}
 
 	/**
-	 * Sets the last process time.
+	 * Sets the last processEvent time.
 	 * 
-	 * @param lastProcessTime the new last process time
+	 * @param lastProcessTime the new last processEvent time
 	 */
 	protected void setLastProcessTime(double lastProcessTime) {
 		this.lastProcessTime = lastProcessTime;

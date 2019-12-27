@@ -296,7 +296,7 @@ public class DatacenterBroker extends SimEntity {
 	/**
 	 * Process non-default received events that aren't processed by
          * the {@link #processEvent(org.cloudbus.cloudsim.core.SimEvent)} method.
-         * This method should be overridden by subclasses in other to process
+         * This method should be overridden by subclasses in other to processEvent
          * new defined events.
 	 *
 	 * @param ev a SimEvent object

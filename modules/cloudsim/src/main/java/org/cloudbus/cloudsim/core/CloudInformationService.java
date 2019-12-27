@@ -17,7 +17,7 @@ import org.cloudbus.cloudsim.Log;
 
 /**
  * A Cloud Information Service (CIS) is an entity that provides cloud resource registration,
- * indexing and discovery services. The Cloud hostList tell their readiness to process Cloudlets by
+ * indexing and discovery services. The Cloud hostList tell their readiness to processEvent Cloudlets by
  * registering themselves with this entity. Other entities such as the resource broker can contact
  * this class for resource discovery service, which returns a list of registered resource IDs. In
  * summary, it acts like a yellow page service. This class will be created by CloudSim upon
@@ -235,7 +235,7 @@ public class CloudInformationService extends SimEntity {
 	/**
 	 * Process non-default received events that aren't processed by
          * the {@link #processEvent(org.cloudbus.cloudsim.core.SimEvent)} method.
-         * This method should be overridden by subclasses in other to process
+         * This method should be overridden by subclasses in other to processEvent
          * new defined events.
 	 * 
 	 * @param ev a SimEvent object

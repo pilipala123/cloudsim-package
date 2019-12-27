@@ -17,7 +17,7 @@ public class ContainerVmPe {
     public static final int BUSY = 2;
 
     /**
-     * Denotes Pe is failed and hence it can't process any Cloudlet at this moment. This Pe is
+     * Denotes Pe is failed and hence it can't processEvent any Cloudlet at this moment. This Pe is
      * failed because it belongs to a machine which is also failed.
      */
     public static final int FAILED = 3;

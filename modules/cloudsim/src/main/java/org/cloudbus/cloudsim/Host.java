@@ -10,6 +10,9 @@ package org.cloudbus.cloudsim;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cloudbus.cloudsim.container.InputParament.K8sInput;
+import org.cloudbus.cloudsim.container.core.ContainerCloudlet;
+import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.lists.PeList;
 import org.cloudbus.cloudsim.provisioners.BwProvisioner;
@@ -29,10 +32,21 @@ public class Host {
 
 	private int state;
 
+	public void setSiemensList(SiemensList siemensList) {
+		this.siemensList = siemensList;
+	}
+
+	private SiemensList siemensList;
 	public int getState() {
 		return state;
 	}
-
+	public SiemensList getSiemensList() {
+		return siemensList;
+	}
+	public void processEvent(List<ContainerCloudlet> cloudletList,
+							 K8sInput k8sInput,
+							 int time){}
+	public void processEvent(int loadpernumber,int time){}
 	public void setState(int state) {
 		this.state = state;
 	}

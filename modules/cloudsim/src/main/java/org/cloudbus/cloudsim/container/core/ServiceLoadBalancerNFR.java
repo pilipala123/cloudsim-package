@@ -3,27 +3,20 @@ package org.cloudbus.cloudsim.container.core;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.container.InputParament.AdjustParament;
 import org.cloudbus.cloudsim.container.InputParament.EcsInput;
-import org.cloudbus.cloudsim.container.InputParament.LoadGeneratorInput;
 import org.cloudbus.cloudsim.container.InputParament.NfrInput;
-import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
-import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
-import org.cloudbus.cloudsim.container.core.util.Calculatebw;
-import org.cloudbus.cloudsim.container.schedulers.ContainerCloudletScheduler;
-import org.yunji.cloudsimrd.load.LoadGenerator;
 
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.cloudbus.cloudsim.container.core.util.Process.processRequests;
+import static java.lang.Double.NaN;
 
 public class ServiceLoadBalancerNFR extends Host {
 
     private int responseTime;
-
+    private String name;
     private double qps;
 
-    private SiemensList nfrsiemensList;
     private int cpuresources;
 
     private int memoryresources;
@@ -37,6 +30,14 @@ public class ServiceLoadBalancerNFR extends Host {
 
     private int vmnumber;
     private int mipsability;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getMipsability() {
         return mipsability;
@@ -78,14 +79,6 @@ public class ServiceLoadBalancerNFR extends Host {
         this.vmnumber = vmnumber;
     }
 
-    public SiemensList getNfrsiemensList() {
-        return nfrsiemensList;
-    }
-
-    public void setNfrsiemensList(SiemensList nfrsiemensList) {
-        this.nfrsiemensList = nfrsiemensList;
-    }
-
     /**
      * Creates a new Container-based Redis object.
      *
@@ -121,10 +114,17 @@ public class ServiceLoadBalancerNFR extends Host {
         /**
          * Functions to calculate response time and qps will be added here
          */
-        setNfrsiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
+        setSiemensList(new SiemensList(cloudletList,containernumber,vmnumber,
                 cpuresources,memoryresources,loadnumber,ramp_down));
 
 //        setQps(100);
+    }
+    public ServiceLoadBalancerNFR(int id,String name,int responseTime){
+        super(id);
+        setResponseTime(responseTime);
+        setSiemensList(new SiemensList());
+        getSiemensList().setAverageresponsetimelist(new ArrayList<>());
+        getSiemensList().setQpslist(new ArrayList<>());
     }
 
     public int getResponseTime(){
@@ -143,19 +143,21 @@ public class ServiceLoadBalancerNFR extends Host {
         this.qps = qps;
     }
 
-    public void processEvent(int loadpernumber,double responsetime) {
+    public void processEvent(int loadpernumber,int time) {
+        super.processEvent(loadpernumber,time);
         String label = "Slb_NFR";
         double qpsbase = this.qps;
-        getNfrsiemensList().setName(label);
-        getNfrsiemensList().getQpslist().add(qpsbase * (double) loadpernumber);
-        getNfrsiemensList().getAverageresponsetimelist().add(responsetime);
+        getSiemensList().setName(this.name);
+        getSiemensList().getQpslist().add(qpsbase * (double) loadpernumber);
+        getSiemensList().getAverageresponsetimelist().add((double)this.responseTime);
+        System.out.println("time: "+time+ "s "+ getSiemensList().getName()+": average response time is "+ this.responseTime+"ms");
 
 //    }
 //    /**
 //     * Process the requests and generate response time
 //     * @param cloudletList
 //     */
-//    public void process(List<ContainerCloudlet> cloudletList,
+//    public void processEvent(List<ContainerCloudlet> cloudletList,
 //                        AdjustParament adjustParament,
 //                        int time){
 //        try {
@@ -163,8 +165,8 @@ public class ServiceLoadBalancerNFR extends Host {
 //            int mipsability = getMipsability();
 //            double mips = (double)mipsability/(double)mipsparament;
 //            int responsetimeparament = adjustParament.getNfrresponsetimeparament();
-//            this.nfrsiemensList = processRequests(cloudletList,cpuresources,
-//                    memoryresources,"NFR",this.nfrsiemensList,containernumber,
+//            this.siemensList = processRequests(cloudletList,cpuresources,
+//                    memoryresources,"NFR",this.siemensList,containernumber,
 //                    vmnumber,mips,responsetimeparament, time,this.qps,this.qpsratio,
 //                    this.qpsthreshold, this.responsetimethreshold,this.responsetimeratio,2,200);
 //
@@ -172,7 +174,7 @@ public class ServiceLoadBalancerNFR extends Host {
 //            e.printStackTrace();
 //        }
 //
-//        setResponseTime(this.nfrsiemensList.getFinishtime());
+//        setResponseTime(this.siemensList.getFinishtime());
 //    }
     }
 }

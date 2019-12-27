@@ -1,6 +1,9 @@
 package org.cloudbus.cloudsim.container.InputParament;
 
-public class K8sInput extends PartInput implements Comparable<K8sInput>{
+public class K8sInput extends PartInput{
+    public K8sInput(){
+        super();
+    }
     private int id;
     private int ECSNumbers;
     private int EcsCPUQuota;
@@ -22,6 +25,8 @@ public class K8sInput extends PartInput implements Comparable<K8sInput>{
     private double k8smipsability;
     private String name;
     private double responsetimeratio2;
+
+
 
     public double getResponsetimeratio2() {
         return responsetimeratio2;
@@ -194,7 +199,11 @@ public class K8sInput extends PartInput implements Comparable<K8sInput>{
     private int PodNumbersineachECS;
 
     @Override
-    public int compareTo(K8sInput k8sInput) {
-        return this.id - k8sInput.getId();
+    public int compareTo(PartInput partInput) {
+
+        return this.id - partInput.getId();
     }
+
+
+
 }

@@ -40,7 +40,7 @@ public class ContainerDatacenter extends SimEntity {
     private ContainerAllocationPolicy containerAllocationPolicy;
 
     /**
-     * The last process time.
+     * The last processEvent time.
      */
     private double lastProcessTime;
 
@@ -111,7 +111,7 @@ public class ContainerDatacenter extends SimEntity {
         // If this resource doesn't have any PEs then no useful at all
         if (getCharacteristics().getNumberOfPes() == 0) {
             throw new Exception(super.getName()
-                    + " : Error - this entity has no PEs. Therefore, can't process any Cloudlets.");
+                    + " : Error - this entity has no PEs. Therefore, can't processEvent any Cloudlets.");
         }
 
         // stores id of this class
@@ -836,7 +836,7 @@ public class ContainerDatacenter extends SimEntity {
                 return;
             }
 
-            // process this Cloudlet to this CloudResource
+            // processEvent this Cloudlet to this CloudResource
             cl.setResourceParameter(getId(), getCharacteristics().getCostPerSecond(), getCharacteristics()
                     .getCostPerBw());
 
@@ -1230,18 +1230,18 @@ public class ContainerDatacenter extends SimEntity {
     }
 
     /**
-     * Gets the last process time.
+     * Gets the last processEvent time.
      *
-     * @return the last process time
+     * @return the last processEvent time
      */
     protected double getLastProcessTime() {
         return lastProcessTime;
     }
 
     /**
-     * Sets the last process time.
+     * Sets the last processEvent time.
      *
-     * @param lastProcessTime the new last process time
+     * @param lastProcessTime the new last processEvent time
      */
     protected void setLastProcessTime(double lastProcessTime) {
         this.lastProcessTime = lastProcessTime;

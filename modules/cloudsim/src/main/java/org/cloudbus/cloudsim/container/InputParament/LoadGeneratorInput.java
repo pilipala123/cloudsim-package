@@ -18,33 +18,7 @@ public class LoadGeneratorInput {
     private int cpurandomnumber;
     private int lengthrandomnumber;
     private int bwrandomnumber;
-    private int slbresponsetime;
-    private int nfrresponsetime;
-    private int mockserviceresponsetime;
 
-    public int getSlbresponsetime() {
-        return slbresponsetime;
-    }
-
-    public void setSlbresponsetime(int slbresponsetime) {
-        this.slbresponsetime = slbresponsetime;
-    }
-
-    public int getNfrresponsetime() {
-        return nfrresponsetime;
-    }
-
-    public void setNfrresponsetime(int nfrresponsetime) {
-        this.nfrresponsetime = nfrresponsetime;
-    }
-
-    public int getMockserviceresponsetime() {
-        return mockserviceresponsetime;
-    }
-
-    public void setMockserviceresponsetime(int mockserviceresponsetime) {
-        this.mockserviceresponsetime = mockserviceresponsetime;
-    }
 
     public int getCloudletcpurequest() {
         return cloudletcpurequest;

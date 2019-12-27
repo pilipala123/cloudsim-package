@@ -134,9 +134,9 @@ public class Switch extends SimEntity {
 	public List<Vm> BagofTaskVm = new ArrayList<Vm>();
 
         /**
-         * The time the switch spends to process a received packet.
+         * The time the switch spends to processEvent a received packet.
          * This time is considered constant no matter how many packets 
-         * the switch have to process.
+         * the switch have to processEvent.
          * 
          * @todo The value of this attribute is being defined by
          * constants such as {@link NetworkConstants#SwitchingDelayRoot},
@@ -170,11 +170,11 @@ public class Switch extends SimEntity {
 		switch (ev.getTag()) {
 		// Resource characteristics request
 			case CloudSimTags.Network_Event_UP:
-				// process the packet from down switch or host
+				// processEvent the packet from down switch or host
 				processpacket_up(ev);
 				break;
 			case CloudSimTags.Network_Event_DOWN:
-				// process the packet from uplink
+				// processEvent the packet from uplink
 				processpacket_down(ev);
 				break;
 			case CloudSimTags.Network_Event_send:
@@ -209,7 +209,7 @@ public class Switch extends SimEntity {
 	/**
 	 * Sends a packet to switches connected through a downlink port.
 	 * 
-	 * @param ev Event/packet to process
+	 * @param ev Event/packet to processEvent
 	 */
 	protected void processpacket_down(SimEvent ev) {
 		// packet coming from up level router
@@ -252,7 +252,7 @@ public class Switch extends SimEntity {
 	/**
 	 * Sends a packet to switches connected through a uplink port.
 	 * 
-	 * @param ev Event/packet to process
+	 * @param ev Event/packet to processEvent
 	 */
 	protected void processpacket_up(SimEvent ev) {
 		// packet coming from down level router.
@@ -378,7 +378,7 @@ public class Switch extends SimEntity {
         /**
 	 * Process non-default received events that aren't processed by
          * the {@link #processEvent(org.cloudbus.cloudsim.core.SimEvent)} method.
-         * This method should be overridden by subclasses in other to process
+         * This method should be overridden by subclasses in other to processEvent
          * new defined events.
          *  
          * @todo the method should be protected to allow sub classes to override it,
@@ -391,7 +391,7 @@ public class Switch extends SimEntity {
 	/**
 	 * Sends a packet to hosts connected to the switch
 	 * 
-	 * @param ev Event/packet to process
+	 * @param ev Event/packet to processEvent
 	 */
 	protected void processpacketforward(SimEvent ev) {
 		// search for the host and packets..send to them

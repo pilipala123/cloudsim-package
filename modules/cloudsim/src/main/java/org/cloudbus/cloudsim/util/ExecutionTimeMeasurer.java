@@ -20,24 +20,24 @@ import java.util.Map;
 public class ExecutionTimeMeasurer {
 
 	/** A map of execution times where each key
-         * represents the name of the method/process being its
+         * represents the name of the method/processEvent being its
          * execution time computed and each key is the
-         * time the method/process started (in milliseconds). 
-         * Usually, this name is the method/process name, making
+         * time the method/processEvent started (in milliseconds).
+         * Usually, this name is the method/processEvent name, making
          * easy to identify the execution times into the map.
          * 
          * @todo The name of the attribute doesn't match with what it stores.
-         * It in fact stores the method/process start time,
+         * It in fact stores the method/processEvent start time,
          * no the time it spent executing.
          */
 	private final static Map<String, Long> executionTimes = new HashMap<String, Long>();
 
 	/**
-	 * Start measuring the execution time of a method/process.
+	 * Start measuring the execution time of a method/processEvent.
          * Usually this method has to be called at the first line of the method
          * that has to be its execution time measured.
 	 * 
-	 * @param name the name of the method/process being measured.
+	 * @param name the name of the method/processEvent being measured.
          * @see #executionTimes
 	 */
 	public static void start(String name) {
@@ -45,10 +45,10 @@ public class ExecutionTimeMeasurer {
 	}
 
 	/**
-	 * Finalizes measuring the execution time of a method/process.
+	 * Finalizes measuring the execution time of a method/processEvent.
 	 * 
-	 * @param name the name of the method/process being measured.
-	 * @return the time the method/process spent in execution (in seconds)
+	 * @param name the name of the method/processEvent being measured.
+	 * @return the time the method/processEvent spent in execution (in seconds)
          * @see #executionTimes
 	 */
 	public static double end(String name) {

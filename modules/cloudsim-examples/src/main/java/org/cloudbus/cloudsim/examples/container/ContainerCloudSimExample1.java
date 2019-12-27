@@ -127,7 +127,6 @@ public class ContainerCloudSimExample1 {
                         break;
 
                 }
-                System.out.println(id);
             }
             partInputList.addAll(k8sInputList);
             Collections.sort(k8sInputList);
@@ -145,6 +144,9 @@ public class ContainerCloudSimExample1 {
             /**
              * S3:init
              */
+            System.out.println("*************************");
+            System.out.println("Starting init process");
+            System.out.println("*************************");
             int gwnumber= 0;
             ServiceLoadBalancerGW slb_gw = null;
             ServiceLoadBalancerNFR nfr=null;
@@ -177,7 +179,8 @@ public class ContainerCloudSimExample1 {
                                 hostList.add(mockService);
                                 break;
                             default:
-//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+                                hostList.add(slb);
                                 break;
                         }
                         break;
@@ -189,16 +192,17 @@ public class ContainerCloudSimExample1 {
             /**
             * S4: init SiemensList,which is used to store the results
             */
-            SiemensList slbsiemensList=null;
+            SiemensList partsiemensList = null;
             SiemensList redisSiementsList;
             SiemensList k8ssiemensList= null;
-            SiemensList nfrsiemensList=null;
-            SiemensList mockservicesiemenslist = null;
             List<SiemensList> siemensListList = new ArrayList<>();
             List<SiemensList> siemensListList2 = new ArrayList<>();
             /**
              * S5:generator the loads which is close to the real environment
              */
+            System.out.println("*************************");
+            System.out.println("Starting simulation process");
+            System.out.println("*************************");
             int time =0;
             int loadnumberpertime = 0;
             for(time=0;time<ramp_down;time++) {
@@ -229,12 +233,11 @@ public class ContainerCloudSimExample1 {
 
                 int hostnumber=0;
                 gwnumber=0;
-                System.out.print("order:");
+                System.out.println("result:");
                 for(PartInput runpartInput:partInputList){
 
                     String type = runpartInput.getType();
                     String name = runpartInput.getName();
-                    System.out.print(name+"__");
                     switch (type) {
                         case "GW":
                             hostList.get(hostnumber).processEvent(cloudlets, k8sInputList.get(gwnumber), time);
@@ -242,29 +245,29 @@ public class ContainerCloudSimExample1 {
                             hostnumber++;
                             break;
                         case "part":
-                            switch (name){
-                                case "slb":
-                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
-                                    hostnumber++;
-                                    break;
-                                case "nfr":
-                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
-                                    hostnumber++;
-                                    break;
-                                case "mockservice":
-                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
-                                    hostnumber++;
-                                    break;
-                                default:
-//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
-                                    break;
-                            }
+
+                            hostList.get(hostnumber).processEvent(loadnumberpertime,time);
+                            hostnumber++;
                             break;
+//                                case "slb":
+//
+//                                case "nfr":
+//                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
+//                                    hostnumber++;
+//                                    break;
+//                                case "mockservice":
+//                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
+//                                    hostnumber++;
+//                                    break;
+//                                default:
+////                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+//                                    break;
+
+
                         default:
                             break;
                     }
                 }
-                System.out.println();
             }
             /**
              * S7:print the results
@@ -273,52 +276,36 @@ public class ContainerCloudSimExample1 {
             gwnumber=0;
             for(PartInput outputpartInput:partInputList){
                 String type = outputpartInput.getType();
-                String name = outputpartInput.getName();
                 switch (type) {
                     case "GW":
-                        k8ssiemensList=hostList.get(hostnumber).getSiemensList();
-                        siemensListList.add(k8ssiemensList);
+                        partsiemensList=hostList.get(hostnumber).getSiemensList();
+                        siemensListList.add(partsiemensList);
                         gwnumber++;
                         hostnumber++;
                         break;
                     case "part":
-                        switch (name){
-                            case "slb":
-                                slbsiemensList = hostList.get(hostnumber).getSiemensList();
-                                siemensListList2.add(slbsiemensList);
-                                hostnumber++;
-                                break;
-                            case "nfr":
-                                nfrsiemensList = hostList.get(hostnumber).getSiemensList();
-                                siemensListList2.add(nfrsiemensList);
-                                hostnumber++;
-                                break;
-                            case "mockservice":
-                                mockservicesiemenslist = hostList.get(hostnumber).getSiemensList();
-                                siemensListList2.add(mockservicesiemenslist);
-                                hostnumber++;
-                                break;
-                            default:
-//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
-                                break;
-                        }
+                        partsiemensList = hostList.get(hostnumber).getSiemensList();
+                        siemensListList2.add(partsiemensList);
+                        hostnumber++;
                         break;
                     default:
                         break;
                 }
             }
 
-
+            System.out.println("*************************");
+            System.out.println("Plot the pictures");
+            System.out.println("*************************");
             for (SiemensList siemensList:siemensListList){
 
                 //绘制图形
                 if(siemensList.getState()==1) {
-                    Plotpictures.plotpicture(ramp_down, siemensList.getAvgperresponsetimelist(), siemensList.getName() + "每个时刻的平均响应时间", "per response time(ms)");
+                    Plotpictures.plotpicture(ramp_down, siemensList.getAvgperresponsetimelist(), siemensList.getName() + "每个时刻完成任务的平均响应时间", "per response time(ms)");
                     Plotpictures.plotpicture(ramp_down, siemensList.getQpslist(), siemensList.getName() + " qps随时间的关系", "qps(/sec)");
                     Plotpictures.plotpicture(ramp_down, siemensList.getLoadnumber(), siemensList.getName() + " 负载产生数量随时间的关系", "load(vu)");
                     Plotpictures.plotpicture(ramp_down, siemensList.getHostcpuusagelist(), siemensList.getName() + " CPU利用率随时间的关系", "CPU(%)");
                     Plotpictures.plotpicture(ramp_down, siemensList.getHostbwusagelist(), siemensList.getName() + " 带宽利用率随时间的关系", "bw(%)");
-                    Plotpictures.plotpicture(ramp_down, siemensList.getAverageresponsetimelist(), siemensList.getName() + " 平均响应时间随时间的关系", "response time(ms)");
+                    Plotpictures.plotpicture(ramp_down, siemensList.getAverageresponsetimelist(), siemensList.getName() + " 这时刻之前所有任务平均响应时间随时间的关系", "response time(ms)");
                     Plotpictures.plotpicture(ramp_down,siemensList.getVmcpuusagelist(),siemensList.getName()+" vm中 cpu利用率随时间的关系","CPU(%)");
                     Plotpictures.plotpicture(ramp_down,siemensList.getContainercpuusagelist(),siemensList.getName()+" container中 cpu利用率随时间的关系","CPU(%)");
                     Plotpictures.plotpicture(ramp_down,siemensList.getHostoutputbwusage(),siemensList.getName()+" output bw","bw");

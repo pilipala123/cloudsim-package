@@ -55,7 +55,7 @@ public class NetworkVm extends Vm implements Comparable<Object> {
 	public boolean flagfree;
 
         /**
-         * The time when the VM finished to process its cloudlets.
+         * The time when the VM finished to processEvent its cloudlets.
          */
 	public double finishtime;
 

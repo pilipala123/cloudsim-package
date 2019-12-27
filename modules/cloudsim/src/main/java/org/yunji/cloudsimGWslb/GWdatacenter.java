@@ -15,7 +15,7 @@ public class GWdatacenter extends Datacenter {
      * @param characteristics    the characteristics of the datacenter to be created
      * @param vmAllocationPolicy the policy to be used to allocate VMs into hosts
      * @param storageList        a List of storage elements, for data simulation
-     * @param schedulingInterval the scheduling delay to process each datacenter received event
+     * @param schedulingInterval the scheduling delay to processEvent each datacenter received event
      * @throws Exception when one of the following scenarios occur:
      *                   <ul>
      *                   <li>creating this entity before initializing CloudSim package

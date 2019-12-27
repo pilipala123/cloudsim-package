@@ -134,9 +134,6 @@ public class LoadProperties {
         loadGeneratorInput.setCloudletcpurequest(Integer.parseInt(properties.getProperty("cloudletcpurequest")));
         loadGeneratorInput.setCloudletmemoryrequest(Integer.parseInt(properties.getProperty("cloudletmemoryrequest")));
         loadGeneratorInput.setCloudletlength(Integer.parseInt(properties.getProperty("cloudletlength")));
-        loadGeneratorInput.setNfrresponsetime(Integer.parseInt(properties.getProperty("nfrresponsetime")));
-        loadGeneratorInput.setSlbresponsetime(Integer.parseInt(properties.getProperty("slbresponsetime")));
-        loadGeneratorInput.setMockserviceresponsetime(Integer.parseInt(properties.getProperty("mockserviceresponsetime")));
 //        loadGeneratorInput.setPrecision(Double.parseDouble(properties.getProperty("precision")));
         return loadGeneratorInput;
     }
@@ -162,16 +159,19 @@ public class LoadProperties {
 //        slbInput.setSlbMaxoutboundbandwidth(Integer.parseInt(properties.getProperty("Loadnumbers")));
 //        slbInput.setSlbMaxQPS(Integer.parseInt(properties.getProperty("Loadnumbers")));
 //        slbInput.setSlbMemoryQuota(Integer.parseInt(properties.getProperty("Loadnumbers")));
-        slbInput.setSlbECSnumber(Integer.parseInt(properties.getProperty("SlbECSnumber")));
-        slbInput.setSlbmaxqps(Integer.parseInt(properties.getProperty("Slbmaxqps")));
-        slbInput.setSlbnetworkbandwidth(Integer.parseInt(properties.getProperty("Slbnetworkbandwidth")));
-        slbInput.setSlbcontainernumber(Integer.parseInt(properties.getProperty("Slbcontainernumber")));
-        slbInput.setSlbcpucore(Double.parseDouble(properties.getProperty("Slbcpucore")));
-        slbInput.setSlbQpsperload(Double.parseDouble(properties.getProperty("Slbqpsperload")));
-        slbInput.setSlbqpsratio(Double.parseDouble(properties.getProperty("Slbqpsratio")));
-        slbInput.setSlbqpsthreshold(Double.parseDouble(properties.getProperty("Slbqpsthreshold")));
-        slbInput.setSlbresponsetimeratio(Double.parseDouble(properties.getProperty("Slbresponsetimeratio")));
-        slbInput.setSlbresponsetimethreshold(Double.parseDouble(properties.getProperty("Slbresponsetimethreshold")));
+//        slbInput.setSlbECSnumber(Integer.parseInt(properties.getProperty("SlbECSnumber")));
+//        slbInput.setSlbmaxqps(Integer.parseInt(properties.getProperty("Slbmaxqps")));
+//        slbInput.setSlbnetworkbandwidth(Integer.parseInt(properties.getProperty("Slbnetworkbandwidth")));
+//        slbInput.setSlbcontainernumber(Integer.parseInt(properties.getProperty("Slbcontainernumber")));
+//        slbInput.setSlbcpucore(Double.parseDouble(properties.getProperty("Slbcpucore")));
+//        slbInput.setSlbQpsperload(Double.parseDouble(properties.getProperty("Slbqpsperload")));
+//        slbInput.setSlbqpsratio(Double.parseDouble(properties.getProperty("Slbqpsratio")));
+//        slbInput.setSlbqpsthreshold(Double.parseDouble(properties.getProperty("Slbqpsthreshold")));
+//        slbInput.setSlbresponsetimeratio(Double.parseDouble(properties.getProperty("Slbresponsetimeratio")));
+//        slbInput.setSlbresponsetimethreshold(Double.parseDouble(properties.getProperty("Slbresponsetimethreshold")));
+        slbInput.setSlbresponsetime(Integer.parseInt(properties.getProperty("responsetime")));
+        slbInput.setId(Integer.parseInt(properties.getProperty("id")));
+        slbInput.setType(properties.getProperty("type"));
         return slbInput;
     }
 
@@ -243,16 +243,19 @@ public class LoadProperties {
 
     public static NfrInput setnfrInput(Properties properties){
         NfrInput nfrInput= new NfrInput();
-        nfrInput.setNfrcontainernumber(Integer.parseInt(properties.getProperty("Nfrcontainernumber")));
-        nfrInput.setNfrECSnumber(Integer.parseInt(properties.getProperty("NfrECSnumber")));
-        nfrInput.setNfrnetworkbandwidth(Integer.parseInt(properties.getProperty("Nfrnetworkbandwidth")));
-        nfrInput.setNfrmaxqps(Integer.parseInt(properties.getProperty("Nfrmaxqps")));
-        nfrInput.setCpucore(Double.parseDouble(properties.getProperty("Nfrcpucore")));
-        nfrInput.setNfrqpsratio(Double.parseDouble(properties.getProperty("Nfrqpsratio")));
-        nfrInput.setNfrqpsperload(Double.parseDouble(properties.getProperty("Nfrqpsperload")));
-        nfrInput.setNfrqpsthreshold(Double.parseDouble(properties.getProperty("Nfrqpsthreshold")));
-        nfrInput.setNfrresponsetimeratio(Double.parseDouble(properties.getProperty("Nfrresponsetimeratio")));
-        nfrInput.setNfrresponsetimethreshold(Double.parseDouble(properties.getProperty("Nfrresponsetimethreshold")));
+//        nfrInput.setNfrcontainernumber(Integer.parseInt(properties.getProperty("Nfrcontainernumber")));
+//        nfrInput.setNfrECSnumber(Integer.parseInt(properties.getProperty("NfrECSnumber")));
+//        nfrInput.setNfrnetworkbandwidth(Integer.parseInt(properties.getProperty("Nfrnetworkbandwidth")));
+//        nfrInput.setNfrmaxqps(Integer.parseInt(properties.getProperty("Nfrmaxqps")));
+//        nfrInput.setCpucore(Double.parseDouble(properties.getProperty("Nfrcpucore")));
+//        nfrInput.setNfrqpsratio(Double.parseDouble(properties.getProperty("Nfrqpsratio")));
+//        nfrInput.setNfrqpsperload(Double.parseDouble(properties.getProperty("Nfrqpsperload")));
+//        nfrInput.setNfrqpsthreshold(Double.parseDouble(properties.getProperty("Nfrqpsthreshold")));
+//        nfrInput.setNfrresponsetimeratio(Double.parseDouble(properties.getProperty("Nfrresponsetimeratio")));
+//        nfrInput.setNfrresponsetimethreshold(Double.parseDouble(properties.getProperty("Nfrresponsetimethreshold")));
+        nfrInput.setId(Integer.parseInt(properties.getProperty("id")));
+        nfrInput.setType(properties.getProperty("type"));
+        nfrInput.setNfrresponsetime(Integer.parseInt(properties.getProperty("nfrresponsetime")));
         return nfrInput;
     }
 
@@ -273,52 +276,52 @@ public class LoadProperties {
         System.out.println("Tablestorethreadcount:"+tablestoreInput.getTablestorethreadcount());
     }
 
-    public static RegressionParament setregressionParament(Properties properties){
-        RegressionParament regressionParament = new RegressionParament();
-//        double bw = Double.parseDouble(properties.getProperty("bw_a_s"));
-        regressionParament.getSlb_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_s")));
-        regressionParament.getSlb_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_s")));
-        regressionParament.getSlb_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_m")));
-        regressionParament.getSlb_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_m")));
-        regressionParament.getSlb_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_c_m")));
-        regressionParament.getGwtma_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_s")));
-        regressionParament.getGwtma_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_s")));
-        regressionParament.getGwtma_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_m")));
-        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_m")));
-        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_c_m")));
-        regressionParament.getK8s_slb_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_s")));
-        regressionParament.getK8s_slb_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_s")));
-        regressionParament.getK8s_slb_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_m")));
-        regressionParament.getK8s_slb_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_m")));
-        regressionParament.getK8s_slb_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_c_m")));
-        regressionParament.getK8s_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_s")));
-        regressionParament.getK8s_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_s")));
-        regressionParament.getK8s_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_m")));
-        regressionParament.getK8s_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_m")));
-        regressionParament.getK8s_nfr_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_c_m")));
-        regressionParament.getK8s_redis_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_s")));
-        regressionParament.getK8s_redis_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_s")));
-        regressionParament.getK8s_redis_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_m")));
-        regressionParament.getK8s_redis_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_m")));
-        regressionParament.getK8s_redis_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_c_m")));
-        regressionParament.getNfr_gwtma_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_s")));
-        regressionParament.getNfr_gwtma_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_s")));
-        regressionParament.getNfr_gwtma_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_m")));
-        regressionParament.getNfr_gwtma_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_m")));
-        regressionParament.getNfr_gwtma_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_c_m")));
-        regressionParament.getNfr_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_s")));
-        regressionParament.getNfr_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_s")));
-        regressionParament.getNfr_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_m")));
-        regressionParament.getNfr_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_m")));
-        regressionParament.getNfr_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_c_m")));
-        regressionParament.getRedis_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_s")));
-        regressionParament.getRedis_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_s")));
-        regressionParament.getRedis_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_m")));
-        regressionParament.getRedis_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_m")));
-        regressionParament.getRedis_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_c_m")));
-
-        return regressionParament;
-    }
+//    public static RegressionParament setregressionParament(Properties properties){
+//        RegressionParament regressionParament = new RegressionParament();
+////        double bw = Double.parseDouble(properties.getProperty("bw_a_s"));
+//        regressionParament.getSlb_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_s")));
+//        regressionParament.getSlb_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_s")));
+//        regressionParament.getSlb_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_a_m")));
+//        regressionParament.getSlb_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_b_m")));
+//        regressionParament.getSlb_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("slb_k8s_bw_c_m")));
+//        regressionParament.getGwtma_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_s")));
+//        regressionParament.getGwtma_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_s")));
+//        regressionParament.getGwtma_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_a_m")));
+//        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_b_m")));
+//        regressionParament.getGwtma_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("gwtma_nfr_bw_c_m")));
+//        regressionParament.getK8s_slb_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_s")));
+//        regressionParament.getK8s_slb_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_s")));
+//        regressionParament.getK8s_slb_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_a_m")));
+//        regressionParament.getK8s_slb_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_b_m")));
+//        regressionParament.getK8s_slb_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_slb_bw_c_m")));
+//        regressionParament.getK8s_nfr_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_s")));
+//        regressionParament.getK8s_nfr_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_s")));
+//        regressionParament.getK8s_nfr_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_a_m")));
+//        regressionParament.getK8s_nfr_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_b_m")));
+//        regressionParament.getK8s_nfr_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_nfr_bw_c_m")));
+//        regressionParament.getK8s_redis_s().setBw_a_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_s")));
+//        regressionParament.getK8s_redis_s().setBw_b_s(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_s")));
+//        regressionParament.getK8s_redis_m().setBw_a_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_a_m")));
+//        regressionParament.getK8s_redis_m().setBw_b_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_b_m")));
+//        regressionParament.getK8s_redis_m().setBw_c_m(Double.parseDouble(properties.getProperty("k8s_redis_bw_c_m")));
+//        regressionParament.getNfr_gwtma_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_s")));
+//        regressionParament.getNfr_gwtma_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_s")));
+//        regressionParament.getNfr_gwtma_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_a_m")));
+//        regressionParament.getNfr_gwtma_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_b_m")));
+//        regressionParament.getNfr_gwtma_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_gwtma_bw_c_m")));
+//        regressionParament.getNfr_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_s")));
+//        regressionParament.getNfr_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_s")));
+//        regressionParament.getNfr_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_a_m")));
+//        regressionParament.getNfr_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_b_m")));
+//        regressionParament.getNfr_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("nfr_k8s_bw_c_m")));
+//        regressionParament.getRedis_k8s_s().setBw_a_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_s")));
+//        regressionParament.getRedis_k8s_s().setBw_b_s(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_s")));
+//        regressionParament.getRedis_k8s_m().setBw_a_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_a_m")));
+//        regressionParament.getRedis_k8s_m().setBw_b_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_b_m")));
+//        regressionParament.getRedis_k8s_m().setBw_c_m(Double.parseDouble(properties.getProperty("redis_k8s_bw_c_m")));
+//
+//        return regressionParament;
+//    }
 
 
     public static AdjustParament setAdjustParament(Properties properties){
@@ -337,7 +340,23 @@ public class LoadProperties {
 
     }
 
+    public static MockserviceInput setmockserviceInput(Properties properties){
+        MockserviceInput mockserviceInput = new MockserviceInput();
+        mockserviceInput.setId(Integer.parseInt(properties.getProperty("id")));
+        mockserviceInput.setType(properties.getProperty("type"));
+        mockserviceInput.setMockserviceresponsetime(Integer.parseInt(properties.getProperty("mockserviceresponsetime")));
+        return  mockserviceInput;
+    }
 
+
+    public static PartInput setpartInput(Properties properties){
+        PartInput partInput = new PartInput();
+        partInput.setId(Integer.parseInt(properties.getProperty("id")));
+        partInput.setType(properties.getProperty("type"));
+        partInput.setName(properties.getProperty("name"));
+        partInput.setResponsetime(Integer.parseInt(properties.getProperty("responsetime")));
+        return partInput;
+    }
 
 
 }

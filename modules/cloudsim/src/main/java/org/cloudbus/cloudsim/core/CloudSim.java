@@ -764,7 +764,7 @@ public class CloudSim {
 		}
 		clock = e.eventTime();
 
-		// Ok now process it
+		// Ok now processEvent it
 		switch (e.getType()) {
 			case SimEvent.ENULL:
 				throw new IllegalArgumentException("Event has a null type.");
