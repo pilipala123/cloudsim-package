@@ -11,46 +11,18 @@ package org.cloudbus.cloudsim.examples.container;
  */
 
 
-import com.google.common.annotations.GwtCompatible;
-import org.cloudbus.cloudsim.Cloudlet;
-import org.cloudbus.cloudsim.Log;
-import org.cloudbus.cloudsim.Storage;
-import org.cloudbus.cloudsim.UtilizationModelNull;
+import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.container.InputParament.*;
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerBwProvisionerSimple;
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerPe;
-import org.cloudbus.cloudsim.container.containerProvisioners.ContainerRamProvisionerSimple;
-import org.cloudbus.cloudsim.container.containerProvisioners.CotainerPeProvisionerSimple;
-import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmBwProvisionerSimple;
-import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmPe;
-import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmPeProvisionerSimple;
-import org.cloudbus.cloudsim.container.containerVmProvisioners.ContainerVmRamProvisionerSimple;
 import org.cloudbus.cloudsim.container.core.*;
-import org.cloudbus.cloudsim.container.core.Siemens.RegressionParament;
 import org.cloudbus.cloudsim.container.core.Siemens.SiemensList;
 import org.cloudbus.cloudsim.container.core.plotpicture.Plotpictures;
 import org.cloudbus.cloudsim.container.core.util.CalculateSumResponsetime;
-import org.cloudbus.cloudsim.container.core.util.Calculatebw;
-import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicy;
-import org.cloudbus.cloudsim.container.hostSelectionPolicies.HostSelectionPolicyFirstFit;
-import org.cloudbus.cloudsim.container.load.ConcurrencyLoads;
 import org.cloudbus.cloudsim.container.load.LoadGeneratorMDSP;
-import org.cloudbus.cloudsim.container.load.LoadPropertiesMDSP;
-import org.cloudbus.cloudsim.container.resourceAllocatorMigrationEnabled.PowerContainerVmAllocationPolicyMigrationAbstractHostSelection;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerAllocationPolicy;
 import org.cloudbus.cloudsim.container.resourceAllocators.ContainerVmAllocationPolicy;
-import org.cloudbus.cloudsim.container.resourceAllocators.PowerContainerAllocationPolicySimple;
-import org.cloudbus.cloudsim.container.schedulers.ContainerCloudletSchedulerDynamicWorkload;
-import org.cloudbus.cloudsim.container.schedulers.ContainerSchedulerTimeSharedOverSubscription;
-import org.cloudbus.cloudsim.container.schedulers.ContainerVmSchedulerTimeSharedOverSubscription;
-import org.cloudbus.cloudsim.container.utils.IDs;
-import org.cloudbus.cloudsim.container.vmSelectionPolicies.PowerContainerVmSelectionPolicy;
-import org.cloudbus.cloudsim.container.vmSelectionPolicies.PowerContainerVmSelectionPolicyMaximumUsage;
-import org.cloudbus.cloudsim.core.CloudSim;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.io.*;
-import java.text.DecimalFormat;
+import java.io.File;
 import java.util.*;
 
 import static org.cloudbus.cloudsim.container.core.LoadProperties.*;
@@ -97,8 +69,12 @@ public class ContainerCloudSimExample1 {
              */
             LoadGeneratorInput loadGeneratorInput = new LoadGeneratorInput();
             K8sInput k8sInput = new K8sInput();
+            PartInput partInput = new PartInput();
             List<K8sInput> k8sInputList = new ArrayList<>();
+            List<PartInput> partInputList= new ArrayList<>();
             List<GW_K8S> gw_k8SList = new ArrayList<>();
+            List<Host> hostList = new ArrayList<>();
+            List<Integer> idlist = new ArrayList<>();
             ArrayList<String> listFileName = new ArrayList<String>();
             List<Properties> propertiesList = new ArrayList<>();
             List<InputStream> inputStreamList = new ArrayList<>();
@@ -123,6 +99,7 @@ public class ContainerCloudSimExample1 {
             }
             for(Properties properties:propertiesList) {
                 int id = Integer.parseInt(properties.getProperty("id"));
+
                 String type = properties.getProperty("type");
                 if(type==null){
                     continue;
@@ -139,65 +116,26 @@ public class ContainerCloudSimExample1 {
                         gwpartnumber++;
                         k8sInput = setk8sInput(properties);
                         k8sInput.setId(id);
+                        k8sInput.setType("GW");
                         k8sInputList.add(k8sInput);
                         break;
+                    case "part":
+                        partInput = setpartInput(properties);
+                        partInput.setId(id);
+                        partInputList.add(partInput);
                     default:
                         break;
-                }
-                Collections.sort(k8sInputList);
 
+                }
                 System.out.println(id);
             }
-
-            Properties properties = new Properties();
-            Properties properties1 = new Properties();
-            Properties loadproperties = new Properties();
-//            Properties k8sproperties = new Properties();
-            InputStream inputStream = null;
-            InputStream inputStream2 = null;
-            InputStream loadinputStream = null;
-            InputStream k8sinputStream =null;
-
-            EcsInput ecsInput = new EcsInput();
-
-            SlbInput slbInput = new SlbInput();
-//            RegressionParament regressionParament = new RegressionParament();
-            AdjustParament adjustParament = new AdjustParament();
-            NfrInput nfrInput = new NfrInput();
-            try {
-                inputStream = new FileInputStream("modules/cloudsim/src/main/resources/config.properties");
-                properties.load(inputStream);
-                inputStream2 = new FileInputStream("modules/cloudsim/src/main/resources/parament.properties");
-                properties1.load(inputStream2);
-//                loadinputStream = new FileInputStream("modules/cloudsim/src/main/resources/loadgenerator.properties");
-//                loadproperties.load(loadinputStream);
-//                k8sinputStream = new FileInputStream("modules/cloudsim/src/main/resources/k8s_gw.properties");
-//                k8sproperties.load(k8sinputStream);
-                //ecs init
-//                regressionParament = setregressionParament(properties);
-                ecsInput = setEcsInput(properties);
-
-                slbInput = setslbInput(properties);
-                nfrInput = setnfrInput(properties);
-                adjustParament = setAdjustParament(properties1);
-
-
-
-            } catch (IOException error) {
-                error.printStackTrace();
-            }finally {
-                if(inputStream !=null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException error2) {
-                        error2.printStackTrace();
-                    }
-                }
-            }
+            partInputList.addAll(k8sInputList);
+            Collections.sort(k8sInputList);
+            Collections.sort(partInputList);
+            Collections.sort(idlist);
 
             LoadGeneratorMDSP loadGeneratorMDSP = new LoadGeneratorMDSP();
-//            MathUtil mathUtil = new MathUtil();
-//            LoadPropertiesMDSP loadPropertiesMDSP = new LoadPropertiesMDSP();
+
 
             /**
              * S2: Use Load generator generate loads
@@ -207,16 +145,47 @@ public class ContainerCloudSimExample1 {
             /**
              * S3:init
              */
-            ServiceLoadBalancerGW slb_gw = new ServiceLoadBalancerGW(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
-            Redis redis = new Redis(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,slbInput);
-            for(int i=0;i<gwpartnumber;i++){
-                GW_K8S gw_k8S = new GW_K8S(k8sInputList.get(i).getId(),cloudlets,loadnumber,ramp_down,k8sInputList.get(i));
-                gw_k8SList.add(gw_k8S);
+            int gwnumber= 0;
+            ServiceLoadBalancerGW slb_gw = null;
+            ServiceLoadBalancerNFR nfr=null;
+            MockService mockService=null;
+            for(PartInput partInput1:partInputList){
+                String type = partInput1.getType();
+                String name = partInput1.getName();
+                int id = partInput.getId();
+                idlist.add(id);
+                int responsetime = partInput1.getResponsetime();
+                switch (type) {
+                    case "GW":
+                        GW_K8S gw_k8S = new GW_K8S(partInput.getId(), cloudlets, loadnumber, ramp_down, k8sInputList.get(gwnumber));
+                        gw_k8SList.add(gw_k8S);
+                        hostList.add(gw_k8S);
+                        gwnumber++;
+                        break;
+                    case "part":
+                        switch (name){
+                            case "slb":
+                                slb_gw = new ServiceLoadBalancerGW(id,name,responsetime);
+                                hostList.add(slb_gw);
+                                break;
+                            case "nfr":
+                                nfr = new ServiceLoadBalancerNFR(id,name,responsetime);
+                                hostList.add(nfr);
+                                break;
+                            case "mockservice":
+                                mockService = new MockService(id,name,responsetime);
+                                hostList.add(mockService);
+                                break;
+                            default:
+//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            ServiceLoadBalancerNFR nfr = new ServiceLoadBalancerNFR(0,cloudlets,loadnumber,ramp_down,adjustParament,ecsInput,nfrInput);
-            MockService mockService = new MockService(0);
-            int flag = 1;    //flag为0时计算带宽时采用单元回归，为1时采用多元回归
             /**
             * S4: init SiemensList,which is used to store the results
             */
@@ -257,33 +226,89 @@ public class ContainerCloudSimExample1 {
                 /**
                  * S6:run the simulation
                  */
-                slb_gw.processEvent(loadnumberpertime,loadGeneratorInput.getSlbresponsetime());
-//                slb_gw.process(cloudlets,adjustParament,time);
-//                redis.process(cloudlets,flag,regressionParament,loadGeneratorInput,adjustParament,time);
-                for (int j=0;j<gwpartnumber;j++) {
-                    gw_k8SList.get(j).process(cloudlets, k8sInputList.get(j), time);
+
+                int hostnumber=0;
+                gwnumber=0;
+                System.out.print("order:");
+                for(PartInput runpartInput:partInputList){
+
+                    String type = runpartInput.getType();
+                    String name = runpartInput.getName();
+                    System.out.print(name+"__");
+                    switch (type) {
+                        case "GW":
+                            hostList.get(hostnumber).processEvent(cloudlets, k8sInputList.get(gwnumber), time);
+                            gwnumber++;
+                            hostnumber++;
+                            break;
+                        case "part":
+                            switch (name){
+                                case "slb":
+                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
+                                    hostnumber++;
+                                    break;
+                                case "nfr":
+                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
+                                    hostnumber++;
+                                    break;
+                                case "mockservice":
+                                    hostList.get(hostnumber).processEvent(loadnumberpertime);
+                                    hostnumber++;
+                                    break;
+                                default:
+//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+                                    break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
-                nfr.processEvent(loadnumberpertime,loadGeneratorInput.getNfrresponsetime());
-//                nfr.process(cloudlets,adjustParament,time);
-                mockService.processEvent(loadnumberpertime,loadGeneratorInput.getMockserviceresponsetime());
+                System.out.println();
             }
             /**
              * S7:print the results
              */
-            slbsiemensList = slb_gw.getSlbsiemensList();
-//            redisSiementsList = redis.getSiemensList();
-//            存储为非定值的列表
-            for (int k=0;k<gwpartnumber;k++) {
-                k8ssiemensList = gw_k8SList.get(k).getK8ssiemensList();
-                siemensListList.add(k8ssiemensList);
+            int hostnumber=0;
+            gwnumber=0;
+            for(PartInput outputpartInput:partInputList){
+                String type = outputpartInput.getType();
+                String name = outputpartInput.getName();
+                switch (type) {
+                    case "GW":
+                        k8ssiemensList=hostList.get(hostnumber).getSiemensList();
+                        siemensListList.add(k8ssiemensList);
+                        gwnumber++;
+                        hostnumber++;
+                        break;
+                    case "part":
+                        switch (name){
+                            case "slb":
+                                slbsiemensList = hostList.get(hostnumber).getSiemensList();
+                                siemensListList2.add(slbsiemensList);
+                                hostnumber++;
+                                break;
+                            case "nfr":
+                                nfrsiemensList = hostList.get(hostnumber).getSiemensList();
+                                siemensListList2.add(nfrsiemensList);
+                                hostnumber++;
+                                break;
+                            case "mockservice":
+                                mockservicesiemenslist = hostList.get(hostnumber).getSiemensList();
+                                siemensListList2.add(mockservicesiemenslist);
+                                hostnumber++;
+                                break;
+                            default:
+//                                ServiceLoadBalancerGW slb = new ServiceLoadBalancerGW(id,name,responsetime);
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
-            nfrsiemensList = nfr.getNfrsiemensList();
-            mockservicesiemenslist = mockService.getMockservicesiemensList();
-        //将获取到的结果类做成列表   存储为定值的列表
-            siemensListList2.add(slbsiemensList);
-//            siemensListList.add(redisSiementsList);
-            siemensListList2.add(nfrsiemensList);
-            siemensListList2.add(mockservicesiemenslist);
+
+
             for (SiemensList siemensList:siemensListList){
 
                 //绘制图形
@@ -300,7 +325,7 @@ public class ContainerCloudSimExample1 {
 
                 }
             }
-//            Plotpictures.plotpicture(ramp_down,mockService.getMockservicesiemensList().getAverageresponsetimelist(),mockService.getName()+"qps随时间的关系","qps");
+//            Plotpictures.plotpicture(ramp_down,mockService.getSiemensList().getAverageresponsetimelist(),mockService.getName()+"qps随时间的关系","qps");
             CalculateSumResponsetime.calculateresultresponsetime(siemensListList,siemensListList2,ramp_down);
 //            CalculateSumResponsetime.calculateresultresponsetime(siemensListList,ramp_down);
         } catch (Exception e) {
